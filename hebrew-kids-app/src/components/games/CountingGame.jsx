@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import GameShell from '../GameShell';
-import Bluey from '../characters/Bluey';
+import CharacterImg from '../CharacterImg';
 import { COUNT_ITEMS, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './CountingGame.css';
@@ -72,7 +72,7 @@ export default function CountingGame({ onBack, onAddStars }) {
     <GameShell title="ספירה עם בלוי" emoji="🐾" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="counting-bg">
       {done ? (
         <div className="done-screen fade-in">
-          <Bluey size={130} animate />
+          <CharacterImg character="bluey" size={130} />
           <div className="done-box pop">
             <span className="done-emoji">🐾</span>
             <h2 className="done-title">כל הכבוד!</h2>
@@ -93,7 +93,7 @@ export default function CountingGame({ onBack, onAddStars }) {
 
           <div className={`count-stage ${correct ? 'correct-stage' : ''} ${wrong ? 'wrong-stage' : ''}`}>
             <div className={`bluey-wrap ${blueyAnim}`}>
-              <Bluey size={90} animate={correct} />
+              <CharacterImg character="bluey" size={90} />
               {correct && <div className="speech-bubble">כן! נכון מאוד! 🎉</div>}
               {wrong && <div className="speech-bubble wrong-speech">נסי שוב! 💪</div>}
             </div>

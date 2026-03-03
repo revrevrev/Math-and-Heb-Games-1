@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import GameShell from '../GameShell';
-import Anna from '../characters/Anna';
+import CharacterImg from '../CharacterImg';
 import { Sounds } from '../../utils/sounds';
 import './MathGame.css';
 
@@ -98,7 +98,7 @@ export default function MathGame({ onBack, onAddStars }) {
     <GameShell title="חשבון עם אנה" emoji="🎯" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
       {done ? (
         <div className="done-screen fade-in">
-          <Anna size={130} animate />
+          <CharacterImg character="anna" size={130} />
           <div className="done-box pop">
             <span className="done-emoji">🎯</span>
             <h2 className="done-title">מצוינת!</h2>
@@ -119,7 +119,7 @@ export default function MathGame({ onBack, onAddStars }) {
 
           <div className="math-stage">
             <div className={`anna-wrap ${annaAnim}`}>
-              <Anna size={85} animate={correct} />
+              <CharacterImg character="anna" size={85} />
               {correct && <div className="speech-bubble">נכון! יופי! 🌟</div>}
               {wrong   && <div className="speech-bubble wrong-speech">נסי שוב 💪</div>}
             </div>

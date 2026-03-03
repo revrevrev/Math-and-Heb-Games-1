@@ -1,5 +1,42 @@
 /* Shared game styles reused by all 5 games */
 
+/* ── Character image frame (replaces SVG characters) ─── */
+.char-img-frame {
+  border-radius: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.6);
+  box-shadow:
+    0 6px 22px rgba(0,0,0,0.4),
+    0 0 0 2px rgba(255,255,255,0.15),
+    0 0 28px rgba(255,255,255,0.1);
+  animation: char-idle 3s ease-in-out infinite, char-glow-border 4s ease-in-out infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.char-img-frame:hover {
+  transform: scale(1.08) rotate(-2deg);
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.45),
+    0 0 0 3px rgba(255,255,255,0.3),
+    0 0 40px rgba(255,255,255,0.2);
+}
+.char-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@keyframes char-idle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-3px) rotate(-1deg); }
+  75%      { transform: translateY(-2px) rotate(1deg); }
+}
+@keyframes char-glow-border {
+  0%, 100% { border-color: rgba(255,255,255,0.6); }
+  50%      { border-color: rgba(255,220,120,0.85); }
+}
+
 /* Background themes */
 .letters-bg  { background: linear-gradient(160deg, #0f172a 0%, #1e3a6e 50%, #0ea5e9 100%); }
 .counting-bg { background: linear-gradient(160deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%); }

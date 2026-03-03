@@ -1,0 +1,8 @@
+Verify it runs - Start the dev server and confirm it works in browser (npm run dev) - done
+Enhance characters - The SVG characters are basic; improve to be more recognizable
+Add audio polish - Real sound effects / background music vs synthesized beeps
+Android testing - Sync to Capacitor and test on device/emulator
+Stars/rewards system - Persistent progress tracking, sticker collection
+Review quality - Check each game for bugs, missing content, broken flows
+Add more games - Shapes, colors, rhyming, letter tracing
+Difficulty progression - Adaptive levels per game

@@ -7,8 +7,43 @@ export default function Elsa({ size = 160, animate = false }) {
       className={animate ? 'float' : ''}
       style={{ filter: 'drop-shadow(0 4px 12px rgba(165,243,252,0.6))' }}
     >
-      {/* Snowflake crown */}
-      <g transform="translate(60,14)">
+      <defs>
+        <style>{`
+          .elsa-blink  { animation: elsa-blink 3.8s ease-in-out infinite; transform-origin: center; }
+          .elsa-body   { animation: elsa-breathe 3.2s ease-in-out infinite; transform-origin: 60px 100px; }
+          .elsa-crown  { animation: elsa-crown-glow 2s ease-in-out infinite; }
+          .elsa-sparkle { animation: elsa-sparkle 2.5s ease-in-out infinite; }
+          .elsa-magic  { animation: elsa-magic 2s ease-in-out infinite; transform-origin: 28px 97px; }
+          .elsa-braid  { animation: elsa-braid-sway 4s ease-in-out infinite; transform-origin: 72px 40px; }
+          @keyframes elsa-blink {
+            0%, 35%, 39%, 100% { transform: scaleY(1); }
+            37% { transform: scaleY(0.08); }
+          }
+          @keyframes elsa-breathe {
+            0%, 100% { transform: scaleY(1) translateY(0); }
+            50% { transform: scaleY(1.012) translateY(-1px); }
+          }
+          @keyframes elsa-crown-glow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+          }
+          @keyframes elsa-sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.6); }
+            50% { opacity: 1; transform: scale(1.3); }
+          }
+          @keyframes elsa-magic {
+            0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
+            25% { transform: rotate(-8deg) scale(1.1); opacity: 1; }
+            75% { transform: rotate(6deg) scale(0.95); opacity: 0.7; }
+          }
+          @keyframes elsa-braid-sway {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(3deg); }
+          }
+        `}</style>
+      </defs>
+      {/* Snowflake crown – with glow */}
+      <g transform="translate(60,14)" className="elsa-crown">
         {[0,60,120,180,240,300].map(a => (
           <line key={a}
             x1="0" y1="-10" x2="0" y2="-18"
@@ -21,23 +56,27 @@ export default function Elsa({ size = 160, animate = false }) {
 
       {/* Hair – platinum blonde braid */}
       <ellipse cx="60" cy="30" rx="20" ry="22" fill="#f5e6b0" />
-      {/* braid down right side */}
+      {/* braid down right side – with sway */}
+      <g className="elsa-braid">
       <path d="M72 40 Q80 70 74 100 Q70 110 66 108 Q62 106 64 96 Q68 70 66 44"
         fill="#f0dc8c" stroke="#d4b83a" strokeWidth="1" />
       {/* braid loops */}
       {[55,65,75,85].map(y => (
         <ellipse key={y} cx="71" cy={y} rx="5" ry="3.5" fill="#e8ce7a" opacity="0.7" />
       ))}
+      </g>{/* end braid group */}
 
       {/* Face */}
       <ellipse cx="60" cy="38" rx="17" ry="19" fill="#fce8d0" />
-      {/* Eyes */}
-      <ellipse cx="53" cy="34" rx="3.5" ry="4" fill="#4db6d0" />
-      <ellipse cx="67" cy="34" rx="3.5" ry="4" fill="#4db6d0" />
-      <circle  cx="52" cy="33" r="1.2" fill="white" />
-      <circle  cx="66" cy="33" r="1.2" fill="white" />
-      <ellipse cx="53" cy="35" rx="2" ry="2.5" fill="#1a6a88" />
-      <ellipse cx="67" cy="35" rx="2" ry="2.5" fill="#1a6a88" />
+      {/* Eyes – with blink */}
+      <g className="elsa-blink">
+        <ellipse cx="53" cy="34" rx="3.5" ry="4" fill="#4db6d0" />
+        <ellipse cx="67" cy="34" rx="3.5" ry="4" fill="#4db6d0" />
+        <circle  cx="52" cy="33" r="1.2" fill="white" />
+        <circle  cx="66" cy="33" r="1.2" fill="white" />
+        <ellipse cx="53" cy="35" rx="2" ry="2.5" fill="#1a6a88" />
+        <ellipse cx="67" cy="35" rx="2" ry="2.5" fill="#1a6a88" />
+      </g>
       {/* Rosy cheeks */}
       <ellipse cx="47" cy="41" rx="4" ry="2.5" fill="#ffb3b3" opacity="0.5" />
       <ellipse cx="73" cy="41" rx="4" ry="2.5" fill="#ffb3b3" opacity="0.5" />
@@ -46,7 +85,8 @@ export default function Elsa({ size = 160, animate = false }) {
       {/* Smile */}
       <path d="M53 48 Q60 54 67 48" stroke="#c97a6a" strokeWidth="1.8" fill="none" strokeLinecap="round" />
 
-      {/* Ice-blue dress body */}
+      {/* Ice-blue dress body – with breathing */}
+      <g className="elsa-body">}
       <path d="M42 56 Q38 80 34 130 L86 130 Q82 80 78 56 Q72 52 60 52 Q48 52 42 56Z"
         fill="#5bb8d4" />
       <path d="M42 56 Q38 80 34 130 L50 130 Q48 80 46 56Z"
@@ -70,16 +110,27 @@ export default function Elsa({ size = 160, animate = false }) {
       {/* Hands */}
       <circle cx="28" cy="97" r="6" fill="#fce8d0" />
       <circle cx="92" cy="97" r="6" fill="#fce8d0" />
-      {/* Ice magic from hand */}
-      {[[-6,-6],[-10,-2],[-6,2]].map(([dx,dy],i) => (
-        <circle key={i} cx={28+dx} cy={97+dy} r="2" fill="#a5f3fc" opacity="0.8" />
-      ))}
+      {/* Ice magic from hand – animated */}
+      <g className="elsa-magic">
+        {[[-6,-6],[-10,-2],[-6,2],[-12,-8],[-14,0]].map(([dx,dy],i) => (
+          <circle key={i} cx={28+dx} cy={97+dy} r={i < 3 ? 2 : 1.5} fill="#a5f3fc" opacity="0.8"
+            className="elsa-sparkle" style={{ animationDelay: `${i * 0.4}s` }} />
+        ))}
+      </g>
 
       {/* Legs / shoes */}
       <rect x="50" y="128" width="9" height="22" rx="4" fill="#3a8ea8" />
       <rect x="63" y="128" width="9" height="22" rx="4" fill="#3a8ea8" />
       <ellipse cx="54" cy="150" rx="8" ry="4" fill="#2a6e88" />
       <ellipse cx="68" cy="150" rx="8" ry="4" fill="#2a6e88" />
+      </g>{/* end elsa-body */}
+
+      {/* Floating ice particles */}
+      {[[15,70],[105,85],[20,110],[100,65],[12,55]].map(([x,y],i) => (
+        <circle key={`ice${i}`} cx={x} cy={y} r={1.5 + (i % 2)}
+          fill="#a5f3fc" opacity="0.6" className="elsa-sparkle"
+          style={{ animationDelay: `${i * 0.5}s` }} />
+      ))}
     </svg>
   );
 }

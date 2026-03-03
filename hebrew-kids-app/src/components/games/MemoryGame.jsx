@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import GameShell from '../GameShell';
-import Teletubby from '../characters/Teletubby';
+import CharacterImg from '../CharacterImg';
 import { ALEF_BET, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './MemoryGame.css';
@@ -15,8 +15,6 @@ function buildCards() {
   });
   return shuffle(cards);
 }
-
-const COLORS = ['purple', 'green', 'yellow', 'red'];
 
 export default function MemoryGame({ onBack, onAddStars }) {
   const [cards, setCards] = useState(() => buildCards());
@@ -74,9 +72,7 @@ export default function MemoryGame({ onBack, onAddStars }) {
     <GameShell title="זיכרון עם הטלטאביז" emoji="🧠" score={score} maxScore={8} onBack={onBack} bgClass="memory-bg">
       {done ? (
         <div className="done-screen fade-in">
-          <div style={{ display:'flex', gap:'8px', justifyContent:'center' }}>
-            {COLORS.map(c => <Teletubby key={c} color={c} size={70} animate screenContent="🎉" />)}
-          </div>
+          <CharacterImg character="teletubbies" size={280} className="bounce" />
           <div className="done-box pop">
             <span className="done-emoji">🧠</span>
             <h2 className="done-title">מדהים!</h2>
@@ -90,14 +86,13 @@ export default function MemoryGame({ onBack, onAddStars }) {
         </div>
       ) : (
         <>
-          {/* Teletubbies helpers */}
+          {/* Teletubbies helpers banner */}
           <div className="memory-helpers">
-            {COLORS.map((c, i) => (
-              <Teletubby key={c} color={c} size={54}
-                animate={matchAnim !== null && i === (matchAnim % 4)}
-                screenContent={['💜','💚','💛','❤️'][i]}
-              />
-            ))}
+            <CharacterImg
+              character="teletubbies"
+              size={240}
+              className={matchAnim !== null ? 'bounce' : ''}
+            />
           </div>
           <p className="instruction">מצאי את הזוגות! 🃏</p>
 

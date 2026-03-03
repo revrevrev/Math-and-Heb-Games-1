@@ -1,3 +1,8 @@
+/* ╔══════════════════════════════════════════════════════╗
+   ║           HOME SCREEN – full overhaul                ║
+   ╚══════════════════════════════════════════════════════╝ */
+
+/* ── Screen container ─────────────────────────────────── */
 .home-screen {
   position: relative;
   width: 100%;
@@ -5,185 +10,390 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 24px;
-  overflow: hidden;
+  padding-bottom: 28px;
+  overflow-x: hidden;
 }
 
-/* Background animated stars */
-.bg-stars {
+/* ── Background floating particles ────────────────────── */
+.bg-particles {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
 }
-.bg-star {
+.particle {
   position: absolute;
-  color: rgba(255,255,255,0.18);
-  animation: float 3s ease-in-out infinite;
+  animation: drift var(--dur, 4s) ease-in-out infinite;
+  opacity: 0.22;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.3));
 }
 
-/* Header */
+/* ── Welcome overlay ───────────────────────────────────── */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 20, 80, 0.72);
+  backdrop-filter: blur(6px);
+}
+.welcome-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #6d28d9 100%);
+  border: 3px solid rgba(255,255,255,0.35);
+  border-radius: 28px;
+  padding: 20px 28px 20px 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 40px rgba(165,243,252,0.25);
+  max-width: 340px;
+  margin: 0 16px;
+}
+/* .welcome-elsa removed – now uses .char-sticker */
+.welcome-text-wrap {
+  text-align: right;
+}
+.welcome-hi {
+  font-size: clamp(1.1rem, 5vw, 1.4rem);
+  color: #a5f3fc;
+  margin-bottom: 6px;
+}
+.welcome-msg {
+  font-size: clamp(1rem, 4vw, 1.2rem);
+  color: white;
+  margin-bottom: 10px;
+}
+.welcome-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  font-size: 1.4rem;
+}
+.welcome-dots span {
+  animation: bounce 1.2s ease-in-out infinite;
+}
+.welcome-dots span:nth-child(2) { animation-delay: 0.15s; }
+.welcome-dots span:nth-child(3) { animation-delay: 0.3s; }
+.welcome-dots span:nth-child(4) { animation-delay: 0.45s; }
+
+/* ── Header ────────────────────────────────────────────── */
 .home-header {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 600px;
-  padding: 16px 16px 8px;
-  text-align: center;
+  max-width: 560px;
+  padding: 12px 14px 6px;
 }
 
-.header-characters {
+.header-chars-row {
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 4px;
 }
 
-.header-char {
+.header-char-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   flex-shrink: 0;
 }
+/* Stagger header character animations so they don't sync */
+.header-char-slot:first-child .char-sticker { animation-delay: 0s, 0s; }
+.header-char-slot:last-child  .char-sticker { animation-delay: 1.2s, 1.5s; }
+.char-name {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.02em;
+}
 
-.header-title-wrap {
+.title-block {
   flex: 1;
   text-align: center;
+  padding: 0 6px;
 }
-
 .home-title {
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(1.35rem, 5.5vw, 2rem);
   color: white;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 20px rgba(165,243,252,0.4);
-  line-height: 1.2;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(165,243,252,0.4);
+  line-height: 1.15;
   white-space: nowrap;
 }
-
-.home-sub {
-  font-size: clamp(0.9rem, 3vw, 1.1rem);
-  color: #e0f2fe;
-  margin-top: 4px;
+.title-sparkle {
+  display: inline-block;
+  font-size: 0.85em;
+  animation: spin 4s linear infinite;
+}
+.home-subtitle {
+  font-size: clamp(0.85rem, 3vw, 1rem);
+  color: #bae6fd;
+  margin-top: 3px;
 }
 
-/* Stars bar */
-.stars-bar {
+/* ── Stars counter ─────────────────────────────────────── */
+.stars-counter {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 99px;
-  padding: 6px 16px;
-  backdrop-filter: blur(8px);
+  gap: 6px;
+  margin-top: 10px;
+  background: rgba(255,255,255,0.12);
   border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 99px;
+  padding: 8px 18px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(251,191,36,0.2);
 }
-
-.stars-label {
+.stars-crown {
+  font-size: 1.3rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+.stars-label-text {
+  font-size: 0.9rem;
   color: #fde68a;
-  font-size: 0.95rem;
 }
-
-.stars-count {
-  font-size: 1.1rem;
+.stars-icons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+}
+.star-pip {
+  font-size: 1rem;
+  animation: starPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both;
+}
+.stars-extra {
+  font-size: 1rem;
   color: #fde047;
+  font-weight: bold;
+  background: rgba(251,191,36,0.2);
+  border-radius: 8px;
+  padding: 1px 6px;
+}
+.stars-total-num {
+  font-size: 0.85rem;
+  color: #fcd34d;
+}
+.stars-empty-msg {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+  font-style: italic;
 }
 
-.stars-num {
-  font-size: 1.1rem;
-  color: white;
-  margin-right: 4px;
-}
-
-/* Welcome bubble */
-.welcome-bubble {
-  position: relative;
-  z-index: 2;
-  margin: 8px auto;
-  background: linear-gradient(135deg, #fde047, #fb923c);
-  border-radius: 24px;
-  padding: 10px 22px;
-  box-shadow: 0 4px 20px rgba(251,146,60,0.5);
-}
-
-.welcome-text {
-  color: #7c1d00;
-  font-size: clamp(0.9rem, 3.5vw, 1.1rem);
-}
-
-/* Games grid */
+/* ── Games grid ────────────────────────────────────────── */
 .games-grid {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 8px 14px;
-}
-
-.game-card {
-  display: flex;
-  align-items: center;
+  max-width: 560px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding: 10px 14px;
-  border-radius: 22px;
-  border: 3px solid rgba(255,255,255,0.35);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  animation: slideUp 0.4s ease-out both;
+}
+
+/* Last card (Words) spans full width */
+.game-card:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+/* ── Individual game card ──────────────────────────────── */
+.game-card {
+  position: relative;
+  height: 158px;
+  border-radius: 24px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  overflow: hidden;
   text-align: right;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: slideUp 0.45s ease-out both, cardGlow 3s ease-in-out infinite;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+}
+/* Full-width card is slightly taller */
+.game-card:nth-child(5) {
+  height: 136px;
 }
 
-.game-card:active {
-  transform: scale(0.96);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.game-card:active,
+.game-card.card-pressed {
+  transform: scale(0.93);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
-.card-character {
-  flex-shrink: 0;
-  width: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-}
-
-.card-emoji {
-  font-size: 1.3rem;
+/* Large semi-transparent watermark emoji */
+.card-watermark {
+  position: absolute;
+  bottom: -12px;
+  left: -8px;
+  font-size: 86px;
+  opacity: 0.12;
+  transform: rotate(-12deg);
+  pointer-events: none;
+  filter: blur(1px);
   line-height: 1;
 }
-
-.card-title {
-  font-size: clamp(1rem, 4vw, 1.25rem);
-  color: white;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+.game-card:nth-child(5) .card-watermark {
+  font-size: 70px;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-5deg);
 }
 
-.card-sub {
-  font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+/* Character "peeking" from bottom-right corner – feet slightly clipped */
+.card-char-peek {
+  position: absolute;
+  bottom: -18px;
+  right: 4px;
+  z-index: 3;
+  filter: drop-shadow(-3px 0 6px rgba(0,0,0,0.3));
+}
+.game-card:nth-child(5) .card-char-peek {
+  bottom: -18px;
+  right: 16px;
+}
+
+/* Text content area */
+.card-text-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 82px;       /* leave room for character on physical right */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;  /* RTL: flex-start = physical right = reading start */
+  padding: 12px 14px 12px 4px;
+  gap: 3px;
+  z-index: 2;
+}
+.game-card:nth-child(5) .card-text-area {
+  left: 100px;
+}
+
+.card-emoji-badge {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.card-title {
+  font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+  color: white;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+  line-height: 1.2;
+}
+.card-subtitle {
+  font-size: clamp(0.72rem, 2.8vw, 0.88rem);
   color: rgba(255,255,255,0.85);
 }
-
-.card-arrow {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.6);
-  flex-shrink: 0;
+.card-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  color: white;
+  backdrop-filter: blur(4px);
 }
 
-/* Footer characters */
+/* ── Footer characters ─────────────────────────────────── */
 .home-footer {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 0 16px;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 0 10px;
+  flex-wrap: nowrap;
+}
+.footer-char {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.footer-name {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+}
+
+/* ── Character sticker (real photo in circle) ──────────── */
+.char-sticker {
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: white;
+  border: 3px solid rgba(255,255,255,0.85);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.35),
+    0 0 0 2px rgba(255,255,255,0.2),
+    0 0 20px rgba(255,255,255,0.15);
+  animation: sticker-bob 3.5s ease-in-out infinite, sticker-glow 4s ease-in-out infinite;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.char-sticker:hover {
+  transform: scale(1.12) rotate(-4deg);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.4),
+    0 0 0 3px rgba(255,220,120,0.6),
+    0 0 30px rgba(255,220,120,0.3);
+}
+.char-sticker img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@keyframes sticker-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30%      { transform: translateY(-4px) rotate(-2deg); }
+  70%      { transform: translateY(-2px) rotate(2deg); }
+}
+@keyframes sticker-glow {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.15); }
+  50%      { box-shadow: 0 4px 20px rgba(0,0,0,0.35), 0 0 0 3px rgba(255,220,120,0.5), 0 0 28px rgba(255,220,120,0.25); }
+}
+
+/* Sticker in welcome overlay: not circular – use a pill to show full portrait */
+.welcome-card .char-sticker {
+  border-radius: 22px;
+  width: 110px !important;
+  height: 130px !important;
+}
+
+/* ── Footer Teletubbies banner ─────────────────────────── */
+.footer-teletubbies {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+.teletubbies-banner {
+  width: 100%;
+  max-width: 220px;
+  height: 68px;
+  object-fit: cover;
+  object-position: center 20%;
+  border-radius: 18px;
+  border: 2.5px solid rgba(255,255,255,0.5);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  display: block;
+}
+.footer-tele-label {
+  font-size: 0.72rem;
 }

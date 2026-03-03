@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import GameShell from '../GameShell';
-import Elsa from '../characters/Elsa';
+import CharacterImg from '../CharacterImg';
 import { ALEF_BET, shuffle, pickRandom } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './LettersGame.css';
@@ -109,7 +109,7 @@ export default function LettersGame({ onBack, onAddStars }) {
 
       {done ? (
         <div className="done-screen fade-in">
-          <Elsa size={130} animate />
+          <CharacterImg character="elsa" size={130} />
           <div className="done-box pop">
             <span className="done-emoji">🎉</span>
             <h2 className="done-title">כל הכבוד!</h2>
@@ -132,7 +132,7 @@ export default function LettersGame({ onBack, onAddStars }) {
           {/* Character + letter display */}
           <div className={`letter-stage ${correct ? 'correct-stage' : ''} ${wrong ? 'wrong-stage' : ''}`}>
             <div className={`elsa-wrap ${elsaAnim}`}>
-              <Elsa size={100} animate={correct} />
+              <CharacterImg character="elsa" size={100} />
             </div>
             <div className="big-letter-card">
               <span className="big-letter">{correctItem.letter}</span>

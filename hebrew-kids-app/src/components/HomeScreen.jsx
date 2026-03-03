@@ -1,8 +1,4 @@
-import { useState, useEffect } from 'react';
-import Elsa from './characters/Elsa';
-import Anna from './characters/Anna';
-import Bluey from './characters/Bluey';
-import Teletubby from './characters/Teletubby';
+import { useState, useEffect, useMemo } from 'react';
 import { Sounds } from '../utils/sounds';
 import './HomeScreen.css';
 
@@ -10,147 +6,234 @@ const GAMES = [
   {
     id: 'letters',
     title: 'אותיות עם אלזה',
-    subtitle: 'לימוד אותיות עברית',
+    subtitle: 'לימוד א-ב!',
     emoji: '❄️',
-    color: '#38bdf8',
-    gradient: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
-    character: <Elsa size={70} />,
-    stars: 0,
+    gradient: 'linear-gradient(145deg, #0ea5e9 0%, #6366f1 100%)',
+    glowColor: '#38bdf8',
+    watermark: '❄️',
+    imgSrc: '/images/elsa.png',
+    imgPos: 'top center',
   },
   {
     id: 'counting',
     title: 'ספירה עם בלוי',
-    subtitle: 'לספור ולהכיר מספרים',
+    subtitle: 'בואי נספור!',
     emoji: '🐾',
-    color: '#60a5fa',
-    gradient: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
-    character: <Bluey size={70} />,
-    stars: 0,
+    gradient: 'linear-gradient(145deg, #2563eb 0%, #06b6d4 100%)',
+    glowColor: '#60a5fa',
+    watermark: '🐾',
+    imgSrc: '/images/bluey.webp',
+    imgPos: 'top center',
   },
   {
     id: 'memory',
-    title: 'זיכרון עם הטלטאביז',
-    subtitle: 'מצא את הזוגות!',
+    title: 'זיכרון טלטאבי',
+    subtitle: 'מצאי זוגות!',
     emoji: '🧠',
-    color: '#a855f7',
-    gradient: 'linear-gradient(135deg, #a855f7, #ec4899)',
-    character: <Teletubby color="purple" size={70} />,
-    stars: 0,
+    gradient: 'linear-gradient(145deg, #9333ea 0%, #ec4899 100%)',
+    glowColor: '#c084fc',
+    watermark: '💜',
+    imgSrc: '/images/teletubbies.jpg',
+    imgPos: 'center 12%',
   },
   {
     id: 'math',
     title: 'חשבון עם אנה',
-    subtitle: 'חיבור וחיסור כיפי',
+    subtitle: 'חיבור וחיסור!',
     emoji: '🎯',
-    color: '#22c55e',
-    gradient: 'linear-gradient(135deg, #16a34a, #eab308)',
-    character: <Anna size={70} />,
-    stars: 0,
+    gradient: 'linear-gradient(145deg, #16a34a 0%, #ca8a04 100%)',
+    glowColor: '#4ade80',
+    watermark: '🌟',
+    imgSrc: '/images/anna-elsa.jpg',
+    imgPos: 'left top',
   },
   {
     id: 'words',
     title: 'מילות קסם',
     subtitle: 'בואי נבנה מילים!',
     emoji: '✨',
-    color: '#f97316',
-    gradient: 'linear-gradient(135deg, #f97316, #ec4899)',
-    character: <Teletubby color="yellow" size={70} />,
-    stars: 0,
+    gradient: 'linear-gradient(145deg, #ea580c 0%, #db2777 100%)',
+    glowColor: '#fb923c',
+    watermark: '✨',
+    imgSrc: '/images/anna-elsa.jpg',
+    imgPos: '75% top',
   },
 ];
 
+const PARTICLE_POOL = ['⭐','❄️','🐾','💜','🌸','✨','🎵','🌟','💛','🎈','🦋','💎'];
+
+/* ── Character sticker: real photo in a circle ── */
+function CharImg({ src, alt, size, objPos = 'top center' }) {
+  return (
+    <div
+      className="char-sticker"
+      style={{ width: size, height: size }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        style={{ objectPosition: objPos }}
+        draggable={false}
+      />
+    </div>
+  );
+}
+
 export default function HomeScreen({ onSelectGame, totalStars }) {
-  const [bouncing, setBouncing] = useState(null);
+  const [pressed, setPressed]         = useState(null);
   const [showWelcome, setShowWelcome] = useState(true);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowWelcome(false), 2200);
+    const t = setTimeout(() => setShowWelcome(false), 3200);
     return () => clearTimeout(t);
   }, []);
 
+  const particles = useMemo(() =>
+    Array.from({ length: 22 }).map((_, i) => ({
+      emoji: PARTICLE_POOL[i % PARTICLE_POOL.length],
+      left:  `${(i * 41 + 7)  % 100}%`,
+      top:   `${(i * 67 + 13) % 100}%`,
+      size:  12 + (i % 5) * 4,
+      delay: `${(i * 0.35) % 4}s`,
+      dur:   `${3 + (i % 4)}s`,
+    })), []);
+
   function handleSelect(game) {
     Sounds.tap();
-    setBouncing(game.id);
+    setPressed(game.id);
     setTimeout(() => {
-      setBouncing(null);
+      setPressed(null);
       onSelectGame(game.id);
-    }, 350);
+    }, 320);
   }
+
+  const cappedStars = Math.min(totalStars, 12);
 
   return (
     <div className="home-screen">
-      {/* Floating background stars */}
-      <div className="bg-stars" aria-hidden>
-        {Array.from({ length: 18 }).map((_, i) => (
-          <span key={i} className="bg-star" style={{
-            left:  `${Math.random() * 100}%`,
-            top:   `${Math.random() * 100}%`,
-            fontSize: `${10 + Math.random() * 18}px`,
-            animationDelay:  `${Math.random() * 3}s`,
-            animationDuration:`${2 + Math.random() * 3}s`,
-          }}>✦</span>
+
+      {/* ── Floating background particles ── */}
+      <div className="bg-particles" aria-hidden>
+        {particles.map((p, i) => (
+          <span key={i} className="particle" style={{
+            left: p.left, top: p.top,
+            fontSize: `${p.size}px`,
+            animationDelay: p.delay,
+            animationDuration: p.dur,
+          }}>{p.emoji}</span>
         ))}
       </div>
 
-      {/* Header */}
-      <header className="home-header fade-in">
-        <div className="header-characters">
-          <div className="header-char" style={{ animationDelay: '0s' }}>
-            <Elsa size={70} animate />
-          </div>
-          <div className="header-title-wrap">
-            <h1 className="home-title">🌟 משחקי לימוד 🌟</h1>
-            <p className="home-sub">עברית וחשבון כיפי!</p>
-          </div>
-          <div className="header-char" style={{ animationDelay: '0.4s' }}>
-            <Bluey size={70} animate />
-          </div>
-        </div>
-
-        {/* Stars bar */}
-        <div className="stars-bar">
-          <span className="stars-label">הכוכבים שלי:</span>
-          <span className="stars-count">
-            {'⭐'.repeat(Math.min(totalStars, 10))}
-            {totalStars > 0 && <span className="stars-num"> {totalStars}</span>}
-          </span>
-        </div>
-      </header>
-
-      {/* Welcome bubble */}
+      {/* ── Welcome overlay ── */}
       {showWelcome && (
-        <div className="welcome-bubble pop">
-          <span className="welcome-text">שלום! בואי נשחק ונלמד יחד! 🎉</span>
+        <div className="welcome-overlay">
+          <div className="welcome-card pop">
+            <CharImg src="/images/elsa.png" alt="אלזה" size={110} objPos="top center" />
+            <div className="welcome-text-wrap">
+              <p className="welcome-hi">👋 שלום! אני אלזה!</p>
+              <p className="welcome-msg">בואי נשחק ונלמד יחד! 🎉</p>
+              <div className="welcome-dots">
+                <span>❄️</span><span>⭐</span><span>🐾</span><span>💜</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Game grid */}
+      {/* ── Header ── */}
+      <header className="home-header fade-in">
+        <div className="header-chars-row">
+          <div className="header-char-slot">
+            <CharImg src="/images/elsa.png" alt="אלזה" size={88} objPos="top center" />
+            <span className="char-name">אלזה</span>
+          </div>
+
+          <div className="title-block">
+            <h1 className="home-title">
+              <span className="title-sparkle">✨</span>
+              איזה כיף לשחק
+              <span className="title-sparkle">✨</span>
+            </h1>
+            <p className="home-subtitle">עברית וחשבון כיפי!</p>
+          </div>
+
+          <div className="header-char-slot">
+            <CharImg src="/images/bluey.webp" alt="בלוי" size={88} objPos="top center" />
+            <span className="char-name">בלוי</span>
+          </div>
+        </div>
+
+        {/* Stars counter */}
+        <div className="stars-counter">
+          <span className="stars-crown">👑</span>
+          <span className="stars-label-text">הכוכבים שלי:</span>
+          <div className="stars-icons-row">
+            {cappedStars > 0
+              ? Array.from({ length: cappedStars }).map((_, i) => (
+                  <span key={i} className="star-pip" style={{ animationDelay: `${i * 0.06}s` }}>⭐</span>
+                ))
+              : <span className="stars-empty-msg">שחקי כדי לאסוף כוכבים!</span>
+            }
+            {totalStars > 12 && (
+              <span className="stars-extra">+{totalStars - 12}</span>
+            )}
+          </div>
+          {totalStars > 0 && (
+            <span className="stars-total-num">{totalStars} סה״כ</span>
+          )}
+        </div>
+      </header>
+
+      {/* ── Games grid ── */}
       <main className="games-grid">
         {GAMES.map((game, i) => (
           <button
             key={game.id}
-            className={`game-card ${bouncing === game.id ? 'wiggle' : ''}`}
-            style={{ background: game.gradient, animationDelay: `${i * 0.08}s` }}
+            className={`game-card ${pressed === game.id ? 'card-pressed' : ''}`}
+            style={{
+              background: game.gradient,
+              '--glow': game.glowColor,
+              animationDelay: `${i * 0.09}s`,
+            }}
             onClick={() => handleSelect(game)}
           >
-            <div className="card-character">{game.character}</div>
-            <div className="card-info">
-              <span className="card-emoji">{game.emoji}</span>
-              <strong className="card-title">{game.title}</strong>
-              <span className="card-sub">{game.subtitle}</span>
+            <span className="card-watermark" aria-hidden>{game.watermark}</span>
+
+            <div className="card-char-peek">
+              <CharImg src={game.imgSrc} alt={game.title} size={86} objPos={game.imgPos} />
             </div>
-            <div className="card-arrow">▶</div>
+
+            <div className="card-text-area">
+              <span className="card-emoji-badge">{game.emoji}</span>
+              <strong className="card-title">{game.title}</strong>
+              <span className="card-subtitle">{game.subtitle}</span>
+              <span className="card-play-btn">▶ שחקי!</span>
+            </div>
           </button>
         ))}
       </main>
 
-      {/* Bottom characters */}
+      {/* ── Footer: Anna sticker + Teletubbies photo banner ── */}
       <footer className="home-footer">
-        <Anna size={65} animate />
-        <Teletubby color="green"  size={60} animate screenContent="🎮" />
-        <Teletubby color="yellow" size={60} animate screenContent="📖" />
-        <Teletubby color="red"    size={60} animate screenContent="🔢" />
+        <div className="footer-char">
+          <CharImg src="/images/anna-elsa.jpg" alt="אנה ואלזה" size={62} objPos="22% top" />
+          <span className="footer-name">אנה ואלזה</span>
+        </div>
+        <div className="footer-teletubbies">
+          <img
+            src="/images/teletubbies.jpg"
+            alt="הטלטאביז"
+            className="teletubbies-banner"
+            draggable={false}
+          />
+          <span className="footer-name footer-tele-label">הטלטאביז ❤️</span>
+        </div>
+        <div className="footer-char">
+          <CharImg src="/images/bluey.webp" alt="בלוי" size={62} objPos="top center" />
+          <span className="footer-name">בלוי</span>
+        </div>
       </footer>
+
     </div>
   );
 }

@@ -1,8 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import GameShell from '../GameShell';
-import Elsa from '../characters/Elsa';
-import Anna from '../characters/Anna';
-import Teletubby from '../characters/Teletubby';
+import CharacterImg from '../CharacterImg';
 import { WORDS, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './WordGame.css';
@@ -18,11 +16,7 @@ function makeRound(usedIndices) {
   return { item, letters, originalIdx: WORDS.indexOf(item) };
 }
 
-const CHARS = [
-  <Elsa key="e" size={70} />,
-  <Anna key="a" size={70} />,
-  <Teletubby key="t" color="yellow" size={70} />,
-];
+const CHAR_NAMES = ['elsa', 'anna', 'teletubbies'];
 
 export default function WordGame({ onBack, onAddStars }) {
   const [initRound0] = useState(() => makeRound(new Set()));
@@ -39,7 +33,7 @@ export default function WordGame({ onBack, onAddStars }) {
   const [shake, setShake]         = useState(false);
   const [score, setScore]         = useState(0);
   const [done, setDone]           = useState(false);
-  const charIdx = round % CHARS.length;
+  const charIdx = round % CHAR_NAMES.length;
 
   // init remaining from roundData
   function initRound(rd) {
@@ -114,7 +108,8 @@ export default function WordGame({ onBack, onAddStars }) {
       {done ? (
         <div className="done-screen fade-in">
           <div style={{ display:'flex', gap:'8px', justifyContent:'center' }}>
-            <Elsa size={80} animate /><Anna size={80} animate />
+            <CharacterImg character="elsa" size={80} className="celebrate" />
+            <CharacterImg character="anna" size={80} className="celebrate" />
           </div>
           <div className="done-box pop">
             <span className="done-emoji">✨</span>
@@ -136,7 +131,7 @@ export default function WordGame({ onBack, onAddStars }) {
 
           <div className="word-stage">
             <div className={`word-char-wrap ${correct ? 'celebrate' : ''}`}>
-              {CHARS[charIdx]}
+              <CharacterImg character={CHAR_NAMES[charIdx]} size={90} />
               {correct && <div className="speech-bubble">כן! מצוין! 🌟</div>}
             </div>
             <div className="word-hint-box">
