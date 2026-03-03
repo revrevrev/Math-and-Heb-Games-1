@@ -1,0 +1,60 @@
+@import './shared.css';
+
+.count-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.bluey-wrap {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.count-objects {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 20px;
+  border: 2px solid rgba(255,255,255,0.2);
+  min-height: 120px;
+  align-items: center;
+  justify-content: center;
+}
+
+.count-obj {
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  animation: pop 0.35s ease both;
+  line-height: 1;
+}
+
+.number-choices {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.num-btn {
+  width: clamp(52px, 14vw, 68px);
+  height: clamp(52px, 14vw, 68px);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.18);
+  border: 3px solid rgba(255,255,255,0.35);
+  color: white;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-family: inherit;
+  transition: transform 0.1s;
+  backdrop-filter: blur(6px);
+}
+
+.num-btn:active {
+  transform: scale(0.9);
+}

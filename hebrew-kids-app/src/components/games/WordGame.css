@@ -1,0 +1,115 @@
+@import './shared.css';
+
+.word-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.word-char-wrap {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.word-hint-box {
+  flex: 1;
+  background: rgba(255,255,255,0.15);
+  border: 3px solid rgba(255,255,255,0.3);
+  border-radius: 22px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(6px);
+  min-height: 110px;
+  justify-content: center;
+}
+
+.word-emoji {
+  font-size: clamp(2.5rem, 10vw, 4rem);
+}
+
+.word-hint {
+  font-size: clamp(1rem, 3.5vw, 1.2rem);
+  color: #fde68a;
+}
+
+/* Letter slots */
+.built-slots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.slot {
+  width: clamp(42px, 12vw, 56px);
+  height: clamp(42px, 12vw, 56px);
+  border-radius: 14px;
+  border: 3px dashed rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  color: white;
+  background: rgba(255,255,255,0.08);
+  transition: all 0.2s;
+}
+
+.slot-filled {
+  border-style: solid;
+  border-color: #fbbf24;
+  background: rgba(251,191,36,0.2);
+  animation: pop 0.25s ease;
+}
+
+.slot-correct {
+  border-color: #4ade80 !important;
+  background: rgba(74,222,128,0.25) !important;
+}
+
+/* Letter tiles */
+.letter-tiles {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.letter-tile {
+  width: clamp(46px, 13vw, 62px);
+  height: clamp(46px, 13vw, 62px);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.2);
+  border: 3px solid rgba(255,255,255,0.4);
+  color: white;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-family: inherit;
+  transition: transform 0.1s, opacity 0.2s;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+
+.letter-tile:active:not(:disabled) {
+  transform: scale(0.88);
+}
+
+.tile-used {
+  opacity: 0.2;
+  transform: scale(0.85);
+}
+
+/* Undo button */
+.undo-btn {
+  background: rgba(255,255,255,0.15);
+  color: #fde68a;
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border: 2px solid rgba(255,255,255,0.2);
+}

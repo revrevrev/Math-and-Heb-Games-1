@@ -1,0 +1,100 @@
+@import './shared.css';
+
+.math-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.anna-wrap {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.equation-box {
+  flex: 1;
+  background: rgba(255,255,255,0.12);
+  border: 3px solid rgba(255,255,255,0.25);
+  border-radius: 22px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(8px);
+  min-height: 110px;
+  justify-content: center;
+}
+
+.eq-visual {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.dots-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  max-width: 130px;
+}
+
+.math-dot {
+  font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+  animation: pop 0.25s ease both;
+}
+
+.math-num-big {
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+}
+
+.eq-op,
+.eq-eq {
+  font-size: clamp(1.6rem, 5.5vw, 2.2rem);
+  color: #fde047;
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.eq-unknown {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  color: #fb923c;
+  font-weight: bold;
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+.eq-text {
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  color: white;
+  letter-spacing: 2px;
+}
+
+.math-choices {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+.math-btn {
+  width: clamp(64px, 18vw, 88px);
+  height: clamp(64px, 18vw, 88px);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.18);
+  border: 3px solid rgba(255,255,255,0.35);
+  color: white;
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  font-family: inherit;
+  transition: transform 0.1s;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.math-btn:active {
+  transform: scale(0.9);
+}

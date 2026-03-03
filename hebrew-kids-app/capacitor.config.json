@@ -1,0 +1,8 @@
+{
+  "appId": "com.kids.hebrewlearning",
+  "appName": "משחקי לימוד",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#4c1d95"
+  }
+}

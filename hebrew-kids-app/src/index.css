@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+:root {
+  --pink: #ff6eb4;
+  --purple: #c084fc;
+  --blue: #60a5fa;
+  --ice-blue: #a5f3fc;
+  --yellow: #fde047;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --teal: #2dd4bf;
+  --red: #f87171;
+  --star-gold: #fbbf24;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  direction: rtl;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Fredoka One', 'Arial Rounded MT Bold', Arial, sans-serif;
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #7c3aed 100%);
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+button:active {
+  transform: scale(0.93);
+}
+
+/* ── Animations ─────────────────────────────────── */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-6deg) scale(1.05); }
+  50%       { transform: rotate(6deg)  scale(1.05); }
+}
+@keyframes pop {
+  0%   { transform: scale(0); opacity: 0; }
+  70%  { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0)   rotate(-2deg); }
+  50%       { transform: translateY(-8px) rotate(2deg); }
+}
+@keyframes celebrate {
+  0%   { transform: scale(1) rotate(0); }
+  25%  { transform: scale(1.2) rotate(-6deg); }
+  50%  { transform: scale(1.2) rotate(6deg); }
+  75%  { transform: scale(1.1) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes snowfall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(110vh)  rotate(720deg); opacity: 0; }
+}
+@keyframes starPop {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 1; }
+  60%  { transform: scale(1.4) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(110vh)  rotate(720deg); opacity: 0.3; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,255,255,0.3); }
+  50%       { box-shadow: 0 0 24px rgba(255,255,255,0.8), 0 0 40px rgba(165,243,252,0.5); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.15); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.1); }
+  70%       { transform: scale(1); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.bounce    { animation: bounce    1.2s ease-in-out infinite; }
+.wiggle    { animation: wiggle    0.5s ease-in-out; }
+.pop       { animation: pop       0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.float     { animation: float     3s   ease-in-out infinite; }
+.celebrate { animation: celebrate 0.7s ease-in-out; }
+.fade-in   { animation: fadeInDown 0.5s ease-out; }
+.slide-up  { animation: slideUp   0.4s ease-out; }
+.heartbeat { animation: heartbeat 1.5s ease-in-out infinite; }
+.spin      { animation: spin      2s   linear infinite; }
