@@ -16,7 +16,7 @@ const GAMES = [
   },
   {
     id: 'counting',
-    title: 'ספירה עם בלוי',
+    title: 'ספירה עם בלואי',
     subtitle: 'בואי נספור!',
     emoji: '🐾',
     gradient: 'linear-gradient(145deg, #2563eb 0%, #06b6d4 100%)',
@@ -49,14 +49,14 @@ const GAMES = [
   },
   {
     id: 'words',
-    title: 'מילות קסם',
+    title: 'מילות קסם עם גבי',
     subtitle: 'בואי נבנה מילים!',
     emoji: '✨',
     gradient: 'linear-gradient(145deg, #ea580c 0%, #db2777 100%)',
     glowColor: '#fb923c',
     watermark: '✨',
-    imgSrc: '/images/anna-elsa.jpg',
-    imgPos: '75% top',
+    imgSrc: '/images/gabby-hero2.png',
+    imgPos: 'top center',
   },
 ];
 
@@ -81,12 +81,16 @@ function CharImg({ src, alt, size, objPos = 'top center' }) {
 
 export default function HomeScreen({ onSelectGame, totalStars }) {
   const [pressed, setPressed]         = useState(null);
-  const [showWelcome, setShowWelcome] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(
+    () => !localStorage.getItem('hebrew-app-welcomed')
+  );
 
   useEffect(() => {
+    if (!showWelcome) return;
+    localStorage.setItem('hebrew-app-welcomed', '1');
     const t = setTimeout(() => setShowWelcome(false), 3200);
     return () => clearTimeout(t);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const particles = useMemo(() =>
     Array.from({ length: 22 }).map((_, i) => ({
@@ -158,8 +162,8 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
           </div>
 
           <div className="header-char-slot">
-            <CharImg src="/images/bluey.webp" alt="בלוי" size={88} objPos="top center" />
-            <span className="char-name">בלוי</span>
+            <CharImg src="/images/bluey.webp" alt="בלואי" size={88} objPos="top center" />
+            <span className="char-name">בלואי</span>
           </div>
         </div>
 
@@ -216,8 +220,8 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
       {/* ── Footer: Anna sticker + Teletubbies photo banner ── */}
       <footer className="home-footer">
         <div className="footer-char">
-          <CharImg src="/images/anna-elsa.jpg" alt="אנה ואלזה" size={62} objPos="22% top" />
-          <span className="footer-name">אנה ואלזה</span>
+          <CharImg src="/images/gabby-hero2.png" alt="גבי" size={62} objPos="top center" />
+          <span className="footer-name">גבי</span>
         </div>
         <div className="footer-teletubbies">
           <img
@@ -229,8 +233,8 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
           <span className="footer-name footer-tele-label">הטלטאביז ❤️</span>
         </div>
         <div className="footer-char">
-          <CharImg src="/images/bluey.webp" alt="בלוי" size={62} objPos="top center" />
-          <span className="footer-name">בלוי</span>
+          <CharImg src="/images/bluey.webp" alt="בלואי" size={62} objPos="top center" />
+          <span className="footer-name">בלואי</span>
         </div>
       </footer>
 

@@ -245,26 +245,28 @@
   transform: translateX(-50%) rotate(-5deg);
 }
 
-/* Character "peeking" from bottom-right corner – feet slightly clipped */
+/* Character "peeking" from bottom-left corner – feet slightly clipped */
 .card-char-peek {
   position: absolute;
   bottom: -18px;
-  right: 4px;
+  left: 4px;
+  right: auto;
   z-index: 3;
-  filter: drop-shadow(-3px 0 6px rgba(0,0,0,0.3));
+  filter: drop-shadow(3px 0 6px rgba(0,0,0,0.3));
 }
 .game-card:nth-child(5) .card-char-peek {
   bottom: -18px;
-  right: 16px;
+  left: 16px;
+  right: auto;
 }
 
-/* Text content area */
+/* Text content area — character is on physical left, text fills the rest */
 .card-text-area {
   position: absolute;
   top: 0;
   bottom: 0;
+  left: 96px;       /* leave room for character on physical left */
   right: 0;
-  left: 82px;       /* leave room for character on physical right */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -274,7 +276,7 @@
   z-index: 2;
 }
 .game-card:nth-child(5) .card-text-area {
-  left: 100px;
+  left: 110px;
 }
 
 .card-emoji-badge {

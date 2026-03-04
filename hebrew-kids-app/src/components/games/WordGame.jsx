@@ -17,7 +17,8 @@ function makeRound(usedIndices) {
   return { item, letters, originalIdx: WORDS.indexOf(item) };
 }
 
-const CHAR_NAMES = ['elsa', 'anna', 'teletubbies'];
+// Gabbi leads; Elsa + Anna join for variety across rounds
+const CHAR_NAMES = ['gabby', 'elsa', 'gabby', 'anna', 'gabby', 'elsa', 'gabby', 'anna'];
 
 export default function WordGame({ onBack, onAddStars }) {
   const [initRound0] = useState(() => makeRound(new Set()));
@@ -109,9 +110,10 @@ export default function WordGame({ onBack, onAddStars }) {
       <GameEffects correct={correct} done={done} character={CHAR_NAMES[charIdx]} />
       {done ? (
         <div className="done-screen fade-in">
-          <div style={{ display:'flex', gap:'8px', justifyContent:'center' }}>
-            <CharacterImg character="elsa" size={80} className="celebrate" />
-            <CharacterImg character="anna" size={80} className="celebrate" />
+          <div style={{ display:'flex', gap:'8px', justifyContent:'center', alignItems:'flex-end' }}>
+            <CharacterImg character="elsa" size={64} className="celebrate" />
+            <CharacterImg character="gabby" size={110} className="celebrate" />
+            <CharacterImg character="anna" size={64} className="celebrate" />
           </div>
           <div className="done-box pop">
             <span className="done-emoji">✨</span>

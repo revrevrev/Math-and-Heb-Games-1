@@ -27,6 +27,11 @@
   justify-content: center;
 }
 
+/* Math equation must read left-to-right regardless of page RTL */
+.equation-box {
+  direction: ltr;
+}
+
 .eq-visual {
   display: flex;
   align-items: center;

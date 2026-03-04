@@ -14,9 +14,15 @@ const CHARS = {
     pos: 'top center',
     aspect: 0.82,   // taller than wide  → portrait frame
   },
+  gabby: {
+    src: '/images/gabby-hero2.png',
+    alt: 'גבי',
+    pos: 'top center',
+    aspect: 0.9,
+  },
   bluey: {
     src: '/images/bluey.webp',
-    alt: 'בלוי',
+    alt: 'בלואי',
     pos: 'top center',
     aspect: 0.88,
   },

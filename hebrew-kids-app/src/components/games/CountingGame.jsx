@@ -70,7 +70,7 @@ export default function CountingGame({ onBack, onAddStars }) {
   }
 
   return (
-    <GameShell title="ספירה עם בלוי" emoji="🐾" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="counting-bg">
+    <GameShell title="ספירה עם בלואי" emoji="🐾" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="counting-bg">
       <GameEffects correct={correct} done={done} character="bluey" />
       {done ? (
         <div className="done-screen fade-in">

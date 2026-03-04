@@ -39,32 +39,39 @@
   100% { transform: translate(-50%, -50%) scale(0.3); opacity: 0;  left: 88%; top: 4%;  }
 }
 
-/* ── Celebration Overlay ───────────────────────────── */
+/* ── Celebration Banner (compact, doesn't cover game content) ── */
 .celebrate-overlay {
   position: fixed;
-  inset: 0;
+  top: 52px;              /* below the GameShell top bar */
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.28);
+  gap: 10px;
+  background: rgba(10, 10, 30, 0.78);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 8px 18px 8px 10px;
   z-index: 180;
   pointer-events: none;
-  animation: overlayIn 0.22s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.45), 0 0 20px rgba(255,220,0,0.2);
+  animation: bannerIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes overlayIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.85); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)     scale(1);    }
 }
 
 .celebrate-overlay-text {
-  margin-top: 14px;
-  font-size: 2.8rem;
+  font-size: 1.6rem;
   color: #fff;
   text-shadow:
-    0 0 18px rgba(255, 220, 0, 0.95),
-    0 0 36px rgba(255, 180, 0, 0.6),
-    0 2px 8px rgba(0, 0, 0, 0.7);
-  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    0 0 14px rgba(255, 220, 0, 0.95),
+    0 0 28px rgba(255, 180, 0, 0.5),
+    0 1px 4px rgba(0, 0, 0, 0.8);
+  animation: pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

@@ -6,6 +6,15 @@ QW2→ Animated star counter - star "flies" from answer to score counter - done
 QW3→ Bigger character reactions - full-screen overlay celebrate moment on round win - done
 QW4→ Button press feel - scale-down on :active for all answer buttons - done
 
+=== Functionality And Usability — done ===
+FU1→ Math equations L2R - fixed: direction:ltr on .equation-box - done
+FU2→ Welcome popup only on first visit - fixed: localStorage flag 'hebrew-app-welcomed' - done
+FU3→ Character bubbles overlapping card text - fixed: character moved to physical left side - done
+FU4→ בלוי → בלואי - fixed: renamed in all files - done
+FU5→ Celebration overlay covers game content - fixed: redesigned as compact top banner - done
+FU6→ Add Gabbi character (gabby-hero2.png) as lead for מילות קסם - done
+
+
 === MEDIUM EFFORT (Game Feel) ===
 ME1→ Real sound effects - replace synthesized beeps with actual audio files (freesound.org)
 ME2→ Streak bonuses - 3-in-a-row = bonus star + "מדהים!" special animation

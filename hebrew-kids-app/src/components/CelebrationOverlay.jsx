@@ -31,10 +31,10 @@ export default function CelebrationOverlay({ active, character }) {
         </div>
       )}
 
-      {/* Full-screen character celebration */}
+      {/* Compact banner — slides down from top, doesn't cover game content */}
       {visible && (
         <div className="celebrate-overlay" aria-hidden>
-          <CharacterImg character={character} size={200} className="celebrate" />
+          <CharacterImg character={character} size={52} className="celebrate" />
           <div className="celebrate-overlay-text">{praise}</div>
         </div>
       )}
