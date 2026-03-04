@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
+import GameEffects from '../GameEffects';
 import { ALEF_BET, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './MemoryGame.css';
@@ -70,6 +71,7 @@ export default function MemoryGame({ onBack, onAddStars }) {
 
   return (
     <GameShell title="זיכרון עם הטלטאביז" emoji="🧠" score={score} maxScore={8} onBack={onBack} bgClass="memory-bg">
+      <GameEffects correct={matchAnim !== null} done={done} character="teletubbies" />
       {done ? (
         <div className="done-screen fade-in">
           <CharacterImg character="teletubbies" size={280} className="bounce" />

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
+import GameEffects from '../GameEffects';
 import { WORDS, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './WordGame.css';
@@ -105,6 +106,7 @@ export default function WordGame({ onBack, onAddStars }) {
 
   return (
     <GameShell title="מילות קסם" emoji="✨" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="word-bg">
+      <GameEffects correct={correct} done={done} character={CHAR_NAMES[charIdx]} />
       {done ? (
         <div className="done-screen fade-in">
           <div style={{ display:'flex', gap:'8px', justifyContent:'center' }}>

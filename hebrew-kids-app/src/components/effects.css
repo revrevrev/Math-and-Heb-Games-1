@@ -1,0 +1,70 @@
+/* ── Confetti ──────────────────────────────────────── */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -24px;
+  animation: confettiFall linear forwards;
+  will-change: transform, opacity;
+}
+
+/* ── Flying Star ───────────────────────────────────── */
+.star-fly-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 160;
+  overflow: hidden;
+}
+
+.star-fly {
+  position: absolute;
+  font-size: 2.6rem;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  animation: flyToScore 0.85s cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes flyToScore {
+  0%   { transform: translate(-50%, -50%) scale(1.8); opacity: 1; left: 50%; top: 55%; }
+  45%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; left: 65%; top: 28%; }
+  100% { transform: translate(-50%, -50%) scale(0.3); opacity: 0;  left: 88%; top: 4%;  }
+}
+
+/* ── Celebration Overlay ───────────────────────────── */
+.celebrate-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.28);
+  z-index: 180;
+  pointer-events: none;
+  animation: overlayIn 0.22s ease;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.celebrate-overlay-text {
+  margin-top: 14px;
+  font-size: 2.8rem;
+  color: #fff;
+  text-shadow:
+    0 0 18px rgba(255, 220, 0, 0.95),
+    0 0 36px rgba(255, 180, 0, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.7);
+  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

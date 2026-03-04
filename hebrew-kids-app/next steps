@@ -1,8 +1,24 @@
 Verify it runs - Start the dev server and confirm it works in browser (npm run dev) - done
-Enhance characters - The SVG characters are basic; improve to be more recognizable
-Add audio polish - Real sound effects / background music vs synthesized beeps
-Android testing - Sync to Capacitor and test on device/emulator
-Stars/rewards system - Persistent progress tracking, sticker collection
-Review quality - Check each game for bugs, missing content, broken flows
-Add more games - Shapes, colors, rhyming, letter tracing
-Difficulty progression - Adaptive levels per game
+
+=== QUICK WINS (Visual Polish) ===
+QW1→ Confetti burst on correct answers & round wins - done
+QW2→ Animated star counter - star "flies" from answer to score counter - done
+QW3→ Bigger character reactions - full-screen overlay celebrate moment on round win - done
+QW4→ Button press feel - scale-down on :active for all answer buttons - done
+
+=== MEDIUM EFFORT (Game Feel) ===
+ME1→ Real sound effects - replace synthesized beeps with actual audio files (freesound.org)
+ME2→ Streak bonuses - 3-in-a-row = bonus star + "מדהים!" special animation
+ME3→ Answer reveal animation - briefly show correct answer before moving to next question
+
+=== BIGGER FEATURES ===
+BF1→ Sticker collection - earned stars unlock collectible badges, dedicated sticker screen
+BF2→ Character voice lines - short audio clips of characters saying Hebrew words/letters
+BF3→ Animated home screen characters - idle wave/bounce animation on home screen
+BF4→ Add more games - Shapes, colors, rhyming, letter tracing
+BF5→ Difficulty progression - Adaptive levels per game
+
+=== MAINTENANCE ===
+MN1→ Enhance characters - improve character image quality / recognizability
+MN2→ Android testing - Sync to Capacitor and test on device/emulator
+MN3→ Review quality - Check each game for bugs, missing content, broken flows

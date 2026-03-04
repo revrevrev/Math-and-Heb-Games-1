@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
+import GameEffects from '../GameEffects';
 import { ALEF_BET, shuffle, pickRandom } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
 import './LettersGame.css';
@@ -106,6 +107,7 @@ export default function LettersGame({ onBack, onAddStars }) {
       bgClass="letters-bg"
     >
       <Snowflakes active={showSnow} />
+      <GameEffects correct={correct} done={done} character="elsa" />
 
       {done ? (
         <div className="done-screen fade-in">

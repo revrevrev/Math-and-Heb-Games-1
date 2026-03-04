@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
+import GameEffects from '../GameEffects';
 import { Sounds } from '../../utils/sounds';
 import './MathGame.css';
 
@@ -96,6 +97,7 @@ export default function MathGame({ onBack, onAddStars }) {
 
   return (
     <GameShell title="חשבון עם אנה" emoji="🎯" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
+      <GameEffects correct={correct} done={done} character="anna" />
       {done ? (
         <div className="done-screen fade-in">
           <CharacterImg character="anna" size={130} />
