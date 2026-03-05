@@ -1,14 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
 import GameEffects from '../GameEffects';
 import { Sounds } from '../../utils/sounds';
+import { useGameEnhancements } from '../../utils/useGameEnhancements';
+import { unlockAchievement, recordGamePlayed } from '../../utils/achievements';
 import './MathGame.css';
 
 const ROUNDS = 10;
 
 function makeRound(roundIndex) {
-  // Gradually increase difficulty
   const maxN = Math.min(3 + Math.floor(roundIndex * 0.8), 9);
   const isAdd = Math.random() > 0.35;
   let a, b, answer;
@@ -34,7 +35,6 @@ function shuffle3(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
 
-// Visual fruit dots for small numbers
 function Dots({ n, emoji }) {
   if (n > 10) return <span className="math-num-big">{n}</span>;
   return (
@@ -49,20 +49,33 @@ function Dots({ n, emoji }) {
 const DOT_EMOJIS = ['🍎','🌸','⭐','🍓','🐣','🍊','🎈','💜','🍭','🐠'];
 
 export default function MathGame({ onBack, onAddStars }) {
-  const [round, setRound]     = useState(0);
-  const [data, setData]       = useState(() => makeRound(0));
+  const [round, setRound]           = useState(0);
+  const [data, setData]             = useState(() => makeRound(0));
   const [emoji] = useState(() => DOT_EMOJIS[Math.floor(Math.random() * DOT_EMOJIS.length)]);
-  const [chosen, setChosen]   = useState(null);
-  const [correct, setCorrect] = useState(false);
-  const [wrong, setWrong]     = useState(false);
-  const [score, setScore]     = useState(0);
-  const [done, setDone]       = useState(false);
-  const [annaAnim, setAnnaAnim] = useState('');
+  const [chosen, setChosen]         = useState(null);
+  const [correct, setCorrect]       = useState(false);
+  const [wrong, setWrong]           = useState(false);
+  const [score, setScore]           = useState(0);
+  const [done, setDone]             = useState(false);
+  const [annaAnim, setAnnaAnim]     = useState('');
+  const [showReview, setShowReview] = useState(false);
+  const ge        = useGameEnhancements(ROUNDS);
+  const autoAdvRef = useRef(null);
+
+  useEffect(() => {
+    Sounds.startMusic('math');
+    return () => Sounds.stopMusic();
+  }, []);
 
   const advance = useCallback(() => {
     const next = round + 1;
-    if (next >= ROUNDS) { setDone(true); Sounds.win(); }
-    else {
+    if (next >= ROUNDS) {
+      setDone(true);
+      Sounds.win();
+      const stats = recordGamePlayed('math');
+      if (stats.count >= 10) unlockAchievement('games_10');
+      if (stats.uniqueGames.length >= 5) unlockAchievement('all_games');
+    } else {
       setRound(next);
       setData(makeRound(next));
       setChosen(null);
@@ -70,6 +83,13 @@ export default function MathGame({ onBack, onAddStars }) {
       setWrong(false);
     }
   }, [round]);
+
+  function doAdvance() {
+    if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
+    ge.clearWaiting();
+    setAnnaAnim('');
+    advance();
+  }
 
   function handleChoice(n) {
     if (chosen !== null) return;
@@ -81,23 +101,40 @@ export default function MathGame({ onBack, onAddStars }) {
       setScore(s => s + 1);
       onAddStars(1);
       Sounds.correct();
-      setTimeout(() => { setAnnaAnim(''); advance(); }, 1600);
+      ge.onCorrect({ display: `${data.a} ${data.op} ${data.b} = ${data.answer}` }, round);
+      autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {
       setWrong(true);
       setAnnaAnim('wiggle');
       Sounds.wrong();
+      ge.onWrong();
       setTimeout(() => { setWrong(false); setChosen(null); setAnnaAnim(''); }, 900);
     }
   }
 
   function restart() {
+    if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     setRound(0); setData(makeRound(0)); setChosen(null);
     setCorrect(false); setWrong(false); setScore(0); setDone(false);
+    setShowReview(false);
+    ge.reset();
   }
+
+  useEffect(() => {
+    if (done && score === ROUNDS) unlockAchievement('perfect_game');
+  }, [done, score]);
 
   return (
     <GameShell title="חשבון עם אנה" emoji="🎯" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
       <GameEffects correct={correct} done={done} character="anna" />
+
+      {ge.showStreakBonus && (
+        <div className="streak-banner">🔥 {ge.streakCount} ברצף! מדהים!</div>
+      )}
+      {ge.showLevelUp && (
+        <div className="level-up-banner">⬆️ שלב 2! המשיכי כך! 🌟</div>
+      )}
+
       {done ? (
         <div className="done-screen fade-in">
           <CharacterImg character="anna" size={130} />
@@ -105,12 +142,30 @@ export default function MathGame({ onBack, onAddStars }) {
             <span className="done-emoji">🎯</span>
             <h2 className="done-title">מצוינת!</h2>
             <p className="done-sub">קיבלת {score} כוכבים מתוך {ROUNDS}!</p>
+            {score === ROUNDS && <span className="done-perfect">🌟 משחק מושלם!</span>}
+            <div className="done-perf">
+              <span>🔥 רצף מקסימלי: {ge.bestStreak}</span>
+            </div>
             {'⭐'.repeat(score)}
             <div className="done-btns">
+              <button className="done-btn secondary review-toggle-btn"
+                onClick={() => setShowReview(r => !r)}>
+                {showReview ? '▲ הסתרי' : '📋 סקירה'}
+              </button>
               <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
-              <button className="done-btn secondary" onClick={onBack}>חזרה 🏠</button>
+              <button className="done-btn secondary" onClick={onBack}>🏠 בית</button>
             </div>
           </div>
+          {showReview && (
+            <div className="review-section">
+              {ge.history.map((item, i) => (
+                <div key={i} className="review-item review-correct">
+                  <span className="review-icon">✅</span>
+                  <span className="review-question" style={{ direction: 'ltr' }}>{item.display}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -158,6 +213,10 @@ export default function MathGame({ onBack, onAddStars }) {
               );
             })}
           </div>
+
+          {ge.waitingForNext && correct && (
+            <button className="next-btn" onClick={doAdvance}>הבאה ←</button>
+          )}
         </>
       )}
     </GameShell>

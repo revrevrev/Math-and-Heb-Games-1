@@ -1,0 +1,104 @@
+.settings-screen {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1e1b4b 0%, #3730a3 50%, #6d28d9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-top-bar {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+}
+
+.settings-back-btn {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.settings-title {
+  color: white;
+  font-size: 1.4rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.settings-body {
+  width: 100%;
+  max-width: 480px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.setting-row {
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.setting-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.setting-icon { font-size: 1.8rem; }
+
+.setting-label {
+  display: block;
+  color: white;
+  font-size: 1rem;
+}
+
+.setting-desc {
+  display: block;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.toggle-btn {
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border: none;
+  font-weight: bold;
+  transition: transform 0.1s;
+  min-width: 80px;
+}
+.toggle-btn:active { transform: scale(0.93); }
+.toggle-on  { background: #22c55e; color: white; }
+.toggle-off { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
+
+.setting-danger { border-color: rgba(239,68,68,0.4); }
+
+.reset-btn {
+  background: rgba(239,68,68,0.25);
+  color: #fca5a5;
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border: 2px solid rgba(239,68,68,0.4);
+  transition: transform 0.1s;
+  min-width: 80px;
+}
+.reset-btn:active { transform: scale(0.93); }

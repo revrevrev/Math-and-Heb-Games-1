@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
 import GameEffects from '../GameEffects';
-import { ALEF_BET, shuffle, pickRandom } from '../../utils/hebrewData';
+import { ALEF_BET, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
+import { useGameEnhancements } from '../../utils/useGameEnhancements';
+import { unlockAchievement, recordGamePlayed } from '../../utils/achievements';
 import './LettersGame.css';
 
 const ROUNDS = 10;
@@ -33,20 +35,32 @@ function Snowflakes({ active }) {
 }
 
 export default function LettersGame({ onBack, onAddStars }) {
-  const [round, setRound]         = useState(0);
-  const [roundData, setRoundData] = useState(() => makeRound());
-  const [chosen, setChosen]       = useState(null);
-  const [correct, setCorrect]     = useState(false);
-  const [wrong, setWrong]         = useState(false);
-  const [showSnow, setShowSnow]   = useState(false);
-  const [score, setScore]         = useState(0);
-  const [done, setDone]           = useState(false);
-  const [elsaAnim, setElsaAnim]   = useState('');
+  const [round, setRound]           = useState(0);
+  const [roundData, setRoundData]   = useState(() => makeRound());
+  const [chosen, setChosen]         = useState(null);
+  const [correct, setCorrect]       = useState(false);
+  const [wrong, setWrong]           = useState(false);
+  const [showSnow, setShowSnow]     = useState(false);
+  const [score, setScore]           = useState(0);
+  const [done, setDone]             = useState(false);
+  const [elsaAnim, setElsaAnim]     = useState('');
+  const [showReview, setShowReview] = useState(false);
+  const ge        = useGameEnhancements(ROUNDS);
+  const autoAdvRef = useRef(null);
+
+  // Background music (FU13)
+  useEffect(() => {
+    Sounds.startMusic('letters');
+    return () => Sounds.stopMusic();
+  }, []);
 
   const advance = useCallback(() => {
     if (round + 1 >= ROUNDS) {
       setDone(true);
       Sounds.win();
+      const stats = recordGamePlayed('letters');
+      if (stats.count >= 10) unlockAchievement('games_10');
+      if (stats.uniqueGames.length >= 5) unlockAchievement('all_games');
     } else {
       setRound(r => r + 1);
       setRoundData(makeRound());
@@ -56,6 +70,14 @@ export default function LettersGame({ onBack, onAddStars }) {
       setShowSnow(false);
     }
   }, [round]);
+
+  // FU9: explicit next button + auto-advance after 2.5s
+  function doAdvance() {
+    if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
+    ge.clearWaiting();
+    setElsaAnim('');
+    advance();
+  }
 
   function handleChoice(letter) {
     if (chosen) return;
@@ -68,14 +90,13 @@ export default function LettersGame({ onBack, onAddStars }) {
       setScore(s => s + 1);
       onAddStars(1);
       Sounds.correct();
-      setTimeout(() => {
-        setElsaAnim('');
-        advance();
-      }, 1600);
+      ge.onCorrect({ display: `${roundData.correct.letter} — ${roundData.correct.name}` }, round);
+      autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {
       setWrong(true);
       setElsaAnim('wiggle');
       Sounds.wrong();
+      ge.onWrong();
       setTimeout(() => {
         setWrong(false);
         setChosen(null);
@@ -85,15 +106,17 @@ export default function LettersGame({ onBack, onAddStars }) {
   }
 
   function restart() {
-    setRound(0);
-    setRoundData(makeRound());
-    setChosen(null);
-    setCorrect(false);
-    setWrong(false);
-    setShowSnow(false);
-    setScore(0);
-    setDone(false);
+    if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
+    setRound(0); setRoundData(makeRound()); setChosen(null);
+    setCorrect(false); setWrong(false); setShowSnow(false);
+    setScore(0); setDone(false); setShowReview(false);
+    ge.reset();
   }
+
+  // FU20/perfect_game achievement
+  useEffect(() => {
+    if (done && score === ROUNDS) unlockAchievement('perfect_game');
+  }, [done, score]);
 
   const { correct: correctItem, choices } = roundData;
 
@@ -109,19 +132,48 @@ export default function LettersGame({ onBack, onAddStars }) {
       <Snowflakes active={showSnow} />
       <GameEffects correct={correct} done={done} character="elsa" />
 
+      {/* FU18: Streak bonus banner */}
+      {ge.showStreakBonus && (
+        <div className="streak-banner">🔥 {ge.streakCount} ברצף! מדהים!</div>
+      )}
+      {/* FU19: Level-up banner */}
+      {ge.showLevelUp && (
+        <div className="level-up-banner">⬆️ שלב 2! המשיכי כך! 🌟</div>
+      )}
+
       {done ? (
+        /* FU17/FU20: Enhanced "Round Complete" done screen */
         <div className="done-screen fade-in">
           <CharacterImg character="elsa" size={130} />
           <div className="done-box pop">
             <span className="done-emoji">🎉</span>
             <h2 className="done-title">כל הכבוד!</h2>
             <p className="done-sub">קיבלת {score} כוכבים מתוך {ROUNDS}!</p>
+            {score === ROUNDS && <span className="done-perfect">🌟 משחק מושלם!</span>}
+            <div className="done-perf">
+              <span>🔥 רצף מקסימלי: {ge.bestStreak}</span>
+            </div>
             {'⭐'.repeat(score)}
             <div className="done-btns">
+              {/* FU24: Review answers */}
+              <button className="done-btn secondary review-toggle-btn"
+                onClick={() => setShowReview(r => !r)}>
+                {showReview ? '▲ הסתרי' : '📋 סקירה'}
+              </button>
               <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
-              <button className="done-btn secondary" onClick={onBack}>חזרה 🏠</button>
+              <button className="done-btn secondary" onClick={onBack}>🏠 בית</button>
             </div>
           </div>
+          {showReview && (
+            <div className="review-section">
+              {ge.history.map((item, i) => (
+                <div key={i} className="review-item review-correct">
+                  <span className="review-icon">✅</span>
+                  <span className="review-question">{item.display}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -142,10 +194,8 @@ export default function LettersGame({ onBack, onAddStars }) {
             </div>
           </div>
 
-          {/* Instruction */}
           <p className="instruction">מצאי את האות! 👇</p>
 
-          {/* Choices */}
           <div className="choices-grid">
             {choices.map((item) => {
               const isChosen = chosen === item.letter;
@@ -163,12 +213,17 @@ export default function LettersGame({ onBack, onAddStars }) {
             })}
           </div>
 
-          {/* Feedback */}
+          {/* FU15: Text feedback */}
           {correct && (
             <div className="feedback correct-fb pop">
               <span className="fb-emoji">{correctItem.emoji}</span>
               <span className="fb-text">מצוין! 🌟 {correctItem.word}</span>
             </div>
+          )}
+
+          {/* FU9: Next button */}
+          {ge.waitingForNext && correct && (
+            <button className="next-btn" onClick={doAdvance}>הבאה ←</button>
           )}
         </>
       )}

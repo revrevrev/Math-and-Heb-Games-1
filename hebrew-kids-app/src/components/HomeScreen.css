@@ -185,6 +185,37 @@
   font-style: italic;
 }
 
+/* ── Nav row (Profile / Achievements / Settings) ───────── */
+.home-nav-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 4px 14px 2px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.home-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255,255,255,0.14);
+  border: 2px solid rgba(255,255,255,0.22);
+  border-radius: 16px;
+  padding: 8px 18px;
+  color: white;
+  font-size: 0.8rem;
+  font-family: inherit;
+  flex: 1;
+  max-width: 120px;
+  transition: transform 0.1s, background 0.15s;
+}
+.home-nav-btn span:first-child { font-size: 1.3rem; }
+.home-nav-btn:active { transform: scale(0.93); background: rgba(255,255,255,0.24); }
+
 /* ── Games grid ────────────────────────────────────────── */
 .games-grid {
   position: relative;

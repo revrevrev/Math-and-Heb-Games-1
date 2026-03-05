@@ -1,18 +1,36 @@
 Verify it runs - Start the dev server and confirm it works in browser (npm run dev) - done
 
-=== QUICK WINS (Visual Polish) ===
+=== QUICK WINS (Visual Polish)  — done ===
 QW1→ Confetti burst on correct answers & round wins - done
 QW2→ Animated star counter - star "flies" from answer to score counter - done
 QW3→ Bigger character reactions - full-screen overlay celebrate moment on round win - done
 QW4→ Button press feel - scale-down on :active for all answer buttons - done
 
-=== Functionality And Usability — done ===
+=== Functionality And Usability ===
 FU1→ Math equations L2R - fixed: direction:ltr on .equation-box - done
 FU2→ Welcome popup only on first visit - fixed: localStorage flag 'hebrew-app-welcomed' - done
 FU3→ Character bubbles overlapping card text - fixed: character moved to physical left side - done
 FU4→ בלוי → בלואי - fixed: renamed in all files - done
 FU5→ Celebration overlay covers game content - fixed: redesigned as compact top banner - done
 FU6→ Add Gabbi character (gabby-hero2.png) as lead for מילות קסם - done
+FU7→ Add cakey, kittyfairy, marty, pandy as characters at מילות קסם - done
+FU8→ Add character reactions to all games - happy/sad animations on correct/incorrect answers - done (MemoryGame bounce/wiggle; all other games already had reactions)
+FU9→ Add "Next Round" button on round win screen - done (הבאה ← button shown after correct, auto-advances after 2.5s)
+FU10→ Add "Home" button on all screens - done (GameShell back btn now shows 🏠 בית; done screens show 🏠 בית)
+FU11→ Add progress bar for each round - done (MemoryGame now has progress bar; all others already had it)
+FU12→ Add sound toggle - done (🔊/🔇 mute button in every GameShell header, persists to localStorage)
+FU13→ Add music - done (synthetic Web Audio looping melody per game via Sounds.startMusic/stopMusic)
+FU14→ Add visual feedback for button presses - done (all buttons already had :active CSS, verified)
+FU15→ Add "Correct!" / "Try Again!" text feedback - done (all games already had speech bubbles / feedback strips)
+FU16→ Add character voice lines - skipped (requires real audio files from freesound.org)
+FU17→ Add "Round Complete!" screen - done (enhanced done screen: perfect-game badge, streak stats, review toggle)
+FU18→ Add "Streak Bonus!" screen - done (🔥 banner appears at 3/6/9 consecutive correct, with streak sound)
+FU19→ Add "Level Up!" screen - done (⬆️ banner at midpoint of each game with level-up sound)
+FU20→ Add "Game Over" screen - done (enhanced done screen with score, streak, perfect-game, review)
+FU21→ Add "Achievements" screen - done (new AchievementsScreen with 6 achievements tracked in localStorage)
+FU22→ Add "Settings" screen - done (new SettingsScreen: sound toggle, music toggle, reset progress)
+FU23→ Add "Profile" screen - done (new ProfileScreen: name input + avatar selection from 8 characters)
+FU24→ Add "Review Answers" screen - done (📋 review button in done screen shows all correctly solved questions)
 
 
 === MEDIUM EFFORT (Game Feel) ===

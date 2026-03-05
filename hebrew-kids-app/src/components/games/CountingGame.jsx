@@ -1,9 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
 import GameEffects from '../GameEffects';
 import { COUNT_ITEMS, shuffle } from '../../utils/hebrewData';
 import { Sounds } from '../../utils/sounds';
+import { useGameEnhancements } from '../../utils/useGameEnhancements';
+import { unlockAchievement, recordGamePlayed } from '../../utils/achievements';
 import './CountingGame.css';
 
 const ROUNDS = 10;
@@ -13,7 +15,6 @@ function makeRound(roundIndex) {
   const maxN = Math.min(3 + Math.floor(roundIndex / 2), MAX_COUNT);
   const n = 1 + Math.floor(Math.random() * maxN);
   const item = COUNT_ITEMS[Math.floor(Math.random() * COUNT_ITEMS.length)];
-  // Wrong choices: n-1 or n+1, n+2, but always valid 1..MAX_COUNT
   const wrongs = new Set();
   while (wrongs.size < 2) {
     const w = Math.max(1, Math.min(MAX_COUNT, n + (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 3))));
@@ -24,19 +25,32 @@ function makeRound(roundIndex) {
 }
 
 export default function CountingGame({ onBack, onAddStars }) {
-  const [round, setRound]     = useState(0);
-  const [data, setData]       = useState(() => makeRound(0));
-  const [chosen, setChosen]   = useState(null);
-  const [correct, setCorrect] = useState(false);
-  const [wrong, setWrong]     = useState(false);
-  const [score, setScore]     = useState(0);
-  const [done, setDone]       = useState(false);
-  const [blueyAnim, setBlueyAnim] = useState('');
+  const [round, setRound]           = useState(0);
+  const [data, setData]             = useState(() => makeRound(0));
+  const [chosen, setChosen]         = useState(null);
+  const [correct, setCorrect]       = useState(false);
+  const [wrong, setWrong]           = useState(false);
+  const [score, setScore]           = useState(0);
+  const [done, setDone]             = useState(false);
+  const [blueyAnim, setBlueyAnim]   = useState('');
+  const [showReview, setShowReview] = useState(false);
+  const ge        = useGameEnhancements(ROUNDS);
+  const autoAdvRef = useRef(null);
+
+  useEffect(() => {
+    Sounds.startMusic('counting');
+    return () => Sounds.stopMusic();
+  }, []);
 
   const advance = useCallback(() => {
     const next = round + 1;
-    if (next >= ROUNDS) { setDone(true); Sounds.win(); }
-    else {
+    if (next >= ROUNDS) {
+      setDone(true);
+      Sounds.win();
+      const stats = recordGamePlayed('counting');
+      if (stats.count >= 10) unlockAchievement('games_10');
+      if (stats.uniqueGames.length >= 5) unlockAchievement('all_games');
+    } else {
       setRound(next);
       setData(makeRound(next));
       setChosen(null);
@@ -44,6 +58,13 @@ export default function CountingGame({ onBack, onAddStars }) {
       setWrong(false);
     }
   }, [round]);
+
+  function doAdvance() {
+    if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
+    ge.clearWaiting();
+    setBlueyAnim('');
+    advance();
+  }
 
   function handleChoice(n) {
     if (chosen !== null) return;
@@ -55,23 +76,40 @@ export default function CountingGame({ onBack, onAddStars }) {
       setScore(s => s + 1);
       onAddStars(1);
       Sounds.correct();
-      setTimeout(() => { setBlueyAnim(''); advance(); }, 1500);
+      ge.onCorrect({ display: `${data.n} ${data.item.emoji} ${data.item.name}` }, round);
+      autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {
       setWrong(true);
       setBlueyAnim('wiggle');
       Sounds.wrong();
+      ge.onWrong();
       setTimeout(() => { setWrong(false); setChosen(null); setBlueyAnim(''); }, 900);
     }
   }
 
   function restart() {
+    if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     setRound(0); setData(makeRound(0)); setChosen(null);
     setCorrect(false); setWrong(false); setScore(0); setDone(false);
+    setShowReview(false);
+    ge.reset();
   }
+
+  useEffect(() => {
+    if (done && score === ROUNDS) unlockAchievement('perfect_game');
+  }, [done, score]);
 
   return (
     <GameShell title="ספירה עם בלואי" emoji="🐾" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="counting-bg">
       <GameEffects correct={correct} done={done} character="bluey" />
+
+      {ge.showStreakBonus && (
+        <div className="streak-banner">🔥 {ge.streakCount} ברצף! מדהים!</div>
+      )}
+      {ge.showLevelUp && (
+        <div className="level-up-banner">⬆️ שלב 2! המשיכי כך! 🌟</div>
+      )}
+
       {done ? (
         <div className="done-screen fade-in">
           <CharacterImg character="bluey" size={130} />
@@ -79,12 +117,30 @@ export default function CountingGame({ onBack, onAddStars }) {
             <span className="done-emoji">🐾</span>
             <h2 className="done-title">כל הכבוד!</h2>
             <p className="done-sub">קיבלת {score} כוכבים מתוך {ROUNDS}!</p>
+            {score === ROUNDS && <span className="done-perfect">🌟 משחק מושלם!</span>}
+            <div className="done-perf">
+              <span>🔥 רצף מקסימלי: {ge.bestStreak}</span>
+            </div>
             {'⭐'.repeat(score)}
             <div className="done-btns">
+              <button className="done-btn secondary review-toggle-btn"
+                onClick={() => setShowReview(r => !r)}>
+                {showReview ? '▲ הסתרי' : '📋 סקירה'}
+              </button>
               <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
-              <button className="done-btn secondary" onClick={onBack}>חזרה 🏠</button>
+              <button className="done-btn secondary" onClick={onBack}>🏠 בית</button>
             </div>
           </div>
+          {showReview && (
+            <div className="review-section">
+              {ge.history.map((item, i) => (
+                <div key={i} className="review-item review-correct">
+                  <span className="review-icon">✅</span>
+                  <span className="review-question">{item.display}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -130,6 +186,10 @@ export default function CountingGame({ onBack, onAddStars }) {
               );
             })}
           </div>
+
+          {ge.waitingForNext && correct && (
+            <button className="next-btn" onClick={doAdvance}>הבאה ←</button>
+          )}
         </>
       )}
     </GameShell>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Sounds } from '../utils/sounds';
+import { getProfile } from './ProfileScreen';
 import './HomeScreen.css';
 
 const GAMES = [
@@ -84,6 +85,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
   const [showWelcome, setShowWelcome] = useState(
     () => !localStorage.getItem('hebrew-app-welcomed')
   );
+  const profileName = getProfile().name || '';
 
   useEffect(() => {
     if (!showWelcome) return;
@@ -158,7 +160,10 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
               איזה כיף לשחק
               <span className="title-sparkle">✨</span>
             </h1>
-            <p className="home-subtitle">עברית וחשבון כיפי!</p>
+            {profileName
+              ? <p className="home-subtitle">שלום, {profileName}! 👋</p>
+              : <p className="home-subtitle">עברית וחשבון כיפי!</p>
+            }
           </div>
 
           <div className="header-char-slot">
@@ -187,6 +192,19 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
           )}
         </div>
       </header>
+
+      {/* ── Nav row: Profile / Achievements / Settings ── */}
+      <nav className="home-nav-row">
+        <button className="home-nav-btn" onClick={() => onSelectGame('profile')}>
+          <span>👤</span><span>פרופיל</span>
+        </button>
+        <button className="home-nav-btn" onClick={() => onSelectGame('achievements')}>
+          <span>🏆</span><span>הישגים</span>
+        </button>
+        <button className="home-nav-btn" onClick={() => onSelectGame('settings')}>
+          <span>⚙️</span><span>הגדרות</span>
+        </button>
+      </nav>
 
       {/* ── Games grid ── */}
       <main className="games-grid">
