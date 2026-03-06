@@ -77,13 +77,13 @@ const MELODIES = {
   home:     [523, 659, 784, 659, 523, 784, 880, 784],
 };
 
-const BG_MUSIC_FILES = {
-  letters:  ['/sounds/music/letters.mp3',  '/sounds/music/letters.ogg'],
-  counting: ['/sounds/music/counting.mp3', '/sounds/music/counting.ogg'],
-  memory:   ['/sounds/music/memory.mp3',   '/sounds/music/memory.ogg'],
-  math:     ['/sounds/music/math.mp3',     '/sounds/music/math.ogg'],
-  words:    ['/sounds/music/words.mp3',    '/sounds/music/words.ogg'],
-  home:     ['/sounds/music/home.mp3',     '/sounds/music/home.ogg'],
+// Per-game character music (filename in /sounds/music/)
+const GAME_MUSIC = {
+  letters:  'Elsa.mp3',
+  counting: 'Bluey.mp3',
+  memory:   'Teletubbies.mp3',
+  math:     'Mickey.mp3',
+  words:    'Gabby.mp3',
 };
 
 function stopMusicLoop() {
@@ -100,6 +100,26 @@ function startSynthMusic(game) {
       musicNoteIdx++;
     }
   }, 400);
+}
+
+function startBgMusic(game) {
+  const song = GAME_MUSIC[game];
+  if (!song) {
+    startSynthMusic(game);
+    return;
+  }
+  const howl = new Howl({
+    src: [`/sounds/music/${song}`],
+    volume: 0.25,
+    loop: true,
+    onload: () => {
+      if (bgHowl === howl) howl.play();
+    },
+    onloaderror: () => {
+      if (bgHowl === howl) { bgHowl = null; startSynthMusic(game); }
+    },
+  });
+  bgHowl = howl;
 }
 
 // ── Sound effects (declared after Sounds so synthFn closures work) ──
@@ -154,18 +174,7 @@ export const Sounds = {
     stopMusicLoop();
     if (Sounds.muted || !Sounds.musicEnabled) return;
 
-    // Try file-based music first
-    const filePaths = BG_MUSIC_FILES[game] || BG_MUSIC_FILES.home;
-    bgHowl = new Howl({
-      src: filePaths,
-      volume: 0.25,
-      loop: true,
-      onload: () => bgHowl.play(),
-      onloaderror: () => {
-        bgHowl = null;
-        startSynthMusic(game);
-      },
-    });
+    startBgMusic(game);
   },
 
   stopMusic() {

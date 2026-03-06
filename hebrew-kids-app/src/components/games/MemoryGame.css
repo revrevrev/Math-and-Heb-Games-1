@@ -94,3 +94,32 @@
   font-size: 0.95rem;
   text-align: center;
 }
+
+.level-badge {
+  text-align: center;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 2px 0 4px;
+  direction: rtl;
+}
+
+.full-face {
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 2px;
+}
+
+.full-face-emoji {
+  font-size: clamp(1.1rem, 4vw, 1.7rem);
+  line-height: 1;
+}
+
+.full-face-word {
+  font-size: clamp(0.65rem, 2.2vw, 0.95rem);
+  color: white;
+  font-weight: 700;
+  direction: rtl;
+  text-align: center;
+  line-height: 1.1;
+}

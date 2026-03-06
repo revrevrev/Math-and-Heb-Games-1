@@ -7,15 +7,15 @@ If a file is missing, it automatically falls back to synthesized audio.
 
 | Filename         | Purpose              | Recommended CC0 source (freesound.org) |
 |------------------|----------------------|----------------------------------------|
-| `tap.mp3`        | Button press         | Search "ui click short" — e.g. ID 220206 |
-| `correct.mp3`    | Correct answer chime | Search "correct chime kids" — e.g. ID 341695 |
-| `wrong.mp3`      | Wrong answer buzz    | Search "wrong answer buzz" — e.g. ID 142608 |
-| `win.mp3`        | Game complete fanfare| Search "victory fanfare kids" — e.g. ID 456966 |
-| `flip.mp3`       | Card flip            | Search "card flip whoosh" — e.g. ID 220205 |
-| `match.mp3`      | Memory match found   | Search "ding match" — e.g. ID 341695 |
-| `star.mp3`       | Star earned sparkle  | Search "star sparkle magic" — e.g. ID 270528 |
-| `streak.mp3`     | Streak bonus         | Search "streak bonus game" — e.g. ID 270402 |
-| `level-up.mp3`   | Level up             | Search "level up 8bit" — e.g. ID 387232 |
+| `tap.ogg`        | Button press         | Search "ui click short" — e.g. ID 220206 |
+| `correct.ogg`    | Correct answer chime | Search "correct chime kids" — e.g. ID 341695 |
+| `wrong.ogg`      | Wrong answer buzz    | Search "wrong answer buzz" — e.g. ID 142608 |
+| `win.ogg`        | Game complete fanfare| Search "victory fanfare kids" — e.g. ID 456966 |
+| `flip.ogg`       | Card flip            | Search "card flip whoosh" — e.g. ID 220205 |
+| `match.ogg`      | Memory match found   | Search "ding match" — e.g. ID 341695 |
+| `star.ogg`       | Star earned sparkle  | Search "star sparkle magic" — e.g. ID 270528 |
+| `streak.ogg`     | Streak bonus         | Search "streak bonus game" — e.g. ID 270402 |
+| `level-up.ogg`   | Level up             | Search "level up 8bit" — e.g. ID 387232 |
 
 ## Background Music Files (`/sounds/music/`)
 

@@ -57,7 +57,7 @@ export default function MathGame({ onBack, onAddStars }) {
   const [wrong, setWrong]           = useState(false);
   const [score, setScore]           = useState(0);
   const [done, setDone]             = useState(false);
-  const [annaAnim, setAnnaAnim]     = useState('');
+  const [mickeyAnim, setMickeyAnim] = useState('');
   const [showReview, setShowReview] = useState(false);
   const ge        = useGameEnhancements(ROUNDS);
   const autoAdvRef = useRef(null);
@@ -87,7 +87,7 @@ export default function MathGame({ onBack, onAddStars }) {
   function doAdvance() {
     if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     ge.clearWaiting();
-    setAnnaAnim('');
+    setMickeyAnim('');
     advance();
   }
 
@@ -97,7 +97,7 @@ export default function MathGame({ onBack, onAddStars }) {
     setChosen(n);
     if (n === data.answer) {
       setCorrect(true);
-      setAnnaAnim('celebrate');
+      setMickeyAnim('celebrate');
       setScore(s => s + 1);
       onAddStars(1);
       Sounds.correct();
@@ -105,10 +105,10 @@ export default function MathGame({ onBack, onAddStars }) {
       autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {
       setWrong(true);
-      setAnnaAnim('wiggle');
+      setMickeyAnim('wiggle');
       Sounds.wrong();
       ge.onWrong();
-      setTimeout(() => { setWrong(false); setChosen(null); setAnnaAnim(''); }, 900);
+      setTimeout(() => { setWrong(false); setChosen(null); setMickeyAnim(''); }, 900);
     }
   }
 
@@ -125,8 +125,8 @@ export default function MathGame({ onBack, onAddStars }) {
   }, [done, score]);
 
   return (
-    <GameShell title="חשבון עם אנה" emoji="🎯" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
-      <GameEffects correct={correct} done={done} character="anna" />
+    <GameShell title="חשבון עם מיקי" emoji="🎯" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
+      <GameEffects correct={correct} done={done} character="mickey" />
 
       {ge.showStreakBonus && (
         <div className="streak-banner">🔥 {ge.streakCount} ברצף! מדהים!</div>
@@ -137,7 +137,7 @@ export default function MathGame({ onBack, onAddStars }) {
 
       {done ? (
         <div className="done-screen fade-in">
-          <CharacterImg character="anna" size={130} />
+          <CharacterImg character="mickey" size={130} />
           <div className="done-box pop">
             <span className="done-emoji">🎯</span>
             <h2 className="done-title">מצוינת!</h2>
@@ -175,8 +175,8 @@ export default function MathGame({ onBack, onAddStars }) {
           <p className="round-label">שאלה {round + 1} מתוך {ROUNDS}</p>
 
           <div className="math-stage">
-            <div className={`anna-wrap ${annaAnim}`}>
-              <CharacterImg character="anna" size={85} />
+            <div className={`mickey-wrap ${mickeyAnim}`}>
+              <CharacterImg character="mickey" size={85} />
               {correct && <div className="speech-bubble">נכון! יופי! 🌟</div>}
               {wrong   && <div className="speech-bubble wrong-speech">נסי שוב 💪</div>}
             </div>

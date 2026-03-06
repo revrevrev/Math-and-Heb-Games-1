@@ -21,7 +21,7 @@ const AVATARS = [
   { id: 'pandy',      label: 'פנדי' },
   { id: 'elsa',       label: 'אלזה' },
   { id: 'bluey',      label: 'בלואי' },
-  { id: 'anna',       label: 'אנה' },
+  { id: 'mickey',     label: 'מיקי' },
 ];
 
 export default function ProfileScreen({ onBack }) {

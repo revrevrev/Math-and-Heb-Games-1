@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
 import GameEffects from '../GameEffects';
@@ -7,18 +7,26 @@ import { Sounds } from '../../utils/sounds';
 import { unlockAchievement, recordGamePlayed } from '../../utils/achievements';
 import './MemoryGame.css';
 
-function buildCards() {
+function buildCards(level) {
   const items = shuffle(ALEF_BET).slice(0, 8);
   const cards = [];
   items.forEach((item, i) => {
-    cards.push({ id: `letter-${i}`, pairId: i, type: 'letter', content: item.letter, label: item.name,  emoji: item.emoji });
-    cards.push({ id: `emoji-${i}`,  pairId: i, type: 'emoji',  content: item.emoji,  label: item.word,   letter: item.letter });
+    if (level === 1) {
+      // Level 1: identical pairs — both cards show emoji + word
+      cards.push({ id: `a-${i}`, pairId: i, type: 'full', emoji: item.emoji, word: item.word, letter: item.letter });
+      cards.push({ id: `b-${i}`, pairId: i, type: 'full', emoji: item.emoji, word: item.word, letter: item.letter });
+    } else {
+      // Level 2+: match emoji+word card to first-letter card
+      cards.push({ id: `full-${i}`,   pairId: i, type: 'full',   emoji: item.emoji, word: item.word, letter: item.letter });
+      cards.push({ id: `letter-${i}`, pairId: i, type: 'letter', letter: item.letter, name: item.name });
+    }
   });
   return shuffle(cards);
 }
 
 export default function MemoryGame({ onBack, onAddStars }) {
-  const [cards, setCards]           = useState(() => buildCards());
+  const [level, setLevel]           = useState(1);
+  const [cards, setCards]           = useState(() => buildCards(1));
   const [flipped, setFlipped]       = useState([]);
   const [matched, setMatched]       = useState(new Set());
   const [locked, setLocked]         = useState(false);
@@ -50,12 +58,13 @@ export default function MemoryGame({ onBack, onAddStars }) {
         setMatched(newMatched);
         setScore(s => s + 1);
         onAddStars(1);
-        // FU24: track matched pair
-        const letterCard = cards[a].type === 'letter' ? cards[a] : cards[b];
-        const emojiCard  = cards[a].type === 'emoji'  ? cards[a] : cards[b];
-        setMatchHistory(h => [...h, {
-          display: `${letterCard.content} — ${emojiCard.content} ${letterCard.label}`
-        }]);
+        // track matched pair for review
+        const ca = cards[a], cb = cards[b];
+        const fullCard = ca.type === 'full' ? ca : cb;
+        const display = level === 1
+          ? `${fullCard.emoji} ${fullCard.word}`
+          : `${fullCard.emoji} ${fullCard.word} — ${fullCard.letter}`;
+        setMatchHistory(h => [...h, { display }]);
         setTimeout(() => setMatchAnim(null), 800);
         setFlipped([]);
         setLocked(false);
@@ -78,7 +87,22 @@ export default function MemoryGame({ onBack, onAddStars }) {
   }
 
   function restart() {
-    setCards(buildCards());
+    setCards(buildCards(level));
+    setFlipped([]);
+    setMatched(new Set());
+    setLocked(false);
+    setScore(0);
+    setMatchAnim(null);
+    setWrongAnim(false);
+    setDone(false);
+    setMatchHistory([]);
+    setShowReview(false);
+  }
+
+  function nextLevel() {
+    const nl = level + 1;
+    setLevel(nl);
+    setCards(buildCards(nl));
     setFlipped([]);
     setMatched(new Set());
     setLocked(false);
@@ -112,6 +136,9 @@ export default function MemoryGame({ onBack, onAddStars }) {
                 onClick={() => setShowReview(r => !r)}>
                 {showReview ? '▲ הסתרי' : '📋 סקירה'}
               </button>
+              {level === 1 && (
+                <button className="done-btn primary" onClick={nextLevel}>רמה הבאה ⬆️</button>
+              )}
               <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
               <button className="done-btn secondary" onClick={onBack}>🏠 בית</button>
             </div>
@@ -138,6 +165,10 @@ export default function MemoryGame({ onBack, onAddStars }) {
             />
           </div>
 
+          <div className="level-badge">
+            {level === 1 ? 'רמה 1 — מצאי זוגות זהים' : `רמה ${level} — התאימי תמונה לאות`}
+          </div>
+
           {/* FU11: Progress bar */}
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${(matched.size / 8) * 100}%` }} />
@@ -152,13 +183,18 @@ export default function MemoryGame({ onBack, onAddStars }) {
                 key={card.id}
                 className={`memory-card ${isFaceUp(idx) ? 'flipped' : ''} ${isMatched(idx) ? 'matched' : ''} ${matchAnim === card.pairId ? 'match-pop' : ''}`}
                 onClick={() => handleFlip(idx)}
-                aria-label={isFaceUp(idx) ? card.label : 'קלף הפוך'}
+                aria-label={isFaceUp(idx) ? (card.word || card.letter) : 'קלף הפוך'}
               >
                 <div className="card-inner">
                   <div className="card-back">✦</div>
-                  <div className={`card-front ${card.type === 'letter' ? 'letter-face' : 'emoji-face'}`}>
-                    {card.content}
-                  </div>
+                  {card.type === 'full' ? (
+                    <div className="card-front full-face">
+                      <span className="full-face-emoji">{card.emoji}</span>
+                      <span className="full-face-word">{card.word}</span>
+                    </div>
+                  ) : (
+                    <div className="card-front letter-face">{card.letter}</div>
+                  )}
                 </div>
               </button>
             ))}

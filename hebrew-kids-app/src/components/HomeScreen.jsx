@@ -39,14 +39,14 @@ const GAMES = [
   },
   {
     id: 'math',
-    title: 'חשבון עם אנה',
+    title: 'חשבון עם מיקי',
     subtitle: 'חיבור וחיסור!',
     emoji: '🎯',
     gradient: 'linear-gradient(145deg, #16a34a 0%, #ca8a04 100%)',
     glowColor: '#4ade80',
     watermark: '🌟',
-    imgSrc: '/images/anna-elsa.jpg',
-    imgPos: 'left top',
+    imgSrc: '/images/Mickey1.jpeg',
+    imgPos: 'top center',
   },
   {
     id: 'words',

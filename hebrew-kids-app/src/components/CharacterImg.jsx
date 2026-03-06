@@ -51,10 +51,10 @@ const CHARS = {
     pos: 'top center',
     aspect: 0.88,
   },
-  anna: {
-    src: '/images/anna-elsa.jpg',
-    alt: 'אנה ואלזה',
-    pos: '18% 8%',
+  mickey: {
+    src: '/images/Mickey1.jpeg',
+    alt: 'מיקי מאוס',
+    pos: 'top center',
     aspect: 1.0,
   },
   teletubbies: {
