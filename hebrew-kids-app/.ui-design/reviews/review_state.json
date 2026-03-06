@@ -1,0 +1,16 @@
+{
+  "review_id": "hebrew_kids_app_20260306_120000",
+  "target": "src/components/ (full UI)",
+  "focus_areas": ["visual", "usability", "code", "performance"],
+  "context": "Kids learning app for young Hebrew-speaking girls",
+  "platform": "mobile (primary) + desktop",
+  "status": "complete",
+  "started_at": "2026-03-06T12:00:00Z",
+  "issues_found": 13,
+  "severity_counts": {
+    "critical": 2,
+    "major": 5,
+    "minor": 4,
+    "suggestion": 2
+  }
+}

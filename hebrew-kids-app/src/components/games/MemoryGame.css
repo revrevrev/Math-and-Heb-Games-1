@@ -17,14 +17,15 @@
 /* Card flip */
 .memory-card {
   aspect-ratio: 3/4;
-  border-radius: 14px;
-  border: 3px solid rgba(255,255,255,0.3);
+  border-radius: var(--r-md);
+  border: 2px solid var(--color-border-strong);
   background: linear-gradient(135deg, #6d28d9, #a855f7);
   cursor: pointer;
   perspective: 600px;
   padding: 0;
   overflow: hidden;
-  transition: transform 0.15s;
+  transition: transform var(--t-fast);
+  box-shadow: var(--shadow-sm);
 }
 
 .memory-card:active {

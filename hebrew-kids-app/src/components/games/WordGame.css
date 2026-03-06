@@ -15,17 +15,18 @@
 
 .word-hint-box {
   flex: 1;
-  background: rgba(255,255,255,0.15);
-  border: 3px solid rgba(255,255,255,0.3);
-  border-radius: 22px;
-  padding: 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-3);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   backdrop-filter: blur(6px);
   min-height: 110px;
   justify-content: center;
+  box-shadow: var(--shadow-sm);
 }
 
 .word-emoji {
@@ -83,15 +84,15 @@
 .letter-tile {
   width: clamp(46px, 13vw, 62px);
   height: clamp(46px, 13vw, 62px);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.2);
-  border: 3px solid rgba(255,255,255,0.4);
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,0.18);
+  border: 2px solid var(--color-border-strong);
   color: white;
   font-size: clamp(1.4rem, 5vw, 2rem);
   font-family: inherit;
-  transition: transform 0.1s, opacity 0.2s;
+  transition: transform var(--t-fast), opacity 0.2s;
   backdrop-filter: blur(6px);
-  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .letter-tile:active:not(:disabled) {
@@ -105,11 +106,11 @@
 
 /* Undo button */
 .undo-btn {
-  background: rgba(255,255,255,0.15);
+  background: var(--color-surface);
   color: #fde68a;
-  border-radius: 12px;
-  padding: 8px 18px;
+  border-radius: var(--r-sm);
+  padding: var(--sp-2) var(--sp-4);
   font-size: 0.95rem;
   font-family: inherit;
-  border: 2px solid rgba(255,255,255,0.2);
+  border: 1.5px solid var(--color-border);
 }

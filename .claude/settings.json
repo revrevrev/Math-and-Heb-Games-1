@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)"
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-mobile-development@claude-code-workflows": true,
+    "frontend-mobile-security@claude-code-workflows": true,
+    "ui-design@claude-code-workflows": true
+  }
+}

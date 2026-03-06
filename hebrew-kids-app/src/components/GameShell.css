@@ -6,78 +6,93 @@
   align-items: center;
 }
 
+/* ── Top bar ───────────────────────────────────────────── */
 .game-top-bar {
   width: 100%;
   max-width: 600px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px 6px;
-  gap: 8px;
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  gap: var(--sp-2);
+  /* subtle separator */
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(0,0,0,0.12);
+  backdrop-filter: blur(6px);
 }
 
 .back-btn {
-  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  background: var(--color-surface);
   color: white;
-  border-radius: 12px;
-  padding: 6px 14px;
-  font-size: 1rem;
+  border-radius: var(--r-md);
+  padding: 7px var(--sp-3);
+  font-size: 0.95rem;
   font-family: inherit;
-  border: 2px solid rgba(255,255,255,0.35);
+  border: 1.5px solid var(--color-border);
   backdrop-filter: blur(8px);
-  transition: background 0.15s;
+  transition: background var(--t-fast), transform var(--t-fast);
   white-space: nowrap;
+  flex-shrink: 0;
 }
-
 .back-btn:active {
-  background: rgba(255,255,255,0.35);
-  transform: scale(0.95);
+  background: rgba(255,255,255,0.22);
+  transform: scale(0.94);
 }
 
 .game-top-title {
   color: white;
-  font-size: clamp(0.8rem, 3vw, 1.1rem);
+  font-size: clamp(0.82rem, 3vw, 1.05rem);
   text-shadow: 0 2px 6px rgba(0,0,0,0.3);
   text-align: center;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 var(--sp-2);
 }
 
 .game-top-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--sp-2);
   flex-shrink: 0;
 }
 
 .mute-btn {
-  background: rgba(255,255,255,0.18);
+  background: var(--color-surface);
   color: white;
-  border-radius: 10px;
-  padding: 5px 8px;
+  border-radius: var(--r-sm);
+  padding: 6px var(--sp-2);
   font-size: 1.1rem;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 1.5px solid var(--color-border);
   backdrop-filter: blur(8px);
-  transition: background 0.15s;
+  transition: background var(--t-fast);
   line-height: 1;
 }
-
 .mute-btn:active {
-  background: rgba(255,255,255,0.35);
-  transform: scale(0.93);
+  background: rgba(255,255,255,0.28);
+  transform: scale(0.92);
 }
 
+/* Numeric score: ⭐ 3 /10 */
 .game-score {
-  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(251,191,36,0.16);
+  border: 1.5px solid rgba(251,191,36,0.32);
+  border-radius: var(--r-full);
+  padding: 4px var(--sp-3) 4px var(--sp-2);
   white-space: nowrap;
-  min-width: 48px;
-  text-align: left;
 }
+.score-star { font-size: 1rem; line-height: 1; }
+.score-num  { font-size: 1rem; color: var(--gold); font-weight: bold; min-width: 14px; text-align: center; }
+.score-of   { font-size: 0.78rem; color: var(--color-text-dim); margin-right: 1px; }
 
-.score-of {
-  font-size: 0.8em;
-  color: rgba(255,255,255,0.6);
-}
-
+/* ── Game body ─────────────────────────────────────────── */
 .game-body {
   width: 100%;
   max-width: 600px;
@@ -85,11 +100,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 14px 24px;
-  gap: 12px;
+  padding: var(--sp-3) var(--sp-4) var(--sp-6);
+  gap: var(--sp-3);
 }
 
-/* Celebration overlay */
+/* ── Celebration overlay ───────────────────────────────── */
 .celebration-overlay {
   position: fixed;
   inset: 0;
@@ -98,14 +113,14 @@
   align-items: center;
   justify-content: center;
   z-index: 100;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(3px);
+  background: rgba(0,0,0,0.38);
+  backdrop-filter: blur(4px);
 }
 
 .celebration-box {
   background: linear-gradient(135deg, #fde047, #fb923c);
-  border-radius: 28px;
-  padding: 28px 36px;
+  border-radius: var(--r-xl);
+  padding: var(--sp-8) var(--sp-8);
   text-align: center;
   box-shadow: 0 8px 40px rgba(251,146,60,0.6);
   animation: pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
@@ -116,7 +131,7 @@
 .celebration-emoji {
   font-size: 3.5rem;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-2);
   animation: bounce 1s ease-in-out infinite;
 }
 
@@ -124,27 +139,27 @@
   font-size: 2rem;
   color: #7c1d00;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
 }
 
 .celebration-sub {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: #92400e;
   display: block;
-  margin-bottom: 18px;
+  margin-bottom: var(--sp-5);
 }
 
 .celebration-btn {
   background: #7c1d00;
   color: white;
-  border-radius: 16px;
-  padding: 10px 28px;
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-8);
   font-size: 1.1rem;
   font-family: inherit;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: var(--shadow-md);
 }
 
-/* Confetti pieces */
+/* ── Confetti / snowflake pieces ───────────────────────── */
 .confetti-piece {
   position: fixed;
   top: -20px;
@@ -155,7 +170,6 @@
   z-index: 99;
 }
 
-/* Snowflake pieces */
 .snowflake-piece {
   position: fixed;
   top: -20px;

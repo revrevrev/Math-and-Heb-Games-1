@@ -18,14 +18,15 @@
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  gap: 8px;
-  padding: 10px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 20px;
-  border: 2px solid rgba(255,255,255,0.2);
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--color-surface);
+  border-radius: var(--r-lg);
+  border: 1.5px solid var(--color-border);
   min-height: 120px;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow-sm);
 }
 
 .count-obj {
@@ -45,14 +46,15 @@
 .num-btn {
   width: clamp(52px, 14vw, 68px);
   height: clamp(52px, 14vw, 68px);
-  border-radius: 18px;
-  background: rgba(255,255,255,0.18);
-  border: 3px solid rgba(255,255,255,0.35);
+  border-radius: var(--r-md);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
   color: white;
   font-size: clamp(1.4rem, 5vw, 2rem);
   font-family: inherit;
-  transition: transform 0.1s;
+  transition: transform var(--t-fast);
   backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-sm);
 }
 
 .num-btn:active {

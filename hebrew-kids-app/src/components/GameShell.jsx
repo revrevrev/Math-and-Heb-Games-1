@@ -28,8 +28,9 @@ export default function GameShell({ title, emoji, score, maxScore, onBack, child
             {muted ? '🔇' : '🔊'}
           </button>
           <div className="game-score">
-            {'⭐'.repeat(score)}
-            {maxScore > 0 && <span className="score-of"> / {maxScore}</span>}
+            <span className="score-star">⭐</span>
+            <span className="score-num">{score}</span>
+            {maxScore > 0 && <span className="score-of">/{maxScore}</span>}
           </div>
         </div>
       </div>

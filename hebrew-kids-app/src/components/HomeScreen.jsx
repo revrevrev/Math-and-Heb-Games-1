@@ -63,19 +63,11 @@ const GAMES = [
 
 const PARTICLE_POOL = ['⭐','❄️','🐾','💜','🌸','✨','🎵','🌟','💛','🎈','🦋','💎'];
 
-/* ── Character sticker: real photo in a circle ── */
+/* Character sticker: real photo in a circle */
 function CharImg({ src, alt, size, objPos = 'top center' }) {
   return (
-    <div
-      className="char-sticker"
-      style={{ width: size, height: size }}
-    >
-      <img
-        src={src}
-        alt={alt}
-        style={{ objectPosition: objPos }}
-        draggable={false}
-      />
+    <div className="char-sticker" style={{ width: size, height: size }}>
+      <img src={src} alt={alt} style={{ objectPosition: objPos }} draggable={false} />
     </div>
   );
 }
@@ -95,13 +87,13 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const particles = useMemo(() =>
-    Array.from({ length: 22 }).map((_, i) => ({
+    Array.from({ length: 12 }).map((_, i) => ({
       emoji: PARTICLE_POOL[i % PARTICLE_POOL.length],
-      left:  `${(i * 41 + 7)  % 100}%`,
-      top:   `${(i * 67 + 13) % 100}%`,
-      size:  12 + (i % 5) * 4,
-      delay: `${(i * 0.35) % 4}s`,
-      dur:   `${3 + (i % 4)}s`,
+      left:  `${(i * 57 + 9)  % 96}%`,
+      top:   `${(i * 73 + 7) % 88}%`,
+      size:  14 + (i % 4) * 5,
+      delay: `${(i * 0.5) % 5}s`,
+      dur:   `${5 + (i % 4)}s`,
     })), []);
 
   function handleSelect(game) {
@@ -110,15 +102,17 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
     setTimeout(() => {
       setPressed(null);
       onSelectGame(game.id);
-    }, 320);
+    }, 300);
   }
 
-  const cappedStars = Math.min(totalStars, 12);
+  function dismissWelcome() {
+    setShowWelcome(false);
+  }
 
   return (
     <div className="home-screen">
 
-      {/* ── Floating background particles ── */}
+      {/* Floating background particles */}
       <div className="bg-particles" aria-hidden>
         {particles.map((p, i) => (
           <span key={i} className="particle" style={{
@@ -130,83 +124,48 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
         ))}
       </div>
 
-      {/* ── Welcome overlay ── */}
+      {/* Welcome overlay */}
       {showWelcome && (
-        <div className="welcome-overlay">
-          <div className="welcome-card pop">
-            <CharImg src="/images/elsa.png" alt="אלזה" size={110} objPos="top center" />
+        <div className="welcome-overlay" onClick={dismissWelcome}>
+          <div className="welcome-card pop" onClick={e => e.stopPropagation()}>
+            <CharImg src="/images/elsa.png" alt="אלזה" size={100} objPos="top center" />
             <div className="welcome-text-wrap">
               <p className="welcome-hi">👋 שלום! אני אלזה!</p>
-              <p className="welcome-msg">בואי נשחק ונלמד יחד! 🎉</p>
-              <div className="welcome-dots">
-                <span>❄️</span><span>⭐</span><span>🐾</span><span>💜</span>
-              </div>
+              <p className="welcome-msg">בואי נשחק ונלמד יחד!</p>
+              <button className="welcome-btn" onClick={dismissWelcome}>🎉 בואי!</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Header ── */}
+      {/* Header */}
       <header className="home-header fade-in">
-        <div className="header-chars-row">
-          <div className="header-char-slot">
-            <CharImg src="/images/elsa.png" alt="אלזה" size={88} objPos="top center" />
-            <span className="char-name">אלזה</span>
+        {/* Branding row */}
+        <div className="home-brand-row">
+          <div className="home-brand-chars">
+            <CharImg src="/images/elsa.png"   alt="אלזה"  size={72} objPos="top center" />
+            <CharImg src="/images/bluey.webp" alt="בלואי" size={72} objPos="top center" />
           </div>
-
-          <div className="title-block">
+          <div className="home-brand-title">
             <h1 className="home-title">
-              <span className="title-sparkle">✨</span>
-              איזה כיף לשחק
-              <span className="title-sparkle">✨</span>
+              {profileName ? `שלום, ${profileName}!` : 'משחקי לימוד'}
             </h1>
-            {profileName
-              ? <p className="home-subtitle">שלום, {profileName}! 👋</p>
-              : <p className="home-subtitle">עברית וחשבון כיפי!</p>
-            }
-          </div>
-
-          <div className="header-char-slot">
-            <CharImg src="/images/bluey.webp" alt="בלואי" size={88} objPos="top center" />
-            <span className="char-name">בלואי</span>
+            <p className="home-subtitle">עברית וחשבון כיפי ✨</p>
           </div>
         </div>
 
-        {/* Stars counter */}
+        {/* Stars counter — numeric */}
         <div className="stars-counter">
-          <span className="stars-crown">👑</span>
-          <span className="stars-label-text">הכוכבים שלי:</span>
-          <div className="stars-icons-row">
-            {cappedStars > 0
-              ? Array.from({ length: cappedStars }).map((_, i) => (
-                  <span key={i} className="star-pip" style={{ animationDelay: `${i * 0.06}s` }}>⭐</span>
-                ))
-              : <span className="stars-empty-msg">שחקי כדי לאסוף כוכבים!</span>
-            }
-            {totalStars > 12 && (
-              <span className="stars-extra">+{totalStars - 12}</span>
-            )}
-          </div>
-          {totalStars > 0 && (
-            <span className="stars-total-num">{totalStars} סה״כ</span>
+          <span className="stars-star-icon" aria-hidden>⭐</span>
+          <span className="stars-num">{totalStars}</span>
+          <span className="stars-label">כוכבים</span>
+          {totalStars === 0 && (
+            <span className="stars-hint">שחקי כדי לאסוף!</span>
           )}
         </div>
       </header>
 
-      {/* ── Nav row: Profile / Achievements / Settings ── */}
-      <nav className="home-nav-row">
-        <button className="home-nav-btn" onClick={() => onSelectGame('profile')}>
-          <span>👤</span><span>פרופיל</span>
-        </button>
-        <button className="home-nav-btn" onClick={() => onSelectGame('achievements')}>
-          <span>🏆</span><span>הישגים</span>
-        </button>
-        <button className="home-nav-btn" onClick={() => onSelectGame('settings')}>
-          <span>⚙️</span><span>הגדרות</span>
-        </button>
-      </nav>
-
-      {/* ── Games grid ── */}
+      {/* Games grid */}
       <main className="games-grid">
         {GAMES.map((game, i) => (
           <button
@@ -215,14 +174,14 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
             style={{
               background: game.gradient,
               '--glow': game.glowColor,
-              animationDelay: `${i * 0.09}s`,
+              animationDelay: `${i * 0.08}s`,
             }}
             onClick={() => handleSelect(game)}
           >
             <span className="card-watermark" aria-hidden>{game.watermark}</span>
 
             <div className="card-char-peek">
-              <CharImg src={game.imgSrc} alt={game.title} size={86} objPos={game.imgPos} />
+              <CharImg src={game.imgSrc} alt={game.title} size={88} objPos={game.imgPos} />
             </div>
 
             <div className="card-text-area">
@@ -235,26 +194,21 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
         ))}
       </main>
 
-      {/* ── Footer: Anna sticker + Teletubbies photo banner ── */}
-      <footer className="home-footer">
-        <div className="footer-char">
-          <CharImg src="/images/gabby-hero2.png" alt="גבי" size={62} objPos="top center" />
-          <span className="footer-name">גבי</span>
-        </div>
-        <div className="footer-teletubbies">
-          <img
-            src="/images/teletubbies.jpg"
-            alt="הטלטאביז"
-            className="teletubbies-banner"
-            draggable={false}
-          />
-          <span className="footer-name footer-tele-label">הטלטאביז ❤️</span>
-        </div>
-        <div className="footer-char">
-          <CharImg src="/images/bluey.webp" alt="בלואי" size={62} objPos="top center" />
-          <span className="footer-name">בלואי</span>
-        </div>
-      </footer>
+      {/* Bottom navigation tab bar */}
+      <nav className="bottom-nav" aria-label="ניווט ראשי">
+        <button className="bottom-nav-item" onClick={() => onSelectGame('profile')}>
+          <span className="bnav-icon">👤</span>
+          <span className="bnav-label">פרופיל</span>
+        </button>
+        <button className="bottom-nav-item" onClick={() => onSelectGame('achievements')}>
+          <span className="bnav-icon">🏆</span>
+          <span className="bnav-label">הישגים</span>
+        </button>
+        <button className="bottom-nav-item" onClick={() => onSelectGame('settings')}>
+          <span className="bnav-icon">⚙️</span>
+          <span className="bnav-label">הגדרות</span>
+        </button>
+      </nav>
 
     </div>
   );

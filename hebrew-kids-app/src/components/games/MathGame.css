@@ -14,17 +14,18 @@
 
 .equation-box {
   flex: 1;
-  background: rgba(255,255,255,0.12);
-  border: 3px solid rgba(255,255,255,0.25);
-  border-radius: 22px;
-  padding: 14px 12px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-3);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
   backdrop-filter: blur(8px);
   min-height: 110px;
   justify-content: center;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Math equation must read left-to-right regardless of page RTL */
@@ -89,15 +90,15 @@
 .math-btn {
   width: clamp(64px, 18vw, 88px);
   height: clamp(64px, 18vw, 88px);
-  border-radius: 22px;
-  background: rgba(255,255,255,0.18);
-  border: 3px solid rgba(255,255,255,0.35);
+  border-radius: var(--r-lg);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
   color: white;
   font-size: clamp(1.6rem, 6vw, 2.4rem);
   font-family: inherit;
-  transition: transform 0.1s;
+  transition: transform var(--t-fast);
   backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .math-btn:active {
