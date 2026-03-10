@@ -15,7 +15,7 @@ FU5→ Celebration overlay covers game content - fixed: redesigned as compact to
 FU6→ Add Gabbi character (gabby-hero2.png) as lead for מילות קסם - done
 FU7→ Add cakey, kittyfairy, marty, pandy as characters at מילות קסם - done
 FU8→ Add character reactions to all games - happy/sad animations on correct/incorrect answers - done (MemoryGame bounce/wiggle; all other games already had reactions)
-FU9→ Add "Next Round" button on round win screen - done (הבאה ← button shown after correct, auto-advances after 2.5s)
+FU9→ Add "Next Round" button on round win screen - done (הבא ← button shown after correct, auto-advances after 2.5s)
 FU10→ Add "Home" button on all screens - done (GameShell back btn now shows 🏠 בית; done screens show 🏠 בית)
 FU11→ Add progress bar for each round - done (MemoryGame now has progress bar; all others already had it)
 FU12→ Add sound toggle - done (🔊/🔇 mute button in every GameShell header, persists to localStorage)
@@ -32,8 +32,17 @@ FU22→ Add "Settings" screen - done (new SettingsScreen: sound toggle, music to
 FU23→ Add "Profile" screen - done (new ProfileScreen: name input + avatar selection from 8 characters)
 FU24→ Add "Review Answers" screen - done (📋 review button in done screen shows all correctly solved questions)
 FU25→ ****TODO**** If the user profile was defined, Change the welcom screen - to welcome the specific name. Preferably with verbal greeting
-FU26→ random music - the folder public/sounds/music will include several songs. Each screen will select randomly one of these files to play. - done (manifest.json in public/sounds/music/; startMusic() fetches manifest and picks random song, falls back to synth if empty)
-FU27→ Memory game - in first level - make all cards show only the objects + their names together. Meaning pairs of identical cards each having the objects+ their names. In higher levels the user will have to match the card with object + its name with a card with the first letter only. - done (level 1=identical emoji+word pairs; level 2+=emoji+word card matched to first-letter card; level badge shown; "next level" button after level 1 complete)
+FU26→ Memory game - in first level - make all cards show only the objects + their names together. Meaning pairs of identical cards each having the objects+ their names. In higher levels the user will have to match the card with object + its name with a card with the first letter only. - done (level 1=identical emoji+word pairs; level 2+=emoji+word card matched to first-letter card; level badge shown; "next level" button after level 1 complete)
+
+== MOre ==
+MO1 - להגדיל את האותיות שמתחת למילה במשחק גבי
+MO2 - כפתור back יחזיר ל home
+MO3 - תוסיף עוד הרבה מילים למשחק גבי
+MO4 - We must make it more adictive. Add some special bonus effects that the user can activate after reaching 20,40.60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
+MO5 - Add volume control for the music
+MO6 - Add another game of matching a word to its first letter using drag and drop. The leader for this game will be Zohar
+MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations
+
 
 === MEDIUM EFFORT (Game Feel) ===
 ME1→ Use the skills frontend-mobile-development, ui-design to redesign the UI and make the design of this game much more professional - done

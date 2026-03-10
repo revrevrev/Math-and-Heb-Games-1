@@ -223,7 +223,7 @@ export default function LettersGame({ onBack, onAddStars }) {
 
           {/* FU9: Next button */}
           {ge.waitingForNext && correct && (
-            <button className="next-btn" onClick={doAdvance}>הבאה ←</button>
+            <button className="next-btn" onClick={doAdvance}>הבא ←</button>
           )}
         </>
       )}

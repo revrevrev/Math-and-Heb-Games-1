@@ -82,13 +82,13 @@
 }
 
 .letter-tile {
-  width: clamp(46px, 13vw, 62px);
-  height: clamp(46px, 13vw, 62px);
+  width: clamp(56px, 16vw, 78px);
+  height: clamp(56px, 16vw, 78px);
   border-radius: var(--r-md);
   background: rgba(255,255,255,0.18);
   border: 2px solid var(--color-border-strong);
   color: white;
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(2rem, 7vw, 2.8rem);
   font-family: inherit;
   transition: transform var(--t-fast), opacity 0.2s;
   backdrop-filter: blur(6px);

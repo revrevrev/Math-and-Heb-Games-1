@@ -188,7 +188,7 @@ export default function CountingGame({ onBack, onAddStars }) {
           </div>
 
           {ge.waitingForNext && correct && (
-            <button className="next-btn" onClick={doAdvance}>הבאה ←</button>
+            <button className="next-btn" onClick={doAdvance}>הבא ←</button>
           )}
         </>
       )}

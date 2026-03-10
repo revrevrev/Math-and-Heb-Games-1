@@ -34,6 +34,19 @@ export default function App() {
 
   const goHome = useCallback(() => setScreen('home'), []);
 
+  // Push a history entry whenever leaving home so browser/Android back goes home
+  useEffect(() => {
+    if (screen !== 'home') {
+      window.history.pushState({ screen }, '');
+    }
+  }, [screen]);
+
+  useEffect(() => {
+    const handlePop = () => setScreen('home');
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, []);
+
   return (
     <>
       {screen === 'home'         && <HomeScreen        onSelectGame={setScreen} totalStars={totalStars} />}

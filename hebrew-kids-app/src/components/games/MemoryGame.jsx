@@ -137,7 +137,7 @@ export default function MemoryGame({ onBack, onAddStars }) {
                 {showReview ? '▲ הסתרי' : '📋 סקירה'}
               </button>
               {level === 1 && (
-                <button className="done-btn primary" onClick={nextLevel}>רמה הבאה ⬆️</button>
+                <button className="done-btn primary" onClick={nextLevel}>רמה הבא ⬆️</button>
               )}
               <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
               <button className="done-btn secondary" onClick={onBack}>🏠 בית</button>
