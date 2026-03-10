@@ -159,7 +159,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
           <h1 className="home-greeting">
             {profileName ? `שלום, ${profileName}! 👋` : 'שלום! 👋'}
           </h1>
-          <p className="home-subtitle">בחרי משחק ותתחילי ללמוד</p>
+          <p className="home-subtitle">♥ בואי נשחק  ♥</p>
         </div>
       </header>
 
