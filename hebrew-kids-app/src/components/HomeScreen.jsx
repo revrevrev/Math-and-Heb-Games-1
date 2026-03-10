@@ -6,41 +6,51 @@ import './HomeScreen.css';
 const GAMES = [
   {
     id: 'letters',
-    title: 'אותיות עם אלזה',
-    subtitle: 'א-ב',
-    gradient: 'linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%)',
+    title: 'אותיות',
+    subtitle: 'לימוד א-ב',
+    emoji: '❄️',
+    gradient: 'linear-gradient(145deg, #5b21b6 0%, #8b5cf6 100%)',
+    glow: 'rgba(139,92,246,0.65)',
     imgSrc: '/images/elsa.png',
     imgPos: 'top center',
   },
   {
     id: 'counting',
-    title: 'ספירה עם בלואי',
+    title: 'ספירה',
     subtitle: 'בואי נספור',
-    gradient: 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)',
+    emoji: '🐾',
+    gradient: 'linear-gradient(145deg, #1e40af 0%, #38bdf8 100%)',
+    glow: 'rgba(56,189,248,0.65)',
     imgSrc: '/images/bluey.webp',
     imgPos: 'top center',
   },
   {
     id: 'memory',
-    title: 'משחק הזכרון עם טלטאביס',
+    title: 'זיכרון',
     subtitle: 'מצאי זוגות',
-    gradient: 'linear-gradient(135deg, #f472b6 0%, #9333ea 100%)',
+    emoji: '🧠',
+    gradient: 'linear-gradient(145deg, #831843 0%, #f472b6 100%)',
+    glow: 'rgba(244,114,182,0.65)',
     imgSrc: '/images/teletubbies.jpg',
     imgPos: 'center 12%',
   },
   {
     id: 'math',
-    title: 'חשבון עם מיקי',
+    title: 'חשבון',
     subtitle: 'חיבור וחיסור',
-    gradient: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
+    emoji: '🌟',
+    gradient: 'linear-gradient(145deg, #14532d 0%, #4ade80 100%)',
+    glow: 'rgba(74,222,128,0.65)',
     imgSrc: '/images/Mickey1.jpeg',
     imgPos: 'top center',
   },
   {
     id: 'words',
-    title: 'מילות קסם עם גבי',
+    title: 'מילות קסם',
     subtitle: 'בואי נבנה מילים',
-    gradient: 'linear-gradient(135deg, #fb923c 0%, #e11d48 100%)',
+    emoji: '✨',
+    gradient: 'linear-gradient(145deg, #9a3412 0%, #fb923c 100%)',
+    glow: 'rgba(251,146,60,0.65)',
     imgSrc: '/images/gabby-hero2.png',
     imgPos: 'top center',
   },
@@ -48,7 +58,6 @@ const GAMES = [
 
 const PARTICLE_POOL = ['⭐','❄️','🐾','💜','🌸','✨','🎵','🌟','💛','🎈','🦋','💎'];
 
-/* Character sticker: real photo in a circle */
 function CharImg({ src, alt, size, objPos = 'top center' }) {
   return (
     <div className="char-sticker" style={{ width: size, height: size }}>
@@ -72,13 +81,13 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const particles = useMemo(() =>
-    Array.from({ length: 12 }).map((_, i) => ({
+    Array.from({ length: 16 }).map((_, i) => ({
       emoji: PARTICLE_POOL[i % PARTICLE_POOL.length],
       left:  `${(i * 57 + 9)  % 96}%`,
       top:   `${(i * 73 + 7) % 88}%`,
-      size:  14 + (i % 4) * 5,
-      delay: `${(i * 0.5) % 5}s`,
-      dur:   `${5 + (i % 4)}s`,
+      size:  16 + (i % 4) * 6,
+      delay: `${(i * 0.4) % 5}s`,
+      dur:   `${4 + (i % 3)}s`,
     })), []);
 
   function handleSelect(game) {
@@ -87,7 +96,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
     setTimeout(() => {
       setPressed(null);
       onSelectGame(game.id);
-    }, 300);
+    }, 280);
   }
 
   function dismissWelcome() {
@@ -113,11 +122,11 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
       {showWelcome && (
         <div className="welcome-overlay" onClick={dismissWelcome}>
           <div className="welcome-card pop" onClick={e => e.stopPropagation()}>
-            <CharImg src="/images/elsa.png" alt="אלזה" size={100} objPos="top center" />
+            <CharImg src="/images/elsa.png" alt="אלזה" size={110} objPos="top center" />
             <div className="welcome-text-wrap">
               <p className="welcome-hi">👋 שלום! אני אלזה!</p>
               <p className="welcome-msg">בואי נשחק ונלמד יחד!</p>
-              <button className="welcome-btn" onClick={dismissWelcome}>🎉 בואי!</button>
+              <button className="welcome-btn" onClick={dismissWelcome}>🎉 בואי נתחיל!</button>
             </div>
           </div>
         </div>
@@ -125,32 +134,29 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
 
       {/* Header */}
       <header className="home-header fade-in">
-        {/* Branding row */}
         <div className="home-brand-row">
           <div className="home-brand-chars">
-            <CharImg src="/images/elsa.png"   alt="אלזה"  size={72} objPos="top center" />
-            <CharImg src="/images/bluey.webp" alt="בלואי" size={72} objPos="top center" />
+            <CharImg src="/images/elsa.png"   alt="אלזה"  size={68} objPos="top center" />
+            <CharImg src="/images/bluey.webp" alt="בלואי" size={68} objPos="top center" />
           </div>
           <div className="home-brand-title">
             <h1 className="home-title">
-              {profileName ? `שלום, ${profileName}!` : 'משחקי לימוד'}
+              {profileName ? `שלום, ${profileName}! 🎉` : '🎮 משחקי לימוד'}
             </h1>
-            <p className="home-subtitle">עברית וחשבון כיפי ✨</p>
+            <p className="home-subtitle">עברית וחשבון כיפי</p>
           </div>
         </div>
 
-        {/* Stars counter — numeric */}
+        {/* Stars counter */}
         <div className="stars-counter">
           <span className="stars-star-icon" aria-hidden>⭐</span>
           <span className="stars-num">{totalStars}</span>
           <span className="stars-label">כוכבים</span>
-          {totalStars === 0 && (
-            <span className="stars-hint">שחקי כדי לאסוף!</span>
-          )}
+          {totalStars === 0 && <span className="stars-hint">שחקי כדי לאסוף!</span>}
         </div>
       </header>
 
-      {/* Games grid */}
+      {/* Games grid — 2-column square tiles */}
       <main className="games-grid">
         {GAMES.map((game, i) => (
           <button
@@ -158,25 +164,26 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
             className={`game-card ${pressed === game.id ? 'card-pressed' : ''}`}
             style={{
               background: game.gradient,
-              animationDelay: `${i * 0.08}s`,
+              '--glow': game.glow,
+              animationDelay: `${i * 0.09}s`,
             }}
             onClick={() => handleSelect(game)}
           >
-            <span className="card-play-btn" aria-hidden>▶</span>
-
-            <div className="card-text-area">
-              <strong className="card-title">{game.title}</strong>
-              <span className="card-subtitle">{game.subtitle}</span>
+            {/* Character image — top portion */}
+            <div className="card-char-area">
+              <CharImg src={game.imgSrc} alt={game.title} size={100} objPos={game.imgPos} />
             </div>
 
-            <div className="card-char-peek">
-              <CharImg src={game.imgSrc} alt={game.title} size={120} objPos={game.imgPos} />
+            {/* Title strip — bottom */}
+            <div className="card-label">
+              <span className="card-emoji">{game.emoji}</span>
+              <strong className="card-title">{game.title}</strong>
             </div>
           </button>
         ))}
       </main>
 
-      {/* Bottom navigation tab bar */}
+      {/* Bottom nav */}
       <nav className="bottom-nav" aria-label="ניווט ראשי">
         <button className="bottom-nav-item" onClick={() => onSelectGame('profile')}>
           <span className="bnav-icon">👤</span>

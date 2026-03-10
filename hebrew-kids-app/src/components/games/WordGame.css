@@ -13,30 +13,33 @@
   position: relative;
 }
 
-/* White hint card */
+/* Glassy word hint card */
 .word-hint-box {
   flex: 1;
-  background: white;
-  border: none;
+  background: rgba(255,255,255,0.14);
+  border: 2px solid rgba(255,255,255,0.28);
   border-radius: var(--r-lg);
   padding: var(--sp-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-1);
+  backdrop-filter: blur(10px);
   min-height: 110px;
   justify-content: center;
-  box-shadow: 0 4px 18px rgba(234,88,12,0.14);
+  box-shadow: 0 4px 22px rgba(0,0,0,0.25);
 }
 
 .word-emoji {
-  font-size: clamp(2.5rem, 10vw, 4rem);
+  font-size: clamp(2.8rem, 11vw, 4.5rem);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35));
 }
 
 .word-hint {
-  font-size: clamp(1rem, 3.5vw, 1.2rem);
-  color: #ea580c;
+  font-size: clamp(1.05rem, 3.8vw, 1.25rem);
+  color: #fde68a;
   font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 /* Letter slots */
@@ -48,70 +51,78 @@
 }
 
 .slot {
-  width: clamp(42px, 12vw, 56px);
-  height: clamp(42px, 12vw, 56px);
+  width: clamp(44px, 13vw, 60px);
+  height: clamp(44px, 13vw, 60px);
   border-radius: 14px;
-  border: 3px dashed rgba(255,255,255,0.55);
+  border: 3px dashed rgba(255,255,255,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(1.5rem, 5.5vw, 2.2rem);
   color: white;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.10);
   transition: all 0.2s;
 }
 
 .slot-filled {
   border-style: solid;
-  border-color: white;
-  background: rgba(255,255,255,0.30);
+  border-color: #fbbf24;
+  background: rgba(251,191,36,0.22);
   animation: pop 0.25s ease;
+  box-shadow: 0 0 14px rgba(251,191,36,0.4);
 }
 
 .slot-correct {
   border-color: #4ade80 !important;
   background: rgba(74,222,128,0.25) !important;
+  box-shadow: 0 0 14px rgba(74,222,128,0.5) !important;
 }
 
-/* Letter tiles — white with accent color */
+/* Colorful letter tiles — Kahoot style */
 .letter-tiles {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
 }
 
 .letter-tile {
-  width: clamp(56px, 16vw, 78px);
-  height: clamp(56px, 16vw, 78px);
+  width: clamp(58px, 17vw, 82px);
+  height: clamp(58px, 17vw, 82px);
   border-radius: var(--r-md);
-  background: white;
-  border: 2.5px solid rgba(255,255,255,0.70);
-  color: #ea580c;
-  font-size: clamp(2rem, 7vw, 2.8rem);
+  border: 3px solid rgba(255,255,255,0.28);
+  color: white;
+  font-size: clamp(2.2rem, 7.5vw, 3rem);
   font-family: inherit;
-  transition: transform var(--t-fast), opacity 0.2s;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  font-weight: bold;
+  transition: transform var(--t-fast), opacity 0.2s, filter var(--t-fast);
+  box-shadow: 0 5px 18px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
-.letter-tile:active:not(:disabled) {
-  transform: scale(0.88);
-}
+/* Cycle 4 vivid colors */
+.letter-tile:nth-child(4n+1) { background: #e21b3c; }
+.letter-tile:nth-child(4n+2) { background: #1368ce; }
+.letter-tile:nth-child(4n+3) { background: #d89e00; }
+.letter-tile:nth-child(4n+4) { background: #26890c; }
+
+.letter-tile:active:not(:disabled) { transform: scale(0.86); }
+.letter-tile:hover:not(:disabled)  { filter: brightness(1.15); transform: translateY(-3px); }
 
 .tile-used {
   opacity: 0.2;
-  transform: scale(0.85);
+  transform: scale(0.82);
 }
 
 /* Undo button */
 .undo-btn {
-  background: white;
-  color: #ea580c;
+  background: rgba(255,255,255,0.14);
+  color: #fde68a;
   border-radius: var(--r-sm);
   padding: var(--sp-2) var(--sp-4);
   font-size: 0.95rem;
   font-family: inherit;
-  border: 1.5px solid rgba(234,88,12,0.3);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1.5px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(6px);
 }

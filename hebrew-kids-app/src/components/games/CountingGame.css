@@ -13,7 +13,7 @@
   position: relative;
 }
 
-/* White object display area */
+/* Glassy object display */
 .count-objects {
   flex: 1;
   display: flex;
@@ -21,22 +21,24 @@
   align-content: flex-start;
   gap: var(--sp-2);
   padding: var(--sp-3);
-  background: white;
+  background: rgba(255,255,255,0.14);
   border-radius: var(--r-lg);
-  border: none;
+  border: 2px solid rgba(255,255,255,0.28);
   min-height: 120px;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 18px rgba(37,99,235,0.14);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
 .count-obj {
-  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
   animation: pop 0.35s ease both;
   line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
-/* Number choice buttons */
+/* Number buttons — big colorful circles */
 .number-choices {
   display: flex;
   gap: 10px;
@@ -46,23 +48,23 @@
 }
 
 .num-btn {
-  width: clamp(52px, 14vw, 68px);
-  height: clamp(52px, 14vw, 68px);
-  border-radius: var(--r-md);
-  background: white;
-  border: 2.5px solid rgba(37,99,235,0.25);
-  color: #2563eb;
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  width: clamp(56px, 15vw, 72px);
+  height: clamp(56px, 15vw, 72px);
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.30);
+  color: white;
+  font-size: clamp(1.5rem, 5.5vw, 2.2rem);
   font-family: inherit;
-  transition: transform var(--t-fast), border-color var(--t-fast);
-  box-shadow: 0 3px 12px rgba(37,99,235,0.12);
+  font-weight: bold;
+  transition: transform var(--t-fast), filter var(--t-fast);
+  box-shadow: 0 5px 18px rgba(0,0,0,0.3);
 }
 
-.num-btn:hover {
-  border-color: rgba(37,99,235,0.5);
-  background: #eff6ff;
-}
+/* Cycle 4 Kahoot colors */
+.num-btn:nth-child(4n+1) { background: #e21b3c; }
+.num-btn:nth-child(4n+2) { background: #1368ce; }
+.num-btn:nth-child(4n+3) { background: #d89e00; }
+.num-btn:nth-child(4n+4) { background: #26890c; }
 
-.num-btn:active {
-  transform: scale(0.9);
-}
+.num-btn:hover  { filter: brightness(1.15); transform: translateY(-3px) scale(1.06); }
+.num-btn:active { transform: scale(0.88); }

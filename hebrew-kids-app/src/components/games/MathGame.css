@@ -12,21 +12,22 @@
   position: relative;
 }
 
-/* White equation card */
+/* Glassy equation card */
 .equation-box {
   flex: 1;
-  background: white;
-  border: none;
+  background: rgba(255,255,255,0.14);
+  border: 2px solid rgba(255,255,255,0.28);
   border-radius: var(--r-lg);
   padding: var(--sp-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-2);
+  backdrop-filter: blur(10px);
   min-height: 110px;
   justify-content: center;
-  box-shadow: 0 4px 18px rgba(22,163,74,0.14);
-  /* Math reads LTR */
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  /* Math must read LTR */
   direction: ltr;
 }
 
@@ -47,62 +48,66 @@
 }
 
 .math-dot {
-  font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
   animation: pop 0.25s ease both;
 }
 
 .math-num-big {
-  font-size: 2rem;
-  color: #15803d;
+  font-size: 2.2rem;
+  color: white;
   font-weight: bold;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .eq-op,
 .eq-eq {
-  font-size: clamp(1.6rem, 5.5vw, 2.2rem);
-  color: #16a34a;
+  font-size: clamp(1.8rem, 6vw, 2.4rem);
+  color: #fde047;
   font-weight: bold;
   padding: 0 4px;
+  text-shadow: 0 0 12px rgba(253,224,71,0.6);
 }
 
 .eq-unknown {
-  font-size: clamp(1.8rem, 6vw, 2.6rem);
-  color: #ea580c;
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  color: #fb923c;
   font-weight: bold;
-  animation: pulseGlow 1.5s ease-in-out infinite;
+  animation: pulseGlow 1.4s ease-in-out infinite;
+  text-shadow: 0 0 16px rgba(251,146,60,0.7);
 }
 
 .eq-text {
   font-size: clamp(1.4rem, 5vw, 2rem);
-  color: #1e293b;
+  color: white;
   letter-spacing: 2px;
 }
 
-/* Answer choice buttons */
+/* Big Kahoot-style answer buttons */
 .math-choices {
   display: flex;
   gap: 14px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .math-btn {
-  width: clamp(64px, 18vw, 88px);
-  height: clamp(64px, 18vw, 88px);
+  width: clamp(70px, 19vw, 96px);
+  height: clamp(70px, 19vw, 96px);
   border-radius: var(--r-lg);
-  background: white;
-  border: 2.5px solid rgba(22,163,74,0.25);
-  color: #16a34a;
-  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  border: 3px solid rgba(255,255,255,0.28);
+  color: white;
+  font-size: clamp(1.8rem, 6.5vw, 2.6rem);
   font-family: inherit;
-  transition: transform var(--t-fast), border-color var(--t-fast);
-  box-shadow: 0 3px 14px rgba(22,163,74,0.14);
+  font-weight: bold;
+  transition: transform var(--t-fast), filter var(--t-fast);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.30);
 }
 
-.math-btn:hover {
-  border-color: rgba(22,163,74,0.5);
-  background: #f0fdf4;
-}
+/* Kahoot colors */
+.math-choices .math-btn:nth-child(1) { background: #e21b3c; }
+.math-choices .math-btn:nth-child(2) { background: #1368ce; }
+.math-choices .math-btn:nth-child(3) { background: #d89e00; }
+.math-choices .math-btn:nth-child(4) { background: #26890c; }
 
-.math-btn:active {
-  transform: scale(0.9);
-}
+.math-btn:hover  { filter: brightness(1.14); transform: translateY(-2px) scale(1.05); }
+.math-btn:active { transform: scale(0.90); }
