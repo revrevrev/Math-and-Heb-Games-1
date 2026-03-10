@@ -6,6 +6,7 @@ import './SettingsScreen.css';
 export default function SettingsScreen({ onBack }) {
   const [muted, setMutedState]             = useState(Sounds.muted);
   const [musicEnabled, setMusicEnabledState] = useState(Sounds.musicEnabled);
+  const [musicVolume, setMusicVolumeState] = useState(Sounds.musicVolume);
   const [resetDone, setResetDone]          = useState(false);
 
   function toggleMute() {
@@ -18,6 +19,12 @@ export default function SettingsScreen({ onBack }) {
     const next = !musicEnabled;
     Sounds.setMusicEnabled(next);
     setMusicEnabledState(next);
+  }
+
+  function handleVolumeChange(e) {
+    const val = parseFloat(e.target.value);
+    Sounds.setMusicVolume(val);
+    setMusicVolumeState(val);
   }
 
   function handleReset() {
@@ -52,20 +59,37 @@ export default function SettingsScreen({ onBack }) {
           </button>
         </div>
 
-        <div className="setting-row">
-          <div className="setting-info">
-            <span className="setting-icon">🎵</span>
-            <div>
-              <strong className="setting-label">מוזיקת רקע</strong>
-              <span className="setting-desc">מנגינה עדינה בזמן משחק</span>
+        <div className="setting-row setting-row-col">
+          <div className="setting-row-top">
+            <div className="setting-info">
+              <span className="setting-icon">🎵</span>
+              <div>
+                <strong className="setting-label">מוזיקת רקע</strong>
+                <span className="setting-desc">מנגינה עדינה בזמן משחק</span>
+              </div>
             </div>
+            <button
+              className={`toggle-btn ${musicEnabled ? 'toggle-on' : 'toggle-off'}`}
+              onClick={toggleMusic}
+            >
+              {musicEnabled ? 'פועל ✓' : 'כבוי ✗'}
+            </button>
           </div>
-          <button
-            className={`toggle-btn ${musicEnabled ? 'toggle-on' : 'toggle-off'}`}
-            onClick={toggleMusic}
-          >
-            {musicEnabled ? 'פועל ✓' : 'כבוי ✗'}
-          </button>
+          {musicEnabled && (
+            <div className="volume-row">
+              <span className="volume-icon">🔈</span>
+              <input
+                type="range"
+                className="volume-slider"
+                min="0"
+                max="1"
+                step="0.05"
+                value={musicVolume}
+                onChange={handleVolumeChange}
+              />
+              <span className="volume-icon">🔊</span>
+            </div>
+          )}
         </div>
 
         <div className="setting-row setting-danger">

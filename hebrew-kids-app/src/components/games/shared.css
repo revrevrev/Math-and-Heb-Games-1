@@ -27,11 +27,12 @@
 }
 
 /* ── Background themes — deep vivid ─────────────────── */
-.letters-bg  { background: linear-gradient(160deg, #1e0a5e 0%, #4c1d95 45%, #7c3aed 100%); }
-.counting-bg { background: linear-gradient(160deg, #0a1a5e 0%, #1d4ed8 45%, #38bdf8 100%); }
-.memory-bg   { background: linear-gradient(160deg, #4a0a30 0%, #9d174d 45%, #f472b6 100%); }
-.math-bg     { background: linear-gradient(160deg, #052010 0%, #15803d 45%, #4ade80 100%); }
-.word-bg     { background: linear-gradient(160deg, #451205 0%, #c2410c 45%, #fb923c 100%); }
+.letters-bg     { background: linear-gradient(160deg, #1e0a5e 0%, #4c1d95 45%, #7c3aed 100%); }
+.counting-bg    { background: linear-gradient(160deg, #0a1a5e 0%, #1d4ed8 45%, #38bdf8 100%); }
+.memory-bg      { background: linear-gradient(160deg, #4a0a30 0%, #9d174d 45%, #f472b6 100%); }
+.math-bg        { background: linear-gradient(160deg, #052010 0%, #15803d 45%, #4ade80 100%); }
+.word-bg        { background: linear-gradient(160deg, #451205 0%, #c2410c 45%, #fb923c 100%); }
+.firstletter-bg { background: linear-gradient(160deg, #0c1a40 0%, #1e3a8a 45%, #06b6d4 100%); }
 
 /* ── Progress bar ────────────────────────────────────── */
 .progress-bar {

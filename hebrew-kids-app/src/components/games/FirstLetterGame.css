@@ -1,0 +1,169 @@
+@import './shared.css';
+
+/* ── Character wrapper ───────────────────────────────── */
+.fl-char-wrap {
+  display: flex;
+  justify-content: center;
+}
+.fl-char-wrap.celebrate { animation: charCelebrate 0.65s ease; }
+
+@keyframes charCelebrate {
+  0%   { transform: scale(1)    rotate(0deg); }
+  30%  { transform: scale(1.22) rotate(-8deg); }
+  65%  { transform: scale(1.22) rotate(8deg); }
+  100% { transform: scale(1)    rotate(0deg); }
+}
+
+/* ── Board grid ─────────────────────────────────────────
+   Single CSS grid — 2 cols × 5 fixed-height rows.
+   In RTL: column 1 = visual RIGHT (words), column 2 = visual LEFT (letters).
+   Fixed row height ensures both columns are always perfectly row-aligned.
+──────────────────────────────────────────────────────── */
+.fl-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 54px);
+  gap: 8px;
+  width: 100%;
+}
+
+/* ── Letter drop zone (LEFT column) ─────────────────── */
+.fl-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.10);
+  border: 2.5px dashed rgba(255,255,255,0.40);
+  border-radius: 14px;
+  transition: border-color 0.2s, background 0.2s;
+  overflow: hidden;
+}
+
+.fl-zone-matched {
+  border-style: solid;
+  border-color: rgba(74,222,128,0.45);
+  background: rgba(74,222,128,0.08);
+  opacity: 0.35;
+}
+
+.fl-zone-wrong {
+  border-color: #f87171;
+  background: rgba(248,113,113,0.18);
+  animation: wrongFlash 0.35s ease;
+}
+
+.fl-zone-letter {
+  font-size: clamp(1.7rem, 6.5vw, 2.3rem);
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 0 18px rgba(6,182,212,0.9), 0 2px 8px rgba(0,0,0,0.4);
+  line-height: 1;
+}
+
+.fl-zone-name {
+  font-size: clamp(0.6rem, 2.2vw, 0.75rem);
+  color: rgba(255,255,255,0.60);
+}
+
+/* ── Draggable word card (RIGHT column) ──────────────── */
+.fl-word-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.16);
+  border: 2.5px solid rgba(255,255,255,0.48);
+  border-radius: 14px;
+  padding: 0 12px;
+  direction: rtl;
+  transition: background 0.18s, border-color 0.18s, opacity 0.18s, transform 0.12s;
+  overflow: hidden;
+}
+
+.fl-word-card:not(.fl-word-matched):not(.fl-ghost):not(.fl-word-dragging):hover {
+  background: rgba(255,255,255,0.24);
+  transform: scale(1.03);
+}
+
+.fl-word-dragging {
+  opacity: 0.22;
+}
+
+.fl-word-matched {
+  border-color: rgba(74,222,128,0.45);
+  background: rgba(74,222,128,0.08);
+  opacity: 0.35;
+}
+
+.fl-word-wrong {
+  border-color: #f87171;
+  background: rgba(248,113,113,0.18);
+  animation: wrongFlash 0.35s ease;
+}
+
+.fl-word-emoji {
+  font-size: clamp(1.3rem, 5vw, 1.75rem);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.fl-word-text {
+  font-size: clamp(0.95rem, 3.8vw, 1.2rem);
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+}
+
+/* ── Ghost follows pointer while dragging ────────────── */
+.fl-ghost {
+  opacity: 0.93;
+  transform: scale(1.06) rotate(2deg) !important;
+  box-shadow: 0 14px 42px rgba(0,0,0,0.55) !important;
+  border-color: #fbbf24 !important;
+  background: rgba(255,255,255,0.28) !important;
+  height: 54px;
+}
+
+/* ── Matched pairs strip at bottom ───────────────────── */
+.fl-matched-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+  padding: 4px 0 2px;
+}
+
+.fl-matched-pair {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(74,222,128,0.18);
+  border: 1.5px solid rgba(74,222,128,0.55);
+  border-radius: 22px;
+  padding: 5px 13px;
+  direction: rtl;
+}
+
+.fl-mp-letter {
+  font-size: 1.15rem;
+  color: #4ade80;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.fl-mp-sep {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.50);
+}
+
+.fl-mp-emoji { font-size: 1rem; }
+
+.fl-mp-word {
+  font-size: 0.88rem;
+  color: white;
+  font-weight: bold;
+}

@@ -28,7 +28,7 @@ Math and Hebrew games/
         effects.css             ← shared animation keyframes
       utils/
         sounds.js               ← Sounds singleton (tap, correct, wrong, star)
-    public/images/              ← character photos (elsa.png, bluey.webp, etc.)
+    public/images/              ← character photos (elsa.jpg, Bluey.png, etc.)
     capacitor.config.json       ← Android app: id=com.kids.hebrewlearning
 ```
 

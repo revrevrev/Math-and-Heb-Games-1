@@ -79,11 +79,12 @@ const MELODIES = {
 
 // Per-game character music (filename in /sounds/music/)
 const GAME_MUSIC = {
-  letters:  'Elsa.mp3',
-  counting: 'Bluey.mp3',
-  memory:   'Teletubbies.mp3',
-  math:     'Mickey.mp3',
-  words:    'Gabby.mp3',
+  letters:     'Elsa.mp3',
+  counting:    'Bluey.mp3',
+  memory:      'Teletubbies.mp3',
+  math:        'Mickey.mp3',
+  words:       'Gabby.mp3',
+  firstletter: 'זהר לא הספקתי.mp3',
 };
 
 function stopMusicLoop() {
@@ -110,7 +111,7 @@ function startBgMusic(game) {
   }
   const howl = new Howl({
     src: [`/sounds/music/${song}`],
-    volume: 0.25,
+    volume: Sounds.musicVolume,
     loop: true,
     onload: () => {
       if (bgHowl === howl) howl.play();
@@ -153,6 +154,7 @@ const sfx = {
 export const Sounds = {
   muted:        localStorage.getItem('hebrew-app-muted') === 'true',
   musicEnabled: localStorage.getItem('hebrew-app-music') !== 'false',
+  musicVolume:  parseFloat(localStorage.getItem('hebrew-app-music-volume') ?? '0.25'),
 
   setMuted(val) {
     Sounds.muted = val;
@@ -167,6 +169,12 @@ export const Sounds = {
     localStorage.setItem('hebrew-app-music', String(val));
     if (!val) stopMusicLoop();
     else if (!Sounds.muted && currentMelody) Sounds.startMusic(currentMelody);
+  },
+
+  setMusicVolume(val) {
+    Sounds.musicVolume = val;
+    localStorage.setItem('hebrew-app-music-volume', String(val));
+    if (bgHowl) bgHowl.volume(val);
   },
 
   startMusic(game = 'home') {

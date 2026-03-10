@@ -217,7 +217,7 @@ export default function LettersGame({ onBack, onAddStars }) {
           {correct && (
             <div className="feedback correct-fb pop">
               <span className="fb-emoji">{correctItem.emoji}</span>
-              <span className="fb-text">מצוין! 🌟 {correctItem.word}</span>
+              <span className="fb-text">מצוין! 🌟</span>
             </div>
           )}
 

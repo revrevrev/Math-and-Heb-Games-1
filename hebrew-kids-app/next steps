@@ -35,19 +35,20 @@ FU25→ ****TODO**** If the user profile was defined, Change the welcom screen -
 FU26→ Memory game - in first level - make all cards show only the objects + their names together. Meaning pairs of identical cards each having the objects+ their names. In higher levels the user will have to match the card with object + its name with a card with the first letter only. - done (level 1=identical emoji+word pairs; level 2+=emoji+word card matched to first-letter card; level badge shown; "next level" button after level 1 complete)
 
 == MOre ==
-MO1 - להגדיל את האותיות שמתחת למילה במשחק גבי
+MO1 - להגדיל את האותיות שמתחת למילה במשחק גבי - done
 MO2 - כפתור back יחזיר ל home
-MO3 - תוסיף עוד הרבה מילים למשחק גבי
+MO3 - תוסיף עוד הרבה מילים למשחק גבי - done
 MO4 - We must make it more adictive. Add some special bonus effects that the user can activate after reaching 20,40.60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
-MO5 - Add volume control for the music
-MO6 - Add another game of matching a word to its first letter using drag and drop. The leader for this game will be Zohar
+MO5 - Add volume control for the music - done
+MO6 - Add another game of matching a word to its first letter using drag and drop. The leader for this game will be Zohar - done
 MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations
+MO8 - In the letters game, when the user finds the correct letter, a word is shown. Remove it. - done
 
 
 === MEDIUM EFFORT (Game Feel) ===
 ME1→ Use the skills frontend-mobile-development, ui-design to redesign the UI and make the design of this game much more professional - done
 ME2→ Real sound effects - replace synthesized beeps with actual audio files (freesound.org) - done (Howler.js loads /sounds/*.mp3; auto-falls back to synthesis; run `npm run download-sounds` to fetch CC0 files)
-ME3→ Streak bonuses - 3-in-a-row = bonus star + "מדהים!" special animation
+ME3→ Streak bonuses - 3-in-a-row = bonus star + "מדהים!" special animation - done
 ME4→ Answer reveal animation - briefly show correct answer before moving to next question
 
 

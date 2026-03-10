@@ -45,20 +45,20 @@
 /* Letter slots */
 .built-slots {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .slot {
-  width: clamp(44px, 13vw, 60px);
-  height: clamp(44px, 13vw, 60px);
-  border-radius: 14px;
+  width: clamp(62px, 18vw, 84px);
+  height: clamp(62px, 18vw, 84px);
+  border-radius: 16px;
   border: 3px dashed rgba(255,255,255,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.5rem, 5.5vw, 2.2rem);
+  font-size: clamp(2.2rem, 8vw, 3.2rem);
   color: white;
   background: rgba(255,255,255,0.10);
   transition: all 0.2s;
@@ -88,12 +88,12 @@
 }
 
 .letter-tile {
-  width: clamp(58px, 17vw, 82px);
-  height: clamp(58px, 17vw, 82px);
+  width: clamp(76px, 22vw, 106px);
+  height: clamp(76px, 22vw, 106px);
   border-radius: var(--r-md);
   border: 3px solid rgba(255,255,255,0.28);
   color: white;
-  font-size: clamp(2.2rem, 7.5vw, 3rem);
+  font-size: clamp(3rem, 10vw, 4.2rem);
   font-family: inherit;
   font-weight: bold;
   transition: transform var(--t-fast), opacity 0.2s, filter var(--t-fast);

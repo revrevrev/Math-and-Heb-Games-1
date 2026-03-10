@@ -163,9 +163,6 @@
   padding: var(--sp-2) var(--sp-4) var(--sp-3);
 }
 
-/* Last card spans full width */
-.game-card:nth-child(5) { grid-column: 1 / -1; }
-
 /* ── Game card — square tile ───────────────────────────── */
 .game-card {
   position: relative;
@@ -181,13 +178,6 @@
   box-shadow:
     0 8px 28px var(--glow, rgba(0,0,0,0.4)),
     inset 0 1px 0 rgba(255,255,255,0.2);
-}
-
-/* Last card: shorter + horizontal feel */
-.game-card:nth-child(5) {
-  height: 128px;
-  flex-direction: row;
-  align-items: center;
 }
 
 .game-card:hover { transform: translateY(-4px) scale(1.02); }
@@ -211,12 +201,6 @@
   padding-top: 12px;
 }
 
-.game-card:nth-child(5) .card-char-area {
-  flex: 0 0 110px;
-  padding: 0;
-  padding-right: 8px;
-}
-
 /* ── Card label strip (bottom) ─────────────────────────── */
 .card-label {
   background: rgba(0,0,0,0.30);
@@ -226,15 +210,6 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-}
-
-.game-card:nth-child(5) .card-label {
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-end;
-  background: transparent;
-  padding: var(--sp-3) var(--sp-4);
-  gap: 3px;
 }
 
 .card-emoji {

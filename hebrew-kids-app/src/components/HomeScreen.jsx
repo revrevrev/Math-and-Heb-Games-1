@@ -11,7 +11,7 @@ const GAMES = [
     emoji: '❄️',
     gradient: 'linear-gradient(145deg, #5b21b6 0%, #8b5cf6 100%)',
     glow: 'rgba(139,92,246,0.65)',
-    imgSrc: '/images/elsa.png',
+    imgSrc: '/images/elsa.jpg',
     imgPos: 'top center',
   },
   {
@@ -21,7 +21,7 @@ const GAMES = [
     emoji: '🐾',
     gradient: 'linear-gradient(145deg, #1e40af 0%, #38bdf8 100%)',
     glow: 'rgba(56,189,248,0.65)',
-    imgSrc: '/images/bluey.webp',
+    imgSrc: '/images/Bluey.png',
     imgPos: 'top center',
   },
   {
@@ -38,7 +38,7 @@ const GAMES = [
     id: 'math',
     title: 'חשבון',
     subtitle: 'חיבור וחיסור',
-    emoji: '🌟',
+    emoji: '🎯',
     gradient: 'linear-gradient(145deg, #14532d 0%, #4ade80 100%)',
     glow: 'rgba(74,222,128,0.65)',
     imgSrc: '/images/Mickey1.jpeg',
@@ -52,6 +52,16 @@ const GAMES = [
     gradient: 'linear-gradient(145deg, #9a3412 0%, #fb923c 100%)',
     glow: 'rgba(251,146,60,0.65)',
     imgSrc: '/images/gabby-hero2.png',
+    imgPos: 'top center',
+  },
+  {
+    id: 'firstletter',
+    title: 'מילים ואותיות',
+    subtitle: 'משכי את המילה לאות הראשונה שלה!',
+    emoji: '🌟',
+    gradient: 'linear-gradient(145deg, #0c1a40 0%, #1e3a8a 60%, #06b6d4 100%)',
+    glow: 'rgba(6,182,212,0.65)',
+    imgSrc: '/images/זהר לא הספקתי.jpg',
     imgPos: 'top center',
   },
 ];
@@ -122,7 +132,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
       {showWelcome && (
         <div className="welcome-overlay" onClick={dismissWelcome}>
           <div className="welcome-card pop" onClick={e => e.stopPropagation()}>
-            <CharImg src="/images/elsa.png" alt="אלזה" size={110} objPos="top center" />
+            <CharImg src="/images/elsa.jpg" alt="אלזה" size={110} objPos="top center" />
             <div className="welcome-text-wrap">
               <p className="welcome-hi">👋 שלום! אני אלזה!</p>
               <p className="welcome-msg">בואי נשחק ונלמד יחד!</p>
@@ -136,14 +146,14 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
       <header className="home-header fade-in">
         <div className="home-brand-row">
           <div className="home-brand-chars">
-            <CharImg src="/images/elsa.png"   alt="אלזה"  size={68} objPos="top center" />
-            <CharImg src="/images/bluey.webp" alt="בלואי" size={68} objPos="top center" />
+            <CharImg src="/images/elsa.jpg"   alt="אלזה"  size={68} objPos="top center" />
+            <CharImg src="/images/Bluey.png" alt="בלואי" size={68} objPos="top center" />
           </div>
           <div className="home-brand-title">
             <h1 className="home-title">
               {profileName ? `שלום, ${profileName}! 🎉` : '🎮 משחקי לימוד'}
             </h1>
-            <p className="home-subtitle">עברית וחשבון כיפי</p>
+            <p className="home-subtitle">איזה כיף לשחק</p>
           </div>
         </div>
 

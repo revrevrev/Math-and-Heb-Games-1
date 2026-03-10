@@ -10,7 +10,7 @@
 
 const CHARS = {
   elsa: {
-    src: '/images/elsa.png',
+    src: '/images/elsa.jpg',
     alt: 'אלזה',
     pos: 'top center',
     aspect: 0.82,
@@ -46,7 +46,7 @@ const CHARS = {
     aspect: 0.9,
   },
   bluey: {
-    src: '/images/bluey.webp',
+    src: '/images/Bluey.png',
     alt: 'בלואי',
     pos: 'top center',
     aspect: 0.88,
@@ -62,6 +62,12 @@ const CHARS = {
     alt: 'הטלטאביז',
     pos: 'center 8%',
     aspect: 1.9,
+  },
+  zohar: {
+    src: '/images/זהר לא הספקתי.jpg',
+    alt: 'זוהר',
+    pos: 'top center',
+    aspect: 0.9,
   },
 };
 
