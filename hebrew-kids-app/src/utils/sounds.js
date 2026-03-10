@@ -123,6 +123,58 @@ function startBgMusic(game) {
   bgHowl = howl;
 }
 
+// ── Hebrew voice (Web Speech API) ───────────────────────────────────
+const VOICE_PHRASES = {
+  correct: ['כל הכבוד!', 'מצוין!', 'יפה מאוד!', 'נכון!', ' איזה חכמה!', 'מדהים!', 'איך ידעת?', 'וואו, יפה!'],
+  wrong:   ['נסי שוב', 'לא נכון, נסי שוב', 'כמעט, נסי שוב'],
+  win:     ['כל הכבוד, סיימת!', 'את מדהימה!', 'ניצחת! יפה מאוד!', 'וואו, מצוין!'],
+  streak:  ['וואו, רצף מדהים!', 'כל הכבוד, את על הגל!', 'מדהים, כן כן כן!','וואו איך עשית את זה?'],
+  levelUp: ['עלית רמה! כל הכבוד!', 'מדהים, איזה תותחית. עכשיו רמה חדשה!'],
+};
+
+let _hebrewVoice = null;
+let _voiceReady   = false;
+
+function loadHebrewVoice() {
+  if (_voiceReady) return;
+  const voices = speechSynthesis.getVoices();
+  const heIL    = voices.filter(v => v.lang === 'he-IL');
+  const heAny   = voices.filter(v => v.lang.startsWith('he'));
+  const isFemale = v => /female|woman|girl|f\b/i.test(v.name);
+  _hebrewVoice =
+    heIL.find(isFemale)  ||
+    heAny.find(isFemale) ||
+    heIL[0]  ||
+    heAny[0] ||
+    null;
+  _voiceReady = true;
+}
+
+// Load on first available voices event
+if (typeof speechSynthesis !== 'undefined') {
+  speechSynthesis.addEventListener('voiceschanged', loadHebrewVoice);
+  loadHebrewVoice(); // in case voices are already loaded
+}
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function speakHebrew(text, delayMs = 300) {
+  if (Sounds.muted) return;
+  if (typeof speechSynthesis === 'undefined') return;
+  setTimeout(() => {
+    if (Sounds.muted) return;
+    speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    loadHebrewVoice();
+    if (_hebrewVoice) utt.voice = _hebrewVoice;
+    utt.lang  = 'he-IL';
+    utt.rate  = 0.9;
+    utt.pitch = 1.3;
+    utt.volume = 1.0;
+    speechSynthesis.speak(utt);
+  }, delayMs);
+}
+
 // ── Sound effects (declared after Sounds so synthFn closures work) ──
 
 // Synthesis fallbacks for each sound
@@ -190,14 +242,17 @@ export const Sounds = {
   },
 
   tap:     () => sfx.tap.play(),
-  wrong:   () => sfx.wrong.play(),
-  correct: () => sfx.correct.play(),
-  win:     () => sfx.win.play(),
+  wrong:   () => { sfx.wrong.play(); speakHebrew(pick(VOICE_PHRASES.wrong), 400); },
+  correct: () => { sfx.correct.play(); speakHebrew(pick(VOICE_PHRASES.correct), 350); },
+  win:     () => { sfx.win.play(); speakHebrew(pick(VOICE_PHRASES.win), 600); },
   flip:    () => sfx.flip.play(),
-  match:   () => sfx.match.play(),
+  match:   () => { sfx.match.play(); speakHebrew(pick(VOICE_PHRASES.correct), 300); },
   star:    () => sfx.star.play(0.8),
-  streak:  () => sfx.streak.play(),
-  levelUp: () => sfx.levelUp.play(),
+  streak:  () => { sfx.streak.play(); speakHebrew(pick(VOICE_PHRASES.streak), 400); },
+  levelUp: () => { sfx.levelUp.play(); speakHebrew(pick(VOICE_PHRASES.levelUp), 500); },
+
+  // Speak arbitrary Hebrew text (e.g. letter names, numbers)
+  speak: (text, delayMs = 0) => speakHebrew(text, delayMs),
 };
 
 // Apply persisted mute state to Howler immediately

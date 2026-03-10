@@ -81,7 +81,7 @@ export default function MemoryGame({ onBack, onAddStars }) {
         Sounds.wrong();
         // FU8: wrong match animation on character
         setWrongAnim(true);
-        setTimeout(() => { setFlipped([]); setLocked(false); setWrongAnim(false); }, 1100);
+        setTimeout(() => { setFlipped([]); setLocked(false); setWrongAnim(false); }, 2200);
       }
     }
   }
