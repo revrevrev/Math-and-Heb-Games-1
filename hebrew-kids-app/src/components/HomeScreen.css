@@ -11,7 +11,7 @@
   flex-direction: column;
   align-items: center;
   background: linear-gradient(160deg, #0f0528 0%, #2d0f6b 50%, #4c1d95 100%);
-  padding-bottom: calc(var(--bottom-nav-h) + 12px);
+  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 48px) + 12px);
   overflow-x: hidden;
 }
 
@@ -90,66 +90,78 @@
   z-index: 1;
   width: 100%;
   max-width: var(--max-w);
-  padding: var(--sp-5) var(--sp-4) var(--sp-3);
 }
 
-.home-brand-row {
+/* Top bar: app brand + stars */
+.home-top-bar {
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-3);
+  justify-content: space-between;
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+  background: rgba(10, 3, 40, 0.65);
+  border-bottom: 1px solid rgba(167,139,250,0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.home-brand-chars {
+.home-app-brand {
   display: flex;
+  align-items: center;
   gap: var(--sp-2);
-  flex-shrink: 0;
 }
 
-.home-brand-title {
-  flex: 1;
-  text-align: right;
+.home-app-icon {
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
-.home-title {
-  font-size: clamp(1.35rem, 5.5vw, 1.8rem);
-  color: white;
-  text-shadow: 0 0 24px rgba(167,139,250,0.6), 0 2px 8px rgba(0,0,0,0.5);
-  line-height: 1.15;
+.home-app-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e9d5ff;
+  letter-spacing: 0.03em;
 }
 
-.home-subtitle {
-  font-size: clamp(0.82rem, 3vw, 0.95rem);
-  color: #c4b5fd;
-  margin-top: var(--sp-1);
-}
-
-/* ── Stars counter ─────────────────────────────────────── */
+/* Stars counter (inline in top bar) */
 .stars-counter {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
-  background: rgba(251,191,36,0.15);
-  border: 1.5px solid rgba(251,191,36,0.40);
+  gap: 6px;
+  background: rgba(251,191,36,0.12);
+  border: 1.5px solid rgba(251,191,36,0.35);
   border-radius: var(--r-full);
-  padding: var(--sp-2) var(--sp-4);
-  box-shadow: 0 0 20px rgba(251,191,36,0.25);
-  width: fit-content;
-  align-self: flex-end;
+  padding: 5px 14px 5px 10px;
 }
-.stars-star-icon {
-  font-size: 1.3rem;
-  animation: bounce 2s ease-in-out infinite;
-}
+.stars-star-icon { font-size: 1.1rem; line-height: 1; }
 .stars-num {
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   color: #fbbf24;
-  font-weight: bold;
-  min-width: 22px;
+  font-weight: 700;
+  min-width: 20px;
   text-align: center;
 }
-.stars-label  { font-size: 0.82rem; color: #fde68a; }
-.stars-hint   { font-size: 0.75rem; color: rgba(253,230,138,0.6); font-style: italic; margin-right: var(--sp-1); }
+.stars-label { font-size: 0.78rem; color: #fde68a; }
+
+/* Greeting row below top bar */
+.home-greeting-row {
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  text-align: right;
+  direction: rtl;
+}
+
+.home-greeting {
+  font-size: clamp(1.2rem, 5vw, 1.5rem);
+  color: white;
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+}
+
+.home-subtitle {
+  font-size: clamp(0.78rem, 3vw, 0.9rem);
+  color: #c4b5fd;
+  margin-top: 3px;
+}
 
 /* ── Games grid — 2-column square tiles ────────────────── */
 .games-grid {
@@ -257,16 +269,17 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: var(--max-w);
-  height: var(--bottom-nav-h);
+  min-height: var(--bottom-nav-h);
+  height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 48px));
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-around;
   background: rgba(15, 5, 40, 0.90);
   border-top: 1px solid rgba(167,139,250,0.25);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   z-index: 100;
-  padding: var(--sp-1) var(--sp-4) env(safe-area-inset-bottom, 0px);
+  padding: var(--sp-1) var(--sp-4) env(safe-area-inset-bottom, 48px);
 }
 
 .bottom-nav-item {

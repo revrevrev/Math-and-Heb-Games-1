@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
 import GameEffects from '../GameEffects';
@@ -36,14 +36,37 @@ export default function MemoryGame({ onBack, onAddStars }) {
   const [done, setDone]             = useState(false);
   const [matchHistory, setMatchHistory] = useState([]);  // FU24
   const [showReview, setShowReview] = useState(false);
+  const wrongTimeoutRef = useRef(null);
 
   useEffect(() => {
     Sounds.startMusic('memory');
-    return () => Sounds.stopMusic();
-  }, []);
+    return () => { Sounds.stopMusic(); cancelWrongTimeout(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function cancelWrongTimeout() {
+    if (wrongTimeoutRef.current) {
+      clearTimeout(wrongTimeoutRef.current);
+      wrongTimeoutRef.current = null;
+      return true;
+    }
+    return false;
+  }
 
   function handleFlip(idx) {
-    if (locked || flipped.includes(idx) || matched.has(cards[idx].pairId)) return;
+    if (matched.has(cards[idx].pairId)) return;
+
+    // If waiting for wrong-match cards to flip back, cancel and let user continue immediately
+    if (cancelWrongTimeout()) {
+      setFlipped([]);
+      setLocked(false);
+      setWrongAnim(false);
+      // Guard: don't re-flip the same card that was just shown
+      Sounds.flip();
+      setFlipped([idx]);
+      return;
+    }
+
+    if (locked || flipped.includes(idx)) return;
     Sounds.flip();
     const newFlipped = [...flipped, idx];
     setFlipped(newFlipped);
@@ -58,7 +81,6 @@ export default function MemoryGame({ onBack, onAddStars }) {
         setMatched(newMatched);
         setScore(s => s + 1);
         onAddStars(1);
-        // track matched pair for review
         const ca = cards[a], cb = cards[b];
         const fullCard = ca.type === 'full' ? ca : cb;
         const display = level === 1
@@ -78,15 +100,19 @@ export default function MemoryGame({ onBack, onAddStars }) {
           }, 500);
         }
       } else {
-        Sounds.wrong();
-        // FU8: wrong match animation on character
         setWrongAnim(true);
-        setTimeout(() => { setFlipped([]); setLocked(false); setWrongAnim(false); }, 2200);
+        wrongTimeoutRef.current = setTimeout(() => {
+          wrongTimeoutRef.current = null;
+          setFlipped([]);
+          setLocked(false);
+          setWrongAnim(false);
+        }, 2200);
       }
     }
   }
 
   function restart() {
+    cancelWrongTimeout();
     setCards(buildCards(level));
     setFlipped([]);
     setMatched(new Set());
@@ -100,6 +126,7 @@ export default function MemoryGame({ onBack, onAddStars }) {
   }
 
   function nextLevel() {
+    cancelWrongTimeout();
     const nl = level + 1;
     setLevel(nl);
     setCards(buildCards(nl));
@@ -160,7 +187,7 @@ export default function MemoryGame({ onBack, onAddStars }) {
           <div className="memory-helpers">
             <CharacterImg
               character="teletubbies"
-              size={240}
+              size={70}
               className={teletAnim}
             />
           </div>

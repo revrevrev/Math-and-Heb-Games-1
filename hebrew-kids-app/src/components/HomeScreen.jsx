@@ -144,25 +144,22 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
 
       {/* Header */}
       <header className="home-header fade-in">
-        <div className="home-brand-row">
-          <div className="home-brand-chars">
-            <CharImg src="/images/elsa.jpg"   alt="אלזה"  size={68} objPos="top center" />
-            <CharImg src="/images/Bluey.png" alt="בלואי" size={68} objPos="top center" />
+        <div className="home-top-bar">
+          <div className="home-app-brand">
+            <span className="home-app-icon">🎮</span>
+            <span className="home-app-name">Ferster-Games</span>
           </div>
-          <div className="home-brand-title">
-            <h1 className="home-title">
-              {profileName ? `שלום, ${profileName}! 🎉` : '🎮 משחקי לימוד'}
-            </h1>
-            <p className="home-subtitle">איזה כיף לשחק</p>
+          <div className="stars-counter">
+            <span className="stars-star-icon" aria-hidden>⭐</span>
+            <span className="stars-num">{totalStars}</span>
+            <span className="stars-label">כוכבים</span>
           </div>
         </div>
-
-        {/* Stars counter */}
-        <div className="stars-counter">
-          <span className="stars-star-icon" aria-hidden>⭐</span>
-          <span className="stars-num">{totalStars}</span>
-          <span className="stars-label">כוכבים</span>
-          {totalStars === 0 && <span className="stars-hint">שחקי כדי לאסוף!</span>}
+        <div className="home-greeting-row">
+          <h1 className="home-greeting">
+            {profileName ? `שלום, ${profileName}! 👋` : 'שלום! 👋'}
+          </h1>
+          <p className="home-subtitle">בחרי משחק ותתחילי ללמוד</p>
         </div>
       </header>
 
