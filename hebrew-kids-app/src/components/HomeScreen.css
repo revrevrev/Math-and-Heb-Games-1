@@ -1,5 +1,5 @@
 /* ╔══════════════════════════════════════════════════════╗
-   ║         HOME SCREEN — professional redesign          ║
+   ║     HOME SCREEN — KidsLand-inspired redesign         ║
    ╚══════════════════════════════════════════════════════╝ */
 
 /* ── Screen container ─────────────────────────────────── */
@@ -10,12 +10,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* leave room for fixed bottom nav */
+  background: #f5f7fb;
   padding-bottom: calc(var(--bottom-nav-h) + 12px);
   overflow-x: hidden;
 }
 
-/* ── Background particles (subtle) ────────────────────── */
+/* ── Background particles (very subtle on light bg) ───── */
 .bg-particles {
   position: fixed;
   inset: 0;
@@ -25,8 +25,7 @@
 .particle {
   position: absolute;
   animation: drift var(--dur, 5.5s) ease-in-out infinite;
-  opacity: 0.12;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,0.2));
+  opacity: 0.07;
 }
 
 /* ── Welcome overlay ───────────────────────────────────── */
@@ -37,51 +36,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(10, 6, 40, 0.78);
+  background: rgba(30, 10, 60, 0.65);
   backdrop-filter: blur(8px);
 }
 .welcome-card {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  background: linear-gradient(135deg, #1e3a8a 0%, #6d28d9 100%);
-  border: 2px solid var(--color-border-strong);
+  background: white;
   border-radius: var(--r-xl);
   padding: var(--sp-5) var(--sp-6) var(--sp-5) var(--sp-4);
-  box-shadow: var(--shadow-xl), 0 0 48px rgba(165,243,252,0.18);
+  box-shadow: 0 20px 60px rgba(107,44,199,0.25);
   max-width: 340px;
   margin: 0 var(--sp-4);
 }
 .welcome-text-wrap { text-align: right; }
 .welcome-hi {
   font-size: clamp(1.1rem, 5vw, 1.35rem);
-  color: #a5f3fc;
+  color: #6B2CC7;
   margin-bottom: var(--sp-2);
 }
 .welcome-msg {
-  font-size: clamp(0.95rem, 4vw, 1.15rem);
-  color: white;
+  font-size: clamp(0.95rem, 4vw, 1.1rem);
+  color: #444;
   margin-bottom: var(--sp-3);
 }
 .welcome-btn {
-  background: linear-gradient(135deg, var(--gold), var(--orange));
-  color: #1a0a00;
+  background: linear-gradient(135deg, #6B2CC7, #9B59E8);
+  color: white;
   border-radius: var(--r-full);
   padding: var(--sp-2) var(--sp-5);
   font-size: 1rem;
   font-family: inherit;
   border: none;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 16px rgba(107,44,199,0.35);
   width: 100%;
 }
 .welcome-btn:active { transform: scale(0.94); }
 
-/* Welcome character — pill shape to show portrait */
+/* Welcome character — pill shape */
 .welcome-card .char-sticker {
   border-radius: var(--r-lg) !important;
   width: 90px !important;
   height: 110px !important;
   flex-shrink: 0;
+  border-color: rgba(107,44,199,0.2) !important;
 }
 
 /* ── Header ────────────────────────────────────────────── */
@@ -90,10 +89,11 @@
   z-index: 1;
   width: 100%;
   max-width: var(--max-w);
-  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+  padding: var(--sp-5) var(--sp-4) var(--sp-3);
+  background: transparent;
 }
 
-/* Brand row: character stickers + title */
+/* Brand row */
 .home-brand-row {
   display: flex;
   align-items: center;
@@ -113,41 +113,39 @@
 }
 
 .home-title {
-  font-size: clamp(1.3rem, 5.5vw, 1.9rem);
-  color: white;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 0 28px rgba(165,243,252,0.3);
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  color: #6B2CC7;
   line-height: 1.15;
+  text-shadow: none;
 }
 
 .home-subtitle {
-  font-size: clamp(0.8rem, 3vw, 0.95rem);
-  color: #bae6fd;
+  font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+  color: #9a9ab0;
   margin-top: var(--sp-1);
 }
 
-/* ── Stars counter — numeric, compact ──────────────────── */
+/* ── Stars counter ─────────────────────────────────────── */
 .stars-counter {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  background: rgba(251,191,36,0.14);
-  border: 1.5px solid rgba(251,191,36,0.35);
+  background: rgba(107,44,199,0.08);
+  border: 1.5px solid rgba(107,44,199,0.18);
   border-radius: var(--r-full);
   padding: var(--sp-2) var(--sp-4);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-gold);
   width: fit-content;
   align-self: flex-end;
 }
 
 .stars-star-icon {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   animation: bounce 2.4s ease-in-out infinite;
 }
 
 .stars-num {
-  font-size: 1.4rem;
-  color: var(--gold);
+  font-size: 1.35rem;
+  color: #6B2CC7;
   font-weight: bold;
   min-width: 20px;
   text-align: center;
@@ -155,160 +153,143 @@
 
 .stars-label {
   font-size: 0.82rem;
-  color: #fde68a;
+  color: #8a6fc0;
 }
 
 .stars-hint {
   font-size: 0.76rem;
-  color: var(--color-text-faint);
+  color: #b0b0c8;
   font-style: italic;
   margin-right: var(--sp-1);
 }
 
-/* ── Games grid ────────────────────────────────────────── */
+/* ── Games grid — single column ────────────────────────── */
 .games-grid {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: var(--max-w);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-4) var(--sp-3);
 }
 
-/* Last card (Words) spans full width */
-.game-card:nth-child(5) {
-  grid-column: 1 / -1;
-}
-
-/* ── Individual game card ──────────────────────────────── */
+/* ── Individual game card — KidsLand horizontal ────────── */
 .game-card {
   position: relative;
-  min-height: 150px;
+  height: 130px;
   border-radius: var(--r-xl);
-  border: 2px solid rgba(255,255,255,0.28);
+  border: none;
   overflow: hidden;
-  text-align: right;
   cursor: pointer;
   transition: transform var(--t-fast), box-shadow var(--t-fast);
-  animation: slideUp 0.4s ease-out both, cardGlow 3.5s ease-in-out infinite;
-  box-shadow: var(--shadow-md);
+  animation: slideUp 0.4s ease-out both;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  text-align: right;
 }
-
-.game-card:nth-child(5) { min-height: 128px; }
 
 .game-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.18);
 }
 
 .game-card:active,
 .game-card.card-pressed {
-  transform: scale(0.93);
-  box-shadow: var(--shadow-sm);
+  transform: scale(0.96);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
 }
 
-/* Large semi-transparent watermark emoji */
-.card-watermark {
-  position: absolute;
-  bottom: -10px;
-  left: -6px;
-  font-size: 80px;
-  opacity: 0.11;
-  transform: rotate(-12deg);
-  pointer-events: none;
-  filter: blur(1px);
-  line-height: 1;
-}
-.game-card:nth-child(5) .card-watermark {
-  font-size: 68px;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-5deg);
-}
+/* Watermark: disabled in new design */
+.card-watermark { display: none; }
 
-/* Character peeking from bottom-left */
-.card-char-peek {
+/* ── Play button circle (top-left) ─────────────────────── */
+.card-play-btn {
   position: absolute;
-  bottom: -16px;
-  left: 6px;
+  top: 14px;
+  left: 14px;
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #6B2CC7;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  border: none;
+  padding: 0;
+  /* Override any inline-flex set elsewhere */
+  margin: 0;
+  letter-spacing: 0;
   z-index: 3;
-  filter: drop-shadow(3px 0 6px rgba(0,0,0,0.28));
-}
-.game-card:nth-child(5) .card-char-peek {
-  bottom: -16px;
-  left: 18px;
 }
 
-/* Text content area */
+/* ── Text content (bottom-left area) ───────────────────── */
 .card-text-area {
   position: absolute;
-  inset: 0;
-  left: 100px;
+  bottom: 0;
+  left: 0;
+  right: 120px;
+  padding: 0 var(--sp-4) var(--sp-3) var(--sp-4);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-1);
-  gap: var(--sp-1);
+  justify-content: flex-end;
+  gap: 2px;
   z-index: 2;
 }
-.game-card:nth-child(5) .card-text-area { left: 112px; }
 
-.card-emoji-badge {
-  font-size: 1.45rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.3));
-}
-
-.card-title {
-  font-size: clamp(0.88rem, 3.4vw, 1.05rem);
-  color: white;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
-  line-height: 1.2;
-}
+.card-emoji-badge { display: none; }
 
 .card-subtitle {
-  font-size: clamp(0.7rem, 2.6vw, 0.85rem);
-  color: rgba(255,255,255,0.82);
-}
-
-.card-play-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1);
-  margin-top: var(--sp-2);
-  background: rgba(255,255,255,0.24);
-  border: 1px solid rgba(255,255,255,0.42);
-  border-radius: var(--r-full);
-  padding: 4px var(--sp-3);
-  font-size: 0.76rem;
-  color: white;
-  backdrop-filter: blur(4px);
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.85);
+  text-transform: none;
   letter-spacing: 0.02em;
 }
 
-/* ── Character sticker ─────────────────────────────────── */
+.card-title {
+  font-size: clamp(0.95rem, 3.8vw, 1.1rem);
+  color: white;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  line-height: 1.2;
+}
+
+/* ── Character image — right side ──────────────────────── */
+.card-char-peek {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.card-char-peek .char-sticker {
+  width: 120px !important;
+  height: 130px !important;
+  border-radius: 0 var(--r-xl) var(--r-xl) 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+/* ── Character sticker (header brand row) ─────────────── */
 .char-sticker {
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
   background: white;
-  border: 2.5px solid rgba(255,255,255,0.8);
-  box-shadow:
-    var(--shadow-md),
-    0 0 0 2px rgba(255,255,255,0.18),
-    0 0 18px rgba(255,255,255,0.12);
-  animation: sticker-bob 3.8s ease-in-out infinite, sticker-glow 4.2s ease-in-out infinite;
+  border: 2.5px solid rgba(107,44,199,0.2);
+  box-shadow: 0 4px 12px rgba(107,44,199,0.15);
+  animation: sticker-bob 3.8s ease-in-out infinite;
   transition: transform var(--t-med), box-shadow var(--t-med);
 }
 .char-sticker:hover {
   transform: scale(1.1) rotate(-3deg);
-  box-shadow:
-    var(--shadow-lg),
-    0 0 0 3px rgba(255,220,120,0.5),
-    0 0 28px rgba(255,220,120,0.25);
+  box-shadow: 0 6px 20px rgba(107,44,199,0.3);
 }
 .char-sticker img {
   width: 100%;
@@ -319,15 +300,11 @@
 
 @keyframes sticker-bob {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  30%      { transform: translateY(-4px) rotate(-2deg); }
-  70%      { transform: translateY(-2px) rotate(2deg); }
-}
-@keyframes sticker-glow {
-  0%, 100% { box-shadow: var(--shadow-md), 0 0 0 2px rgba(255,255,255,0.18), 0 0 18px rgba(255,255,255,0.12); }
-  50%      { box-shadow: var(--shadow-md), 0 0 0 3px rgba(255,220,120,0.45), 0 0 26px rgba(255,220,120,0.22); }
+  30%       { transform: translateY(-4px) rotate(-2deg); }
+  70%       { transform: translateY(-2px) rotate(2deg); }
 }
 
-/* ── Bottom navigation tab bar ─────────────────────────── */
+/* ── Bottom navigation tab bar — white ─────────────────── */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -339,10 +316,9 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: rgba(13, 11, 46, 0.88);
-  border-top: 1px solid var(--color-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: white;
+  border-top: 1px solid #eaeaf0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
   z-index: 100;
   padding: var(--sp-1) var(--sp-4) env(safe-area-inset-bottom, 0px);
 }
@@ -358,13 +334,13 @@
   border: none;
   border-radius: var(--r-md);
   transition: background var(--t-fast), transform var(--t-fast);
-  color: var(--color-text-dim);
+  color: #9a9ab0;
   max-width: 90px;
 }
 .bottom-nav-item:active {
-  background: rgba(255,255,255,0.1);
+  background: rgba(107,44,199,0.08);
   transform: scale(0.9);
 }
 
 .bnav-icon  { font-size: 1.5rem; line-height: 1; }
-.bnav-label { font-size: 0.72rem; color: var(--color-text-dim); letter-spacing: 0.01em; }
+.bnav-label { font-size: 0.72rem; color: #9a9ab0; letter-spacing: 0.01em; }

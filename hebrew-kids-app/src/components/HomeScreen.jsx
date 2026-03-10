@@ -7,55 +7,40 @@ const GAMES = [
   {
     id: 'letters',
     title: 'אותיות עם אלזה',
-    subtitle: 'לימוד א-ב!',
-    emoji: '❄️',
-    gradient: 'linear-gradient(145deg, #0ea5e9 0%, #6366f1 100%)',
-    glowColor: '#38bdf8',
-    watermark: '❄️',
+    subtitle: 'א-ב',
+    gradient: 'linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%)',
     imgSrc: '/images/elsa.png',
     imgPos: 'top center',
   },
   {
     id: 'counting',
     title: 'ספירה עם בלואי',
-    subtitle: 'בואי נספור!',
-    emoji: '🐾',
-    gradient: 'linear-gradient(145deg, #2563eb 0%, #06b6d4 100%)',
-    glowColor: '#60a5fa',
-    watermark: '🐾',
+    subtitle: 'בואי נספור',
+    gradient: 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)',
     imgSrc: '/images/bluey.webp',
     imgPos: 'top center',
   },
   {
     id: 'memory',
-    title: 'זיכרון טלטאבי',
-    subtitle: 'מצאי זוגות!',
-    emoji: '🧠',
-    gradient: 'linear-gradient(145deg, #9333ea 0%, #ec4899 100%)',
-    glowColor: '#c084fc',
-    watermark: '💜',
+    title: 'משחק הזכרון עם טלטאביס',
+    subtitle: 'מצאי זוגות',
+    gradient: 'linear-gradient(135deg, #f472b6 0%, #9333ea 100%)',
     imgSrc: '/images/teletubbies.jpg',
     imgPos: 'center 12%',
   },
   {
     id: 'math',
     title: 'חשבון עם מיקי',
-    subtitle: 'חיבור וחיסור!',
-    emoji: '🎯',
-    gradient: 'linear-gradient(145deg, #16a34a 0%, #ca8a04 100%)',
-    glowColor: '#4ade80',
-    watermark: '🌟',
+    subtitle: 'חיבור וחיסור',
+    gradient: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
     imgSrc: '/images/Mickey1.jpeg',
     imgPos: 'top center',
   },
   {
     id: 'words',
     title: 'מילות קסם עם גבי',
-    subtitle: 'בואי נבנה מילים!',
-    emoji: '✨',
-    gradient: 'linear-gradient(145deg, #ea580c 0%, #db2777 100%)',
-    glowColor: '#fb923c',
-    watermark: '✨',
+    subtitle: 'בואי נבנה מילים',
+    gradient: 'linear-gradient(135deg, #fb923c 0%, #e11d48 100%)',
     imgSrc: '/images/gabby-hero2.png',
     imgPos: 'top center',
   },
@@ -173,22 +158,19 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
             className={`game-card ${pressed === game.id ? 'card-pressed' : ''}`}
             style={{
               background: game.gradient,
-              '--glow': game.glowColor,
               animationDelay: `${i * 0.08}s`,
             }}
             onClick={() => handleSelect(game)}
           >
-            <span className="card-watermark" aria-hidden>{game.watermark}</span>
-
-            <div className="card-char-peek">
-              <CharImg src={game.imgSrc} alt={game.title} size={88} objPos={game.imgPos} />
-            </div>
+            <span className="card-play-btn" aria-hidden>▶</span>
 
             <div className="card-text-area">
-              <span className="card-emoji-badge">{game.emoji}</span>
               <strong className="card-title">{game.title}</strong>
               <span className="card-subtitle">{game.subtitle}</span>
-              <span className="card-play-btn">▶ שחקי!</span>
+            </div>
+
+            <div className="card-char-peek">
+              <CharImg src={game.imgSrc} alt={game.title} size={120} objPos={game.imgPos} />
             </div>
           </button>
         ))}

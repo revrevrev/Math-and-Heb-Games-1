@@ -13,6 +13,7 @@
   position: relative;
 }
 
+/* White object display area */
 .count-objects {
   flex: 1;
   display: flex;
@@ -20,13 +21,13 @@
   align-content: flex-start;
   gap: var(--sp-2);
   padding: var(--sp-3);
-  background: var(--color-surface);
+  background: white;
   border-radius: var(--r-lg);
-  border: 1.5px solid var(--color-border);
+  border: none;
   min-height: 120px;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 18px rgba(37,99,235,0.14);
 }
 
 .count-obj {
@@ -35,6 +36,7 @@
   line-height: 1;
 }
 
+/* Number choice buttons */
 .number-choices {
   display: flex;
   gap: 10px;
@@ -47,14 +49,18 @@
   width: clamp(52px, 14vw, 68px);
   height: clamp(52px, 14vw, 68px);
   border-radius: var(--r-md);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border-strong);
-  color: white;
+  background: white;
+  border: 2.5px solid rgba(37,99,235,0.25);
+  color: #2563eb;
   font-size: clamp(1.4rem, 5vw, 2rem);
   font-family: inherit;
-  transition: transform var(--t-fast);
-  backdrop-filter: blur(6px);
-  box-shadow: var(--shadow-sm);
+  transition: transform var(--t-fast), border-color var(--t-fast);
+  box-shadow: 0 3px 12px rgba(37,99,235,0.12);
+}
+
+.num-btn:hover {
+  border-color: rgba(37,99,235,0.5);
+  background: #eff6ff;
 }
 
 .num-btn:active {

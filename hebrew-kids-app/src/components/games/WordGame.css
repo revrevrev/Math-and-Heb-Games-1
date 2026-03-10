@@ -13,20 +13,20 @@
   position: relative;
 }
 
+/* White hint card */
 .word-hint-box {
   flex: 1;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
+  background: white;
+  border: none;
   border-radius: var(--r-lg);
   padding: var(--sp-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-1);
-  backdrop-filter: blur(6px);
   min-height: 110px;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 18px rgba(234,88,12,0.14);
 }
 
 .word-emoji {
@@ -35,7 +35,8 @@
 
 .word-hint {
   font-size: clamp(1rem, 3.5vw, 1.2rem);
-  color: #fde68a;
+  color: #ea580c;
+  font-weight: 600;
 }
 
 /* Letter slots */
@@ -50,20 +51,20 @@
   width: clamp(42px, 12vw, 56px);
   height: clamp(42px, 12vw, 56px);
   border-radius: 14px;
-  border: 3px dashed rgba(255,255,255,0.4);
+  border: 3px dashed rgba(255,255,255,0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: clamp(1.4rem, 5vw, 2rem);
   color: white;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.15);
   transition: all 0.2s;
 }
 
 .slot-filled {
   border-style: solid;
-  border-color: #fbbf24;
-  background: rgba(251,191,36,0.2);
+  border-color: white;
+  background: rgba(255,255,255,0.30);
   animation: pop 0.25s ease;
 }
 
@@ -72,7 +73,7 @@
   background: rgba(74,222,128,0.25) !important;
 }
 
-/* Letter tiles */
+/* Letter tiles — white with accent color */
 .letter-tiles {
   display: flex;
   gap: 8px;
@@ -85,14 +86,13 @@
   width: clamp(56px, 16vw, 78px);
   height: clamp(56px, 16vw, 78px);
   border-radius: var(--r-md);
-  background: rgba(255,255,255,0.18);
-  border: 2px solid var(--color-border-strong);
-  color: white;
+  background: white;
+  border: 2.5px solid rgba(255,255,255,0.70);
+  color: #ea580c;
   font-size: clamp(2rem, 7vw, 2.8rem);
   font-family: inherit;
   transition: transform var(--t-fast), opacity 0.2s;
-  backdrop-filter: blur(6px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
 }
 
 .letter-tile:active:not(:disabled) {
@@ -106,11 +106,12 @@
 
 /* Undo button */
 .undo-btn {
-  background: var(--color-surface);
-  color: #fde68a;
+  background: white;
+  color: #ea580c;
   border-radius: var(--r-sm);
   padding: var(--sp-2) var(--sp-4);
   font-size: 0.95rem;
   font-family: inherit;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid rgba(234,88,12,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }

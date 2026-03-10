@@ -12,24 +12,21 @@
   position: relative;
 }
 
+/* White equation card */
 .equation-box {
   flex: 1;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
+  background: white;
+  border: none;
   border-radius: var(--r-lg);
   padding: var(--sp-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-2);
-  backdrop-filter: blur(8px);
   min-height: 110px;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Math equation must read left-to-right regardless of page RTL */
-.equation-box {
+  box-shadow: 0 4px 18px rgba(22,163,74,0.14);
+  /* Math reads LTR */
   direction: ltr;
 }
 
@@ -56,31 +53,32 @@
 
 .math-num-big {
   font-size: 2rem;
-  color: white;
+  color: #15803d;
   font-weight: bold;
 }
 
 .eq-op,
 .eq-eq {
   font-size: clamp(1.6rem, 5.5vw, 2.2rem);
-  color: #fde047;
+  color: #16a34a;
   font-weight: bold;
   padding: 0 4px;
 }
 
 .eq-unknown {
   font-size: clamp(1.8rem, 6vw, 2.6rem);
-  color: #fb923c;
+  color: #ea580c;
   font-weight: bold;
   animation: pulseGlow 1.5s ease-in-out infinite;
 }
 
 .eq-text {
   font-size: clamp(1.4rem, 5vw, 2rem);
-  color: white;
+  color: #1e293b;
   letter-spacing: 2px;
 }
 
+/* Answer choice buttons */
 .math-choices {
   display: flex;
   gap: 14px;
@@ -91,14 +89,18 @@
   width: clamp(64px, 18vw, 88px);
   height: clamp(64px, 18vw, 88px);
   border-radius: var(--r-lg);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border-strong);
-  color: white;
+  background: white;
+  border: 2.5px solid rgba(22,163,74,0.25);
+  color: #16a34a;
   font-size: clamp(1.6rem, 6vw, 2.4rem);
   font-family: inherit;
-  transition: transform var(--t-fast);
-  backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-md);
+  transition: transform var(--t-fast), border-color var(--t-fast);
+  box-shadow: 0 3px 14px rgba(22,163,74,0.14);
+}
+
+.math-btn:hover {
+  border-color: rgba(22,163,74,0.5);
+  background: #f0fdf4;
 }
 
 .math-btn:active {

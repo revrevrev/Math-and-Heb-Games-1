@@ -82,7 +82,7 @@ html, body {
 
 body {
   font-family: 'Fredoka One', 'Fredoka', 'Arial Rounded MT Bold', Arial, sans-serif;
-  background: var(--bg-gradient);
+  background: #f5f7fb;
   min-height: 100vh;
 }
 

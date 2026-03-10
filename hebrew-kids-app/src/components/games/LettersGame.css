@@ -15,32 +15,33 @@
   position: relative;
 }
 
+/* White card for the big letter */
 .big-letter-card {
-  background: rgba(255,255,255,0.14);
-  border: 3px solid rgba(165,243,252,0.55);
+  background: white;
+  border: none;
   border-radius: var(--r-xl);
   padding: var(--sp-4) var(--sp-6);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-2);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 30px rgba(165,243,252,0.25);
+  box-shadow: 0 6px 28px rgba(124,58,237,0.18);
   min-width: 100px;
 }
 
 .big-letter {
   font-size: clamp(4rem, 14vw, 6rem);
-  color: white;
-  text-shadow: 0 2px 12px rgba(165,243,252,0.8), 0 0 24px rgba(165,243,252,0.5);
+  color: #7c3aed;
+  text-shadow: none;
   line-height: 1;
 }
 
 .letter-name {
-  color: #a5f3fc;
+  color: #8b5cf6;
   font-size: 1rem;
 }
 
+/* 2-column choice grid */
 .choices-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -48,19 +49,24 @@
   width: 100%;
 }
 
+/* White choice buttons with purple letter */
 .choice-btn {
-  background: var(--color-surface);
-  border: 2px solid var(--color-border-strong);
+  background: white;
+  border: 2.5px solid rgba(124,58,237,0.25);
   border-radius: var(--r-lg);
   padding: var(--sp-5) var(--sp-3);
   font-size: clamp(2.2rem, 8vw, 3.2rem);
-  color: white;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  transition: transform var(--t-fast), background var(--t-fast);
-  backdrop-filter: blur(6px);
+  color: #7c3aed;
+  text-shadow: none;
+  transition: transform var(--t-fast), background var(--t-fast), border-color var(--t-fast);
   font-family: inherit;
   line-height: 1;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 3px 12px rgba(124,58,237,0.12);
+}
+
+.choice-btn:hover {
+  border-color: rgba(124,58,237,0.5);
+  background: #faf5ff;
 }
 
 .choice-btn:active {
