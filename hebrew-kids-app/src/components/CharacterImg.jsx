@@ -52,8 +52,14 @@ const CHARS = {
     aspect: 0.88,
   },
   mickey: {
-    src: '/images/Mickey1.jpeg',
+    src: '/images/Mickey2.jpg',
     alt: 'מיקי מאוס',
+    pos: 'top center',
+    aspect: 1.0,
+  },
+  minnie: {
+    src: '/images/minnie-mouse_1.jpg',
+    alt: 'מיני מאוס',
     pos: 'top center',
     aspect: 1.0,
   },

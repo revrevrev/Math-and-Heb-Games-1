@@ -9,57 +9,41 @@ import './MathGame.css';
 
 const ROUNDS = 10;
 
+const OBJECT_SETS = [
+  '🍎','🌸','🎈','🍓','⭐','🍊','🎀','🦋','🍭','🌺',
+  '🐣','🍇','💛','🍉','🌻','🎊','🍬','🐠','🎵','🍑',
+];
+
 function makeRound(roundIndex) {
-  const maxN = Math.min(3 + Math.floor(roundIndex * 0.8), 9);
-  const isAdd = Math.random() > 0.35;
-  let a, b, answer;
-  if (isAdd) {
-    a = 1 + Math.floor(Math.random() * maxN);
-    b = 1 + Math.floor(Math.random() * (maxN - a + 1));
-    answer = a + b;
-  } else {
-    answer = 1 + Math.floor(Math.random() * maxN);
-    b      = 1 + Math.floor(Math.random() * answer);
-    a      = answer + b;
-  }
-  const op    = isAdd ? '+' : '-';
+  const maxA = Math.min(2 + Math.floor(roundIndex * 0.5), 7);
+  const a = 1 + Math.floor(Math.random() * maxA);
+  const maxB = Math.min(10 - a, 2 + Math.floor(roundIndex * 0.5));
+  const b = 1 + Math.floor(Math.random() * Math.max(1, maxB));
+  const answer = a + b;
+  const obj = OBJECT_SETS[roundIndex % OBJECT_SETS.length];
+
   const wrongs = new Set();
   while (wrongs.size < 2) {
-    const w = Math.max(0, Math.min(18, answer + (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 3))));
+    const delta = 1 + Math.floor(Math.random() * 3);
+    const sign = Math.random() > 0.5 ? 1 : -1;
+    const w = Math.max(2, Math.min(10, answer + sign * delta));
     if (w !== answer) wrongs.add(w);
   }
-  return { a, b, op, answer, choices: shuffle3([answer, ...[...wrongs]]) };
+  return { a, b, answer, obj, choices: [...[answer, ...[...wrongs]]].sort(() => Math.random() - 0.5) };
 }
-
-function shuffle3(arr) {
-  return arr.sort(() => Math.random() - 0.5);
-}
-
-function Dots({ n, emoji }) {
-  if (n > 10) return <span className="math-num-big">{n}</span>;
-  return (
-    <span className="dots-row">
-      {Array.from({ length: n }).map((_, i) => (
-        <span key={i} className="math-dot">{emoji}</span>
-      ))}
-    </span>
-  );
-}
-
-const DOT_EMOJIS = ['🍎','🌸','⭐','🍓','🐣','🍊','🎈','💜','🍭','🐠'];
 
 export default function MathGame({ onBack, onAddStars }) {
-  const [round, setRound]           = useState(0);
-  const [data, setData]             = useState(() => makeRound(0));
-  const [emoji] = useState(() => DOT_EMOJIS[Math.floor(Math.random() * DOT_EMOJIS.length)]);
-  const [chosen, setChosen]         = useState(null);
-  const [correct, setCorrect]       = useState(false);
-  const [wrong, setWrong]           = useState(false);
-  const [score, setScore]           = useState(0);
-  const [done, setDone]             = useState(false);
-  const [mickeyAnim, setMickeyAnim] = useState('');
+  const [round, setRound]         = useState(0);
+  const [data, setData]           = useState(() => makeRound(0));
+  const [chosen, setChosen]       = useState(null);
+  const [correct, setCorrect]     = useState(false);
+  const [wrong, setWrong]         = useState(false);
+  const [score, setScore]         = useState(0);
+  const [done, setDone]           = useState(false);
+  const [flying, setFlying]       = useState(false);
+  const [collected, setCollected] = useState(false);
   const [showReview, setShowReview] = useState(false);
-  const ge        = useGameEnhancements(ROUNDS);
+  const ge         = useGameEnhancements(ROUNDS);
   const autoAdvRef = useRef(null);
 
   useEffect(() => {
@@ -81,13 +65,14 @@ export default function MathGame({ onBack, onAddStars }) {
       setChosen(null);
       setCorrect(false);
       setWrong(false);
+      setFlying(false);
+      setCollected(false);
     }
   }, [round]);
 
   function doAdvance() {
     if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     ge.clearWaiting();
-    setMickeyAnim('');
     advance();
   }
 
@@ -97,18 +82,22 @@ export default function MathGame({ onBack, onAddStars }) {
     setChosen(n);
     if (n === data.answer) {
       setCorrect(true);
-      setMickeyAnim('celebrate');
       setScore(s => s + 1);
       onAddStars(1);
       Sounds.correct();
-      ge.onCorrect({ display: `${data.a} ${data.op} ${data.b} = ${data.answer}` }, round);
-      autoAdvRef.current = setTimeout(doAdvance, 2500);
+      ge.onCorrect({ display: `${data.a} + ${data.b} = ${data.answer}` }, round);
+      setFlying(true);
+      setTimeout(() => {
+        setFlying(false);
+        setCollected(true);
+        Sounds.star?.();
+      }, 1200);
+      autoAdvRef.current = setTimeout(doAdvance, 2200);
     } else {
       setWrong(true);
-      setMickeyAnim('wiggle');
       Sounds.wrong();
       ge.onWrong();
-      setTimeout(() => { setWrong(false); setChosen(null); setMickeyAnim(''); }, 900);
+      setTimeout(() => { setWrong(false); setChosen(null); }, 900);
     }
   }
 
@@ -116,7 +105,7 @@ export default function MathGame({ onBack, onAddStars }) {
     if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     setRound(0); setData(makeRound(0)); setChosen(null);
     setCorrect(false); setWrong(false); setScore(0); setDone(false);
-    setShowReview(false);
+    setFlying(false); setCollected(false); setShowReview(false);
     ge.reset();
   }
 
@@ -125,31 +114,27 @@ export default function MathGame({ onBack, onAddStars }) {
   }, [done, score]);
 
   return (
-    <GameShell title="חשבון עם מיקי" emoji="🎯" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
+    <GameShell title="חשבון עם מיקי ומיני" emoji="🧺" score={score} maxScore={ROUNDS} onBack={onBack} bgClass="math-bg">
       <GameEffects correct={correct} done={done} character="mickey" />
 
-      {ge.showStreakBonus && (
-        <div className="streak-banner">🔥 {ge.streakCount} ברצף! מדהים!</div>
-      )}
-      {ge.showLevelUp && (
-        <div className="level-up-banner">⬆️ שלב 2! המשיכי כך! 🌟</div>
-      )}
+      {ge.showStreakBonus && <div className="streak-banner">🔥 {ge.streakCount} ברצף! מדהים!</div>}
+      {ge.showLevelUp    && <div className="level-up-banner">⬆️ שלב 2! המשיכי כך! 🌟</div>}
 
       {done ? (
         <div className="done-screen fade-in">
-          <CharacterImg character="mickey" size={130} />
+          <div className="done-chars">
+            <CharacterImg character="mickey" size={100} className="bounce" />
+            <CharacterImg character="minnie" size={100} className="bounce" />
+          </div>
           <div className="done-box pop">
-            <span className="done-emoji">🎯</span>
+            <span className="done-emoji">🧺</span>
             <h2 className="done-title">מצוינת!</h2>
             <p className="done-sub">קיבלת {score} כוכבים מתוך {ROUNDS}!</p>
             {score === ROUNDS && <span className="done-perfect">🌟 משחק מושלם!</span>}
-            <div className="done-perf">
-              <span>🔥 רצף מקסימלי: {ge.bestStreak}</span>
-            </div>
+            <div className="done-perf"><span>🔥 רצף מקסימלי: {ge.bestStreak}</span></div>
             {'⭐'.repeat(score)}
             <div className="done-btns">
-              <button className="done-btn secondary review-toggle-btn"
-                onClick={() => setShowReview(r => !r)}>
+              <button className="done-btn secondary" onClick={() => setShowReview(r => !r)}>
                 {showReview ? '▲ הסתרי' : '📋 סקירה'}
               </button>
               <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
@@ -172,32 +157,55 @@ export default function MathGame({ onBack, onAddStars }) {
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${(round / ROUNDS) * 100}%` }} />
           </div>
-          <p className="round-label">שאלה {round + 1} מתוך {ROUNDS}</p>
+          <p className="round-label">תרגיל {round + 1} מתוך {ROUNDS}</p>
 
           <div className="math-stage">
-            <div className={`mickey-wrap ${mickeyAnim}`}>
-              <CharacterImg character="mickey" size={85} />
-              {correct && <div className="speech-bubble">נכון! יופי! 🌟</div>}
-              {wrong   && <div className="speech-bubble wrong-speech">נסי שוב 💪</div>}
+
+            {/* Mickey — left */}
+            <div className="character-side">
+              <CharacterImg character="mickey" size={72} className={wrong ? 'wiggle' : ''} />
+              <span className="char-number">{data.a}</span>
+              <div className={`obj-group${flying ? ' fly-left' : ''}${collected ? ' hidden' : ''}`}>
+                {Array.from({ length: data.a }).map((_, i) => (
+                  <span key={i} className="obj-emoji" style={{ animationDelay: `${i * 60}ms` }}>
+                    {data.obj}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            <div className={`equation-box ${correct ? 'correct-stage' : ''} ${wrong ? 'wrong-stage' : ''}`}>
-              <div className="eq-visual">
-                <Dots n={data.a} emoji={emoji} />
-                <span className="eq-op">{data.op}</span>
-                <Dots n={data.b} emoji={emoji} />
-                <span className="eq-eq">=</span>
-                <span className="eq-unknown">?</span>
-              </div>
-              <div className="eq-text">
-                {data.a} {data.op} {data.b} = ?
+            {/* Basket — center */}
+            <div className="basket-center">
+              <div className={`basket-icon${collected ? ' basket-pop' : ''}`}>🧺</div>
+              {collected && (
+                <div className="basket-contents">
+                  {Array.from({ length: data.answer }).map((_, i) => (
+                    <span key={i} className="obj-emoji small" style={{ animationDelay: `${i * 30}ms` }}>
+                      {data.obj}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Minnie — right */}
+            <div className="character-side">
+              <CharacterImg character="minnie" size={72} className={wrong ? 'wiggle' : ''} />
+              <span className="char-number">{data.b}</span>
+              <div className={`obj-group${flying ? ' fly-right' : ''}${collected ? ' hidden' : ''}`}>
+                {Array.from({ length: data.b }).map((_, i) => (
+                  <span key={i} className="obj-emoji" style={{ animationDelay: `${i * 60}ms` }}>
+                    {data.obj}
+                  </span>
+                ))}
               </div>
             </div>
+
           </div>
 
-          <p className="instruction">מה התשובה? 👇</p>
+          <p className="instruction">כמה יש להם יחד? 🧺</p>
 
-          <div className="math-choices">
+          <div className={`math-choices${wrong ? ' shake' : ''}`}>
             {data.choices.map(n => {
               const isChosen = chosen === n;
               const isRight  = isChosen && n === data.answer;
