@@ -22,7 +22,7 @@ FU12→ Add sound toggle - done (🔊/🔇 mute button in every GameShell header
 FU13→ Add music - done (synthetic Web Audio looping melody per game via Sounds.startMusic/stopMusic)
 FU14→ Add visual feedback for button presses - done (all buttons already had :active CSS, verified)
 FU15→ Add "Correct!" / "Try Again!" text feedback - done (all games already had speech bubbles / feedback strips)
-FU16→ ****TODO**** Add character voice lines - skipped (requires real audio files from freesound.org)
+FU16→ Add character voice lines - done
 FU17→ Add "Round Complete!" screen - done (enhanced done screen: perfect-game badge, streak stats, review toggle)
 FU18→ Add "Streak Bonus!" screen - done (🔥 banner appears at 3/6/9 consecutive correct, with streak sound)
 FU19→ Add "Level Up!" screen - done (⬆️ banner at midpoint of each game with level-up sound)
@@ -31,18 +31,22 @@ FU21→ Add "Achievements" screen - done (new AchievementsScreen with 6 achievem
 FU22→ Add "Settings" screen - done (new SettingsScreen: sound toggle, music toggle, reset progress)
 FU23→ Add "Profile" screen - done (new ProfileScreen: name input + avatar selection from 8 characters)
 FU24→ Add "Review Answers" screen - done (📋 review button in done screen shows all correctly solved questions)
-FU25→ ****TODO**** If the user profile was defined, Change the welcom screen - to welcome the specific name. Preferably with verbal greeting
+FU25→ If the user profile was defined, Change the welcom screen - to welcome the specific name. Preferably with verbal greeting - done
 FU26→ Memory game - in first level - make all cards show only the objects + their names together. Meaning pairs of identical cards each having the objects+ their names. In higher levels the user will have to match the card with object + its name with a card with the first letter only. - done (level 1=identical emoji+word pairs; level 2+=emoji+word card matched to first-letter card; level badge shown; "next level" button after level 1 complete)
 
 == MOre ==
 MO1 - להגדיל את האותיות שמתחת למילה במשחק גבי - done
-MO2 - כפתור back יחזיר ל ?
+MO2 - כפתור back יחזיר ל -done
 MO3 - תוסיף עוד הרבה מילים למשחק גבי - done
 MO4 - We must make it more adictive. Add some special bonus effects that the user can activate after reaching 20,40.60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
 MO5 - Add volume control for the music - done
 MO6 - Add another game of matching a word to its first letter using drag and drop. The leader for this game will be Zohar - done
 MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations
 MO8 - In the letters game, when the user finds the correct letter, a word is shown. Remove it. - done
+MO9 - Additional characters: Man on the moon, Stitch
+MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
+MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הבא בתור
+MO12 - The voices don't sound real. Can I record them myself? 
 
 
 === MEDIUM EFFORT (Game Feel) ===
@@ -63,5 +67,22 @@ BF6→ Real Hebrew voice for the words, cheering. effects - done.
 
 === MAINTENANCE ===
 MN1→ Enhance characters - improve character image quality / recognizability
-MN2→ Android testing - Sync to Capacitor and test on device/emulator
-MN3→ Review quality - Check each game for bugs, missing content, broken flows
+MN2→ Android testing - Sync to Capacitor and test on device/emulator - done
+MN3→ Review quality - Check each game for bugs, missing content, broken flows - done
+
+
+=== WHAT'S LEFT — March 11 ===
+
+MO4 - We must make it more addictive. Add some special bonus effects that the user can activate after reaching 20,40,60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
+MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations
+MO9 - Additional characters: Man on the moon, Stitch
+MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
+MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הנב בתור
+MO12 - The voices don't sound real. Can I record them myself? - native TTS now implemented; real recorded voice still an open option
+ME4→ Answer reveal animation - briefly show correct answer before moving to next question
+BF1→ Sticker collection - earned stars unlock collectible badges, dedicated sticker screen
+BF2→ **validate** Character voice lines - short audio clips of characters saying Hebrew words/letters - covered by native TTS; real character clips still not done
+BF3→ Animated home screen characters - idle wave/bounce animation on home screen
+BF4→ Add more games - Shapes, colors, rhyming, letter tracing
+BF5→ Difficulty progression - Adaptive levels per game
+MN1→ Enhance characters - improve character image quality / recognizability

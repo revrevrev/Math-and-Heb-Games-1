@@ -1,4 +1,4 @@
-# משחקי לימוד – Hebrew Kids Learning App
+# המשחקים של שירה – Hebrew Kids Learning App
 
 A colourful, fully-Hebrew educational app for 5-year-olds featuring
 Elsa, Anna, Bluey and the Teletubbies.  Five mini-games teach Hebrew

@@ -149,17 +149,18 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
             <span className="home-app-icon">🎮</span>
             <span className="home-app-name">Ferster-Games</span>
           </div>
+        </div>
+        <div className="home-greeting-row">
+          <div className="greeting-text">
+            <h1 className="home-greeting">
+              {profileName ? `שלום, ${profileName}! 👋` : 'שלום! 👋'}
+            </h1>
+          </div>
           <div className="stars-counter">
             <span className="stars-star-icon" aria-hidden>⭐</span>
             <span className="stars-num">{totalStars}</span>
             <span className="stars-label">כוכבים</span>
           </div>
-        </div>
-        <div className="home-greeting-row">
-          <h1 className="home-greeting">
-            {profileName ? `שלום, ${profileName}! 👋` : 'שלום! 👋'}
-          </h1>
-          <p className="home-subtitle">♥ בואי נשחק  ♥</p>
         </div>
       </header>
 

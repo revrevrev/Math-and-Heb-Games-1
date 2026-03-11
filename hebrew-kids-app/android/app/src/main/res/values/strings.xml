@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">משחקי לימוד</string>
-    <string name="title_activity_main">משחקי לימוד</string>
+    <string name="app_name">המשחקים של שירה</string>
+    <string name="title_activity_main">המשחקים של שירה</string>
     <string name="package_name">com.kids.hebrewlearning</string>
     <string name="custom_url_scheme">com.kids.hebrewlearning</string>
 </resources>

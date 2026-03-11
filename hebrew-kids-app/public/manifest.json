@@ -1,7 +1,7 @@
 {
   "name": "המשחקים של שירה",
-  "short_name": "משחקי לימוד",
-  "description": "משחקי לימוד לילדים - אותיות, ספירה, זיכרון וחשבון",
+  "short_name": "המשחקים של שירה",
+  "description": "המשחקים של שירה לילדים - אותיות, ספירה, זיכרון וחשבון",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

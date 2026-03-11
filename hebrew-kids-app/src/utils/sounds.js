@@ -1,6 +1,11 @@
 // Sound utility — loads real audio files via Howler.js,
 // falls back to Web Audio API synthesis if files are missing.
 import { Howl } from 'howler';
+import { Capacitor } from '@capacitor/core';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
+
+// True when running as a native Android/iOS app via Capacitor
+const IS_NATIVE = Capacitor.isNativePlatform();
 
 // ── Web Audio API (fallback synthesis) ──────────────────────
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -133,11 +138,12 @@ const VOICE_PHRASES = {
 };
 
 let _hebrewVoice = null;
-let _voiceReady   = false;
 
 function loadHebrewVoice() {
-  if (_voiceReady) return;
+  // If we already found a Hebrew voice, no need to search again
+  if (_hebrewVoice) return;
   const voices = speechSynthesis.getVoices();
+  if (voices.length === 0) return; // Not loaded yet — will retry on voiceschanged or at speak-time
   const heIL    = voices.filter(v => v.lang === 'he-IL');
   const heAny   = voices.filter(v => v.lang.startsWith('he'));
   const isFemale = v => /female|woman|girl|f\b/i.test(v.name);
@@ -147,7 +153,6 @@ function loadHebrewVoice() {
     heIL[0]  ||
     heAny[0] ||
     null;
-  _voiceReady = true;
 }
 
 // Load on first available voices event
@@ -159,18 +164,28 @@ if (typeof speechSynthesis !== 'undefined') {
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function speakHebrew(text, delayMs = 300) {
-  if (Sounds.muted) return;
-  if (typeof speechSynthesis === 'undefined') return;
-  setTimeout(() => {
-    if (Sounds.muted) return;
-    speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
+  if (Sounds.muted || !Sounds.voiceEnabled) return;
+  setTimeout(async () => {
+    if (Sounds.muted || !Sounds.voiceEnabled) return;
+    if (IS_NATIVE) {
+      // Use native Android TTS — reliable, no voice pack needed
+      try {
+        await TextToSpeech.stop();
+        await TextToSpeech.speak({ text, lang: 'he-IL', rate: 0.9, pitch: 1.3, volume: Sounds.voiceVolume, category: 'ambient' });
+      } catch (e) { console.warn('Native TTS error:', e); }
+      return;
+    }
+    // Web browser fallback (Web Speech API)
+    if (typeof speechSynthesis === 'undefined') return;
     loadHebrewVoice();
+    const utt = new SpeechSynthesisUtterance(text);
     if (_hebrewVoice) utt.voice = _hebrewVoice;
-    utt.lang  = 'he-IL';
-    utt.rate  = 0.9;
-    utt.pitch = 1.3;
-    utt.volume = 1.0;
+    utt.lang   = 'he-IL';
+    utt.rate   = 0.9;
+    utt.pitch  = 1.3;
+    utt.volume = Sounds.voiceVolume;
+    try { speechSynthesis.resume(); } catch (_) { /* ignore */ }
+    if (speechSynthesis.speaking) speechSynthesis.cancel();
     speechSynthesis.speak(utt);
   }, delayMs);
 }
@@ -207,6 +222,9 @@ export const Sounds = {
   muted:        localStorage.getItem('hebrew-app-muted') === 'true',
   musicEnabled: localStorage.getItem('hebrew-app-music') !== 'false',
   musicVolume:  parseFloat(localStorage.getItem('hebrew-app-music-volume') ?? '0.25'),
+  sfxVolume:    parseFloat(localStorage.getItem('hebrew-app-sfx-volume') ?? '0.7'),
+  voiceEnabled: localStorage.getItem('hebrew-app-voice') !== 'false',
+  voiceVolume:  parseFloat(localStorage.getItem('hebrew-app-voice-volume') ?? '0.9'),
 
   setMuted(val) {
     Sounds.muted = val;
@@ -229,6 +247,21 @@ export const Sounds = {
     if (bgHowl) bgHowl.volume(val);
   },
 
+  setSfxVolume(val) {
+    Sounds.sfxVolume = val;
+    localStorage.setItem('hebrew-app-sfx-volume', String(val));
+  },
+
+  setVoiceEnabled(val) {
+    Sounds.voiceEnabled = val;
+    localStorage.setItem('hebrew-app-voice', String(val));
+  },
+
+  setVoiceVolume(val) {
+    Sounds.voiceVolume = val;
+    localStorage.setItem('hebrew-app-voice-volume', String(val));
+  },
+
   startMusic(game = 'home') {
     currentMelody = game;
     stopMusicLoop();
@@ -241,15 +274,15 @@ export const Sounds = {
     stopMusicLoop();
   },
 
-  tap:     () => sfx.tap.play(),
-  wrong:   () => { sfx.wrong.play(); speakHebrew(pick(VOICE_PHRASES.wrong), 400); },
-  correct: () => { sfx.correct.play(); speakHebrew(pick(VOICE_PHRASES.correct), 350); },
-  win:     () => { sfx.win.play(); speakHebrew(pick(VOICE_PHRASES.win), 600); },
-  flip:    () => sfx.flip.play(),
-  match:   () => { sfx.match.play(); speakHebrew(pick(VOICE_PHRASES.correct), 300); },
-  star:    () => sfx.star.play(0.8),
-  streak:  () => { sfx.streak.play(); speakHebrew(pick(VOICE_PHRASES.streak), 400); },
-  levelUp: () => { sfx.levelUp.play(); speakHebrew(pick(VOICE_PHRASES.levelUp), 500); },
+  tap:     () => sfx.tap.play(Sounds.sfxVolume),
+  wrong:   () => { sfx.wrong.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.wrong), 400); },
+  correct: () => { sfx.correct.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.correct), 350); },
+  win:     () => { sfx.win.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.win), 600); },
+  flip:    () => sfx.flip.play(Sounds.sfxVolume),
+  match:   () => { sfx.match.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.correct), 300); },
+  star:    () => sfx.star.play(Sounds.sfxVolume),
+  streak:  () => { sfx.streak.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.streak), 400); },
+  levelUp: () => { sfx.levelUp.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.levelUp), 500); },
 
   // Speak arbitrary Hebrew text (e.g. letter names, numbers)
   speak: (text, delayMs = 0) => speakHebrew(text, delayMs),

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import HomeScreen from './components/HomeScreen';
 import LettersGame from './components/games/LettersGame';
 import CountingGame from './components/games/CountingGame';
@@ -10,8 +10,15 @@ import SettingsScreen from './components/SettingsScreen';
 import AchievementsScreen from './components/AchievementsScreen';
 import ProfileScreen from './components/ProfileScreen';
 import { unlockAchievement } from './utils/achievements';
+import { Navigation } from './utils/navigation';
+import { Capacitor } from '@capacitor/core';
+import { App as CapApp } from '@capacitor/app';
 
 const STARS_KEY = 'hebrew-app-stars';
+const IS_NATIVE = Capacitor.isNativePlatform();
+
+// Secondary screens: back returns to previous screen instead of home
+const SECONDARY = new Set(['settings', 'achievements', 'profile']);
 
 export default function App() {
   const [screen, setScreen]         = useState('home');
@@ -19,6 +26,10 @@ export default function App() {
     const saved = localStorage.getItem(STARS_KEY);
     return saved ? parseInt(saved, 10) : 0;
   });
+
+  const screenRef     = useRef('home');
+  const prevScreenRef = useRef('home');
+  useEffect(() => { screenRef.current = screen; }, [screen]);
 
   useEffect(() => {
     localStorage.setItem(STARS_KEY, String(totalStars));
@@ -33,30 +44,62 @@ export default function App() {
     });
   }, []);
 
-  const goHome = useCallback(() => setScreen('home'), []);
+  const navigateTo = useCallback((newScreen) => {
+    prevScreenRef.current = screenRef.current;
+    setScreen(newScreen);
+  }, []);
 
-  // Push a history entry whenever leaving home so browser/Android back goes home
-  useEffect(() => {
-    if (screen !== 'home') {
-      window.history.pushState({ screen }, '');
+  const goHome = useCallback(() => {
+    prevScreenRef.current = screenRef.current;
+    setScreen('home');
+  }, []);
+
+  function handleBack() {
+    const cur = screenRef.current;
+    if (cur === 'home') {
+      if (IS_NATIVE) CapApp.minimizeApp();
+    } else if (SECONDARY.has(cur)) {
+      setScreen(prevScreenRef.current || 'home');
+    } else {
+      setScreen('home');
     }
+  }
+
+  useEffect(() => {
+    Navigation.register(() => navigateTo('settings'));
+    return () => Navigation.register(null);
+  }, [navigateTo]);
+
+  // ── Android hardware back button (Capacitor) ──────────────
+  useEffect(() => {
+    if (!IS_NATIVE) return;
+    let handle;
+    CapApp.addListener('backButton', handleBack).then(h => { handle = h; });
+    return () => { handle?.remove(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Web browser back button (desktop / dev) ───────────────
+  useEffect(() => {
+    if (IS_NATIVE) return;
+    if (screen !== 'home') window.history.pushState({ screen }, '');
   }, [screen]);
 
   useEffect(() => {
-    const handlePop = () => setScreen('home');
+    if (IS_NATIVE) return;
+    const handlePop = () => handleBack();
     window.addEventListener('popstate', handlePop);
     return () => window.removeEventListener('popstate', handlePop);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      {screen === 'home'         && <HomeScreen        onSelectGame={setScreen} totalStars={totalStars} />}
+      {screen === 'home'         && <HomeScreen        onSelectGame={navigateTo} totalStars={totalStars} />}
       {screen === 'letters'      && <LettersGame        onBack={goHome} onAddStars={addStars} />}
       {screen === 'counting'     && <CountingGame       onBack={goHome} onAddStars={addStars} />}
       {screen === 'memory'       && <MemoryGame         onBack={goHome} onAddStars={addStars} />}
       {screen === 'math'         && <MathGame           onBack={goHome} onAddStars={addStars} />}
       {screen === 'words'        && <WordGame           onBack={goHome} onAddStars={addStars} />}
-      {screen === 'settings'     && <SettingsScreen     onBack={goHome} />}
+      {screen === 'settings'     && <SettingsScreen     onBack={() => navigateTo(prevScreenRef.current || 'home')} />}
       {screen === 'achievements' && <AchievementsScreen onBack={goHome} totalStars={totalStars} />}
       {screen === 'profile'      && <ProfileScreen      onBack={goHome} />}
       {screen === 'firstletter'  && <FirstLetterGame    onBack={goHome} onAddStars={addStars} />}

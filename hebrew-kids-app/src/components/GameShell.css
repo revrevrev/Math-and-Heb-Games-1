@@ -12,15 +12,22 @@
   width: 100%;
   max-width: 600px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--sp-5) var(--sp-4) var(--sp-4);
-  gap: var(--sp-2);
+  padding: calc(env(safe-area-inset-top, 0px) + var(--sp-3)) var(--sp-4) var(--sp-2);
+  gap: 6px;
   background: rgba(10, 3, 40, 0.70);
   border-bottom: 1px solid rgba(255,255,255,0.12);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  min-height: 88px;
+}
+
+.game-top-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--sp-2);
 }
 
 .back-btn {
@@ -46,14 +53,11 @@
 
 .game-top-title {
   color: white;
-  font-size: clamp(0.85rem, 3vw, 1.05rem);
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
   text-shadow: 0 1px 6px rgba(0,0,0,0.4);
   text-align: center;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0 var(--sp-2);
+  width: 100%;
+  padding: 0;
 }
 
 .game-top-right {
@@ -75,6 +79,22 @@
   min-height: 44px;
 }
 .mute-btn:active {
+  background: rgba(255,255,255,0.24);
+  transform: scale(0.92);
+}
+
+.settings-btn {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border-radius: var(--r-sm);
+  padding: 10px var(--sp-3);
+  font-size: 1.2rem;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  transition: background var(--t-fast);
+  line-height: 1;
+  min-height: 44px;
+}
+.settings-btn:active {
   background: rgba(255,255,255,0.24);
   transform: scale(0.92);
 }

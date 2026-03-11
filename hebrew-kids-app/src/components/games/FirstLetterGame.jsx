@@ -43,6 +43,12 @@ export default function FirstLetterGame({ onBack, onAddStars }) {
     return b;
   }
 
+  // Declare refs first — needed by freshBoard() which is used in useState initializers
+  const dragOffsetRef   = useRef({ x: 0, y: 0 });
+  const zoneRefs        = useRef([]);
+  const roundRef        = useRef(0);
+  const usedLettersRef  = useRef(new Set());
+
   const [round, setRound]             = useState(0);
   const [board, setBoard]             = useState(() => {
     usedLettersRef.current = new Set();
@@ -60,11 +66,6 @@ export default function FirstLetterGame({ onBack, onAddStars }) {
   const [cardSize, setCardSize]       = useState({ w: 0, h: 0 });
   const [wrongWord, setWrongWord]     = useState(null);
   const [wrongZone, setWrongZone]     = useState(null);
-
-  const dragOffsetRef   = useRef({ x: 0, y: 0 });
-  const zoneRefs        = useRef([]);
-  const roundRef        = useRef(0);
-  const usedLettersRef  = useRef(new Set());
 
   useEffect(() => { roundRef.current = round; }, [round]);
 
