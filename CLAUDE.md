@@ -12,6 +12,7 @@ Math and Hebrew games/
       components/
         HomeScreen.jsx/.css     ← game selection grid + welcome overlay
         GameShell.jsx/.css      ← shared game wrapper (back button, header)
+        PresentsScreen.jsx/.css ← presents viewer (video rewards)
         games/                  ← one file pair per game
           LettersGame.jsx/.css  ← Hebrew alphabet learning (Elsa)
           CountingGame.jsx/.css ← number counting (Bluey)
@@ -28,7 +29,12 @@ Math and Hebrew games/
         effects.css             ← shared animation keyframes
       utils/
         sounds.js               ← Sounds singleton (tap, correct, wrong, star)
-    public/images/              ← character photos (elsa.jpg, Bluey.png, etc.)
+        presentsConfig.js       ← video URLs for presents (edit this to add content)
+    public/images/              ← character photos + gift icons
+      Gift-High-Quality.png     ← colored gift icon (nav bar, presents available)
+      Gift-High-Quality-BW.png  ← B/W gift icon (nav bar, no presents)
+      Gifts/                    ← animated gift images
+        01-08-00-669_512.webp   ← animated present used on PresentsScreen
     capacitor.config.json       ← Android app: id=com.kids.hebrewlearning
 ```
 
@@ -60,6 +66,25 @@ npm run lint         # eslint
 2. Add the game screen entry in `App.jsx` (import + `{screen === 'mygame' && ...}`)
 3. Add a card entry to the `GAMES` array in `HomeScreen.jsx`
 4. Accept `{ onBack, onAddStars }` props; call `onAddStars(n)` on success
+
+## Presents Feature
+Every `STARS_PER_PRESENT` stars (configured in `presentsConfig.js`, default 15) the child earns one present.
+
+**Flow:**
+- Bottom nav shows a gift icon with a red badge when presents are available
+  - Colored icon (`Gift-High-Quality.png`) = presents available (glows, clickable)
+  - B/W icon (`Gift-High-Quality-BW.png`) = no presents yet (dimmed, disabled)
+- `PresentsScreen` shows an animated gift WebP; tapping it opens a random video
+- Claimed count stored in `localStorage` key `hebrew-app-presents-claimed`
+- Available = `floor(totalStars / STARS_PER_PRESENT) - claimed`
+
+**Adding video content** — edit `src/utils/presentsConfig.js`:
+```js
+{ type: 'youtube-video',    id: 'VIDEO_ID',    title: 'תיאור' }
+{ type: 'youtube-playlist', id: 'PLAYLIST_ID', title: 'תיאור' }
+```
+- Playlists: a hidden YT IFrame API player fetches all video IDs, picks one randomly, then plays it as a single video (no playlist navigation shown)
+- Google Photos albums: not embeddable (Google blocks iframes); use YouTube instead
 
 ## Notes
 - Target audience: young girls (Hebrew feminine text throughout)

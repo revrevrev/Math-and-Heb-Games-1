@@ -38,7 +38,7 @@ FU26→ Memory game - in first level - make all cards show only the objects + th
 MO1 - להגדיל את האותיות שמתחת למילה במשחק גבי - done
 MO2 - כפתור back יחזיר ל -done
 MO3 - תוסיף עוד הרבה מילים למשחק גבי - done
-MO4 - We must make it more adictive. Add some special bonus effects that the user can activate after reaching 20,40.60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
+MO4 - We must make it more adictive. Add some special bonus effects that the user can activate after reaching 20,40.60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos. - done
 MO5 - Add volume control for the music - done
 MO6 - Add another game of matching a word to its first letter using drag and drop. The leader for this game will be Zohar - done
 MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations - done
@@ -71,9 +71,8 @@ MN2→ Android testing - Sync to Capacitor and test on device/emulator - done
 MN3→ Review quality - Check each game for bugs, missing content, broken flows - done
 
 
-=== WHAT'S LEFT — March 11 ===
+=== WHAT'S LEFT ===
 
-MO4 - We must make it more addictive. Add some special bonus effects that the user can activate after reaching 20,40,60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
 MO9 - Additional characters: Man on the moon, Stitch
 MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
 MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הנב בתור

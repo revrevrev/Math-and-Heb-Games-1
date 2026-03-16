@@ -21,7 +21,7 @@
  *   Google Photos URL  — share an album → copy link
  */
 
-export const STARS_PER_PRESENT = 10;
+export const STARS_PER_PRESENT = 15;
 
 export const PRESENT_SOURCES = [
   // ── YouTube videos ─────────────────────────────────────────────────
@@ -30,8 +30,11 @@ export const PRESENT_SOURCES = [
    { type: 'youtube-video', id: 'cfqLxopZupc', title: 'להפגש ולשחק עם פו הדב' },
    { type: 'youtube-video', id: 'cdo0GZpZN-w', title: 'סבא אליעזר והגזר' },
   // ── YouTube playlists ──────────────────────────────────────────────
-   { type: 'youtube-playlist', id: 'PLGni-QAYrlkjg54TKzx54qcPfWGIltwWM', title: 'סרטונים אהובים' },
+   { type: 'youtube-playlist', id: 'PLGni-QAYrlkjg54TKzx54qcPfWGIltwWM', title: 'סרטונים אהובים' }
 
-  // ── Google Photos shared albums ────────────────────────────────────
-  { type: 'google-photos', url: 'https://photos.app.goo.gl/yRQZXg3oG1Vf7bDM6', title: 'אני ומשפחתי' }
+  // ── Google Photos shared albums ──────────────────────────────────── For now these are just links, since embedding the album viewer is a pain. Removing for now. 
+  // Consider re-adding if we find a good way to embed the albums directly in an app page.
+  // Either by using the Google Photos API (requires auth, but maybe we can do it with a service account and share the albums with that account?), or by parsing the shared album page and extracting the image URLs (fragile, but could work as a fallback).
+  // OR Upload to Youtube and embed as unlisted videos/playlists.
+  // { type: 'google-photos', url: 'https://photos.app.goo.gl/yRQZXg3oG1Vf7bDM6', title: 'אני ומשפחתי' }
 ];
