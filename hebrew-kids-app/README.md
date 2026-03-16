@@ -116,3 +116,36 @@ src/
 All text is in Hebrew, RTL layout throughout.
 Stars earned in every game accumulate on the home screen.
 
+---
+
+## Presents system
+
+Every **15 stars** (configurable in `src/utils/presentsConfig.js`) the child earns a present — a randomly selected video that plays inside a retro TV frame.
+
+To add content, edit `presentsConfig.js`:
+```js
+{ type: 'youtube-video',    id: 'VIDEO_ID',    title: 'תיאור' }
+{ type: 'youtube-playlist', id: 'PLAYLIST_ID', title: 'תיאור' }
+```
+Playlists are shuffled server-side via the YT IFrame API; only a single random video plays (no skip controls visible).
+
+---
+
+## Developer debug gestures
+
+Hidden gestures for testing — invisible to kids, work on both desktop (mouse) and mobile (touch).
+
+| Screen | Gesture | Effect |
+|---|---|---|
+| **Home** | Long-press (700 ms) the gift icon in the bottom nav | Opens Presents screen even with 0 stars |
+| **Presents** | Long-press (700 ms) the "🎁 המתנות שלי" title | Opens a random video without claiming a present |
+| **Settings** | Long-press (700 ms) the "⚙️ הגדרות" title | Toggles the debug panel |
+
+### Settings debug panel
+
+Two independent override fields:
+
+- **⭐ כוכבים** — set the total star count to any value
+- **🎁 מתנות זמינות** — set how many presents should be available right now
+
+Leave a field blank to keep its current value. If the star count is too low to cover the requested presents, it is automatically raised to the minimum needed. Press **החל** to apply.

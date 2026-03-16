@@ -327,17 +327,16 @@
   transition: filter var(--t-fast), transform var(--t-fast);
 }
 
-.bottom-nav-item:disabled .bnav-presents-img {
+.bnav-presents-locked .bnav-presents-img {
   opacity: 0.35;
 }
 
-.bottom-nav-item:disabled {
+.bnav-presents-locked {
   cursor: default;
-  opacity: 1; /* keep image visible, just non-interactive */
 }
-.bottom-nav-item:disabled:active {
-  background: transparent;
-  transform: none;
+.bnav-presents-locked:active {
+  background: transparent !important;
+  transform: none !important;
 }
 
 .bnav-presents-available {

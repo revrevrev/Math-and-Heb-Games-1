@@ -104,7 +104,7 @@ function YouTubeShufflePlayer({ playlistId }) {
       ) : failed ? (
         <div className="presents-loading">⚠️ לא ניתן לטעון</div>
       ) : (
-        <div className="presents-loading">⏳ טוענת סרטון...</div>
+        <div className="presents-loading">⏳ טוען סרטון...</div>
       )}
     </>
   );
@@ -152,6 +152,16 @@ export default function PresentsScreen({ onBack, totalStars }) {
   const [currentSource, setCurrentSource] = useState(null);
   const [opening, setOpening]             = useState(false);
 
+  // Hidden debug: long-press title → opens a random video without claiming a present
+
+  const titlePressRef = useRef(null);
+  function onTitlePointerDown() {
+    titlePressRef.current = setTimeout(() => setCurrentSource(pickRandom(PRESENT_SOURCES)), 700);
+  }
+  function onTitlePointerUp() {
+    clearTimeout(titlePressRef.current);
+  }
+
   const earned      = Math.floor(totalStars / STARS_PER_PRESENT);
   const available   = Math.max(0, earned - claimed);
   const starsToNext = STARS_PER_PRESENT - (totalStars % STARS_PER_PRESENT);
@@ -180,7 +190,13 @@ export default function PresentsScreen({ onBack, totalStars }) {
         <button className="presents-back-btn" onClick={onBack} aria-label="חזרה">
           ‹ חזרה
         </button>
-        <h1 className="presents-title">🎁 המתנות שלי</h1>
+        <h1
+          className="presents-title"
+          onPointerDown={onTitlePointerDown}
+          onPointerUp={onTitlePointerUp}
+          onPointerLeave={onTitlePointerUp}
+          style={{ userSelect: 'none' }}
+        >🎁 המתנות שלי</h1>
         <div className="presents-header-spacer" />
       </header>
 
@@ -247,13 +263,29 @@ export default function PresentsScreen({ onBack, totalStars }) {
         )}
       </section>
 
-      {/* Video overlay */}
+      {/* Video overlay — TV frame */}
       {currentSource && (
         <div className="presents-video-overlay" onClick={closeVideo}>
-          <div className="presents-video-container" onClick={e => e.stopPropagation()}>
-            <button className="presents-video-close" onClick={closeVideo} aria-label="סגרי">✕</button>
-            <div className="presents-video-title">{currentSource.title}</div>
-            <VideoPlayer source={currentSource} />
+          <div className="presents-tv-body" onClick={e => e.stopPropagation()}>
+            {/* Antennas */}
+            <div className="presents-tv-antennas" aria-hidden>
+              <div className="presents-tv-antenna presents-tv-antenna-l" />
+              <div className="presents-tv-antenna presents-tv-antenna-r" />
+            </div>
+            {/* Screen bezel */}
+            <div className="presents-tv-screen">
+              <button className="presents-video-close" onClick={closeVideo} aria-label="סגרי">✕</button>
+              <VideoPlayer source={currentSource} />
+            </div>
+            {/* Bottom controls decoration */}
+            <div className="presents-tv-controls" aria-hidden>
+              <div className="presents-tv-knob" />
+              <div className="presents-tv-knob" />
+              <div className="presents-tv-speaker">
+                {Array.from({ length: 9 }).map((_, i) => <span key={i} className="presents-tv-dot" />)}
+              </div>
+              <div className="presents-tv-knob" />
+            </div>
           </div>
         </div>
       )}

@@ -100,7 +100,7 @@ export default function App() {
       {screen === 'memory'       && <MemoryGame         onBack={goHome} onAddStars={addStars} />}
       {screen === 'math'         && <MathGame           onBack={goHome} onAddStars={addStars} />}
       {screen === 'words'        && <WordGame           onBack={goHome} onAddStars={addStars} />}
-      {screen === 'settings'     && <SettingsScreen     onBack={() => navigateTo(prevScreenRef.current || 'home')} />}
+      {screen === 'settings'     && <SettingsScreen     onBack={() => navigateTo(prevScreenRef.current || 'home')} totalStars={totalStars} onDebugSetStars={setTotalStars} />}
       {screen === 'achievements' && <AchievementsScreen onBack={goHome} totalStars={totalStars} />}
       {screen === 'profile'      && <ProfileScreen      onBack={goHome} />}
       {screen === 'firstletter'  && <FirstLetterGame    onBack={goHome} onAddStars={addStars} />}

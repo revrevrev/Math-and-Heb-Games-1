@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Sounds } from '../utils/sounds';
 import { getProfile } from './ProfileScreen';
 import { getAvailablePresents } from './PresentsScreen';
@@ -114,6 +114,14 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
     setShowWelcome(false);
   }
 
+  const presentsPressRef = useRef(null);
+  function onPresentsPointerDown() {
+    presentsPressRef.current = setTimeout(() => onSelectGame('presents'), 700);
+  }
+  function onPresentsPointerUp() {
+    clearTimeout(presentsPressRef.current);
+  }
+
   return (
     <div className="home-screen">
 
@@ -206,9 +214,11 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
           const avail = getAvailablePresents(totalStars);
           return (
             <button
-              className="bottom-nav-item bnav-presents"
+              className={`bottom-nav-item bnav-presents ${avail === 0 ? 'bnav-presents-locked' : ''}`}
               onClick={() => avail > 0 && onSelectGame('presents')}
-              disabled={avail === 0}
+              onPointerDown={onPresentsPointerDown}
+              onPointerUp={onPresentsPointerUp}
+              onPointerLeave={onPresentsPointerUp}
               aria-label="מתנות"
             >
               <span className="bnav-presents-wrap">

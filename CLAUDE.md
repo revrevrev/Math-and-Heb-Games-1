@@ -86,6 +86,22 @@ Every `STARS_PER_PRESENT` stars (configured in `presentsConfig.js`, default 15) 
 - Playlists: a hidden YT IFrame API player fetches all video IDs, picks one randomly, then plays it as a single video (no playlist navigation shown)
 - Google Photos albums: not embeddable (Google blocks iframes); use YouTube instead
 
+## Developer Debug Gestures
+Hidden gestures for testing — invisible to kids, work on both desktop and mobile (touch).
+
+| Screen | Gesture | Effect |
+|---|---|---|
+| Home | Long-press (700 ms) the gift icon in the bottom nav | Opens Presents screen even with 0 stars |
+| Presents | Long-press (700 ms) the "🎁 המתנות שלי" title | Opens a random video without claiming a present |
+| Settings | Long-press (700 ms) the "⚙️ הגדרות" title | Toggles the debug panel open/closed |
+
+**Settings debug panel** — two independent fields:
+- **⭐ כוכבים** — override total star count
+- **🎁 מתנות זמינות** — override available (unclaimed) presents
+  If the entered star count isn't enough to earn the requested presents, stars are auto-bumped to the minimum required.
+
+Leave a field blank to keep its current value unchanged.
+
 ## Notes
 - Target audience: young girls (Hebrew feminine text throughout)
 - Keep UI colorful, large touch targets, minimal text
