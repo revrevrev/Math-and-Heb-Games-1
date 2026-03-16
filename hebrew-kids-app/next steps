@@ -41,7 +41,7 @@ MO3 - תוסיף עוד הרבה מילים למשחק גבי - done
 MO4 - We must make it more adictive. Add some special bonus effects that the user can activate after reaching 20,40.60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
 MO5 - Add volume control for the music - done
 MO6 - Add another game of matching a word to its first letter using drag and drop. The leader for this game will be Zohar - done
-MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations
+MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations - done
 MO8 - In the letters game, when the user finds the correct letter, a word is shown. Remove it. - done
 MO9 - Additional characters: Man on the moon, Stitch
 MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
@@ -74,7 +74,6 @@ MN3→ Review quality - Check each game for bugs, missing content, broken flows 
 === WHAT'S LEFT — March 11 ===
 
 MO4 - We must make it more addictive. Add some special bonus effects that the user can activate after reaching 20,40,60... stars - e.g. enable the camera and allow taking selfies, show photos from my Google photos.
-MO7 - The math game must be more appealing. Make the sign bigger, and perhaps add animations
 MO9 - Additional characters: Man on the moon, Stitch
 MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
 MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הנב בתור
@@ -86,3 +85,4 @@ BF3→ Animated home screen characters - idle wave/bounce animation on home scre
 BF4→ Add more games - Shapes, colors, rhyming, letter tracing
 BF5→ Difficulty progression - Adaptive levels per game
 MN1→ Enhance characters - improve character image quality / recognizability
+

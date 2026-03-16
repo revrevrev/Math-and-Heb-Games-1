@@ -41,10 +41,14 @@ export default function MathGame({ onBack, onAddStars }) {
   const [score, setScore]         = useState(0);
   const [done, setDone]           = useState(false);
   const [flying, setFlying]       = useState(false);
+  const [flyDist, setFlyDist]     = useState({ mickey: 0, minnie: 0 });
   const [collected, setCollected] = useState(false);
   const [showReview, setShowReview] = useState(false);
-  const ge         = useGameEnhancements(ROUNDS);
-  const autoAdvRef = useRef(null);
+  const ge           = useGameEnhancements(ROUNDS);
+  const autoAdvRef   = useRef(null);
+  const stageRef     = useRef(null);
+  const mickeyObjs   = useRef(null);
+  const minnieObjs   = useRef(null);
 
   useEffect(() => {
     Sounds.startMusic('math');
@@ -66,6 +70,7 @@ export default function MathGame({ onBack, onAddStars }) {
       setCorrect(false);
       setWrong(false);
       setFlying(false);
+      setFlyDist({ mickey: 0, minnie: 0 });
       setCollected(false);
     }
   }, [round]);
@@ -86,13 +91,28 @@ export default function MathGame({ onBack, onAddStars }) {
       onAddStars(1);
       Sounds.correct();
       ge.onCorrect({ display: `${data.a} + ${data.b} = ${data.answer}` }, round);
+
+      // Measure exact pixel distances to center before animating
+      let dist = { mickey: 0, minnie: 0 };
+      if (stageRef.current && mickeyObjs.current && minnieObjs.current) {
+        const stageCx = stageRef.current.getBoundingClientRect().left
+                      + stageRef.current.getBoundingClientRect().width / 2;
+        const mRect = mickeyObjs.current.getBoundingClientRect();
+        const nRect = minnieObjs.current.getBoundingClientRect();
+        dist = {
+          mickey: stageCx - (mRect.left + mRect.width / 2),
+          minnie: stageCx - (nRect.left + nRect.width / 2),
+        };
+      }
+      setFlyDist(dist);
       setFlying(true);
+
       setTimeout(() => {
         setFlying(false);
         setCollected(true);
         Sounds.star?.();
-      }, 1200);
-      autoAdvRef.current = setTimeout(doAdvance, 2200);
+      }, 1400);
+      autoAdvRef.current = setTimeout(doAdvance, 2700);
     } else {
       setWrong(true);
       Sounds.wrong();
@@ -105,7 +125,8 @@ export default function MathGame({ onBack, onAddStars }) {
     if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     setRound(0); setData(makeRound(0)); setChosen(null);
     setCorrect(false); setWrong(false); setScore(0); setDone(false);
-    setFlying(false); setCollected(false); setShowReview(false);
+    setFlying(false); setFlyDist({ mickey: 0, minnie: 0 });
+    setCollected(false); setShowReview(false);
     ge.reset();
   }
 
@@ -159,13 +180,17 @@ export default function MathGame({ onBack, onAddStars }) {
           </div>
           <p className="round-label">תרגיל {round + 1} מתוך {ROUNDS}</p>
 
-          <div className="math-stage">
+          <div className="math-stage" ref={stageRef}>
 
             {/* Mickey — left */}
             <div className="character-side">
               <CharacterImg character="mickey" size={72} className={wrong ? 'wiggle' : ''} />
               <span className="char-number">{data.a}</span>
-              <div className={`obj-group${flying ? ' fly-left' : ''}${collected ? ' hidden' : ''}`}>
+              <div
+                ref={mickeyObjs}
+                className={`obj-group${flying ? ' flying' : ''}${collected ? ' hidden' : ''}`}
+                style={flying ? { '--fly-x': `${flyDist.mickey}px` } : undefined}
+              >
                 {Array.from({ length: data.a }).map((_, i) => (
                   <span key={i} className="obj-emoji" style={{ animationDelay: `${i * 60}ms` }}>
                     {data.obj}
@@ -174,25 +199,26 @@ export default function MathGame({ onBack, onAddStars }) {
               </div>
             </div>
 
-            {/* Basket — center */}
-            <div className="basket-center">
-              <div className={`basket-icon${collected ? ' basket-pop' : ''}`}>🧺</div>
-              {collected && (
-                <div className="basket-contents">
-                  {Array.from({ length: data.answer }).map((_, i) => (
-                    <span key={i} className="obj-emoji small" style={{ animationDelay: `${i * 30}ms` }}>
-                      {data.obj}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* Center — all objects meet here */}
+            {collected && (
+              <div className="center-burst">
+                {Array.from({ length: data.answer }).map((_, i) => (
+                  <span key={i} className="obj-emoji center-obj" style={{ animationDelay: `${i * 50}ms` }}>
+                    {data.obj}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Minnie — right */}
             <div className="character-side">
               <CharacterImg character="minnie" size={72} className={wrong ? 'wiggle' : ''} />
               <span className="char-number">{data.b}</span>
-              <div className={`obj-group${flying ? ' fly-right' : ''}${collected ? ' hidden' : ''}`}>
+              <div
+                ref={minnieObjs}
+                className={`obj-group${flying ? ' flying' : ''}${collected ? ' hidden' : ''}`}
+                style={flying ? { '--fly-x': `${flyDist.minnie}px` } : undefined}
+              >
                 {Array.from({ length: data.b }).map((_, i) => (
                   <span key={i} className="obj-emoji" style={{ animationDelay: `${i * 60}ms` }}>
                     {data.obj}

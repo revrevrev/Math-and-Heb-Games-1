@@ -82,7 +82,7 @@ export const WORDS = [
   // Fun & play
   { word: 'שיר',   emoji: '🎵',  hint: 'שיר' },
   { word: 'ציור',  emoji: '🎨',  hint: 'ציור' },
-  { word: 'שלום',  emoji: '👋',  hint: 'שלום' },
+  { word: 'הי',  emoji: '👋',  hint: 'הי' },
   { word: 'כדורגל', emoji: '⚽', hint: 'כדורגל' },
   { word: 'בובה',  emoji: '🪆',  hint: 'בובה' },
   { word: 'משחק',  emoji: '🎮',  hint: 'משחק' },

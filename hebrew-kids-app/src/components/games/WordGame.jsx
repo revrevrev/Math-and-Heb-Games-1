@@ -10,9 +10,12 @@ import './WordGame.css';
 
 const ROUNDS = 8;
 
-function makeRound(usedIndices) {
-  const available = WORDS.filter((_, i) => !usedIndices.has(i));
-  const pool = available.length > 0 ? available : WORDS;
+const LEVEL1_WORDS = WORDS.filter(w => w.word.length <= 4);
+
+function makeRound(usedIndices, level = 1) {
+  const wordPool = level === 1 ? LEVEL1_WORDS : WORDS;
+  const available = wordPool.filter(w => !usedIndices.has(WORDS.indexOf(w)));
+  const pool = available.length > 0 ? available : wordPool;
   const idx = Math.floor(Math.random() * pool.length);
   const item = pool[idx];
   const letters = shuffle(item.word.split(''));
@@ -23,7 +26,7 @@ function makeRound(usedIndices) {
 const CHAR_NAMES = ['gabby', 'cakey', 'kittyfairy', 'pandy', 'marty', 'gabby', 'cakey', 'pandy'];
 
 export default function WordGame({ onBack, onAddStars }) {
-  const [initRound0] = useState(() => makeRound(new Set()));
+  const [initRound0] = useState(() => makeRound(new Set(), 1));
 
   const [round, setRound]         = useState(0);
   const [usedIdx, setUsedIdx]     = useState(new Set());
@@ -66,7 +69,8 @@ export default function WordGame({ onBack, onAddStars }) {
       if (stats.count >= 10) unlockAchievement('games_10');
       if (stats.uniqueGames.length >= 5) unlockAchievement('all_games');
     } else {
-      const rd = makeRound(newUsed);
+      const nextLevel = next < Math.floor(ROUNDS / 2) ? 1 : 2;
+      const rd = makeRound(newUsed, nextLevel);
       setRound(next);
       setUsedIdx(newUsed);
       setRoundData(rd);

@@ -309,5 +309,68 @@
   transform: scale(0.88);
 }
 
-.bnav-icon  { font-size: 1.6rem; line-height: 1; }
+.bnav-icon  { font-size: 1.6rem; line-height: 1; filter: drop-shadow(0 0 3px rgba(255,255,255,0.4)); }
 .bnav-label { font-size: 0.72rem; color: rgba(196,181,253,0.8); letter-spacing: 0.01em; }
+
+/* ── Presents nav button ───────────────────────────────── */
+.bnav-presents-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bnav-presents-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  transition: filter var(--t-fast), transform var(--t-fast);
+}
+
+.bottom-nav-item:disabled .bnav-presents-img {
+  opacity: 0.35;
+}
+
+.bottom-nav-item:disabled {
+  cursor: default;
+  opacity: 1; /* keep image visible, just non-interactive */
+}
+.bottom-nav-item:disabled:active {
+  background: transparent;
+  transform: none;
+}
+
+.bnav-presents-available {
+  filter: drop-shadow(0 0 6px rgba(251,191,36,0.7));
+  animation: present-glow 2s ease-in-out infinite;
+}
+
+@keyframes present-glow {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(251,191,36,0.6)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(251,191,36,0.95)); }
+}
+
+.bnav-presents-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: var(--r-full);
+  background: #ef4444;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid rgba(15,5,40,0.8);
+  box-shadow: 0 2px 6px rgba(239,68,68,0.5);
+  animation: badge-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}

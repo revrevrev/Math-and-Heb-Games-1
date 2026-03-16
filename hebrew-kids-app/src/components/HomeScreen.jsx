@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Sounds } from '../utils/sounds';
 import { getProfile } from './ProfileScreen';
+import { getAvailablePresents } from './PresentsScreen';
 import './HomeScreen.css';
 
 const GAMES = [
@@ -134,7 +135,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
           <div className="welcome-card pop" onClick={e => e.stopPropagation()}>
             <CharImg src="/images/elsa.jpg" alt="אלזה" size={110} objPos="top center" />
             <div className="welcome-text-wrap">
-              <p className="welcome-hi">👋 שלום! אני אלזה!</p>
+              <p className="welcome-hi">👋 הי! אני אלזה!</p>
               <p className="welcome-msg">בואי נשחק ונלמד יחד!</p>
               <button className="welcome-btn" onClick={dismissWelcome}>🎉 בואי נתחיל!</button>
             </div>
@@ -153,7 +154,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
         <div className="home-greeting-row">
           <div className="greeting-text">
             <h1 className="home-greeting">
-              {profileName ? `שלום, ${profileName}! 👋` : 'שלום! 👋'}
+              {profileName ? `הי, ${profileName}! 👋` : 'הי! 👋'}
             </h1>
           </div>
           <div className="stars-counter">
@@ -194,13 +195,37 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
       {/* Bottom nav */}
       <nav className="bottom-nav" aria-label="ניווט ראשי">
         <button className="bottom-nav-item" onClick={() => onSelectGame('profile')}>
-          <span className="bnav-icon">👤</span>
+          <span className="bnav-icon">👧</span>
           <span className="bnav-label">פרופיל</span>
         </button>
         <button className="bottom-nav-item" onClick={() => onSelectGame('achievements')}>
           <span className="bnav-icon">🏆</span>
           <span className="bnav-label">הישגים</span>
         </button>
+        {(() => {
+          const avail = getAvailablePresents(totalStars);
+          return (
+            <button
+              className="bottom-nav-item bnav-presents"
+              onClick={() => avail > 0 && onSelectGame('presents')}
+              disabled={avail === 0}
+              aria-label="מתנות"
+            >
+              <span className="bnav-presents-wrap">
+                <img
+                  src={avail > 0 ? '/images/Gift-High-Quality.png' : '/images/Gift-High-Quality-BW.png'}
+                  alt="מתנות"
+                  className={`bnav-presents-img ${avail > 0 ? 'bnav-presents-available' : ''}`}
+                  draggable={false}
+                />
+                {avail > 0 && (
+                  <span className="bnav-presents-badge">{avail}</span>
+                )}
+              </span>
+              <span className="bnav-label">מתנות</span>
+            </button>
+          );
+        })()}
         <button className="bottom-nav-item" onClick={() => onSelectGame('settings')}>
           <span className="bnav-icon">⚙️</span>
           <span className="bnav-label">הגדרות</span>

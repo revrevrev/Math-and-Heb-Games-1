@@ -9,6 +9,7 @@ import FirstLetterGame from './components/games/FirstLetterGame';
 import SettingsScreen from './components/SettingsScreen';
 import AchievementsScreen from './components/AchievementsScreen';
 import ProfileScreen from './components/ProfileScreen';
+import PresentsScreen from './components/PresentsScreen';
 import { unlockAchievement } from './utils/achievements';
 import { Navigation } from './utils/navigation';
 import { Capacitor } from '@capacitor/core';
@@ -18,7 +19,7 @@ const STARS_KEY = 'hebrew-app-stars';
 const IS_NATIVE = Capacitor.isNativePlatform();
 
 // Secondary screens: back returns to previous screen instead of home
-const SECONDARY = new Set(['settings', 'achievements', 'profile']);
+const SECONDARY = new Set(['settings', 'achievements', 'profile', 'presents']);
 
 export default function App() {
   const [screen, setScreen]         = useState('home');
@@ -103,6 +104,7 @@ export default function App() {
       {screen === 'achievements' && <AchievementsScreen onBack={goHome} totalStars={totalStars} />}
       {screen === 'profile'      && <ProfileScreen      onBack={goHome} />}
       {screen === 'firstletter'  && <FirstLetterGame    onBack={goHome} onAddStars={addStars} />}
+      {screen === 'presents'     && <PresentsScreen     onBack={goHome} totalStars={totalStars} />}
     </>
   );
 }
