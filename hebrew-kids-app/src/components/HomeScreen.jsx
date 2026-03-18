@@ -219,12 +219,12 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
               onPointerDown={onPresentsPointerDown}
               onPointerUp={onPresentsPointerUp}
               onPointerLeave={onPresentsPointerUp}
-              aria-label="מתנות"
+              aria-label="הפתעות"
             >
               <span className="bnav-presents-wrap">
                 <img
                   src={avail > 0 ? '/images/Gift-High-Quality.png' : '/images/Gift-High-Quality-BW.png'}
-                  alt="מתנות"
+                  alt="הפתעות"
                   className={`bnav-presents-img ${avail > 0 ? 'bnav-presents-available' : ''}`}
                   draggable={false}
                 />
@@ -232,7 +232,7 @@ export default function HomeScreen({ onSelectGame, totalStars }) {
                   <span className="bnav-presents-badge">{avail}</span>
                 )}
               </span>
-              <span className="bnav-label">מתנות</span>
+              <span className="bnav-label">הפתעות</span>
             </button>
           );
         })()}

@@ -46,7 +46,7 @@ MO8 - In the letters game, when the user finds the correct letter, a word is sho
 MO9 - Additional characters: Man on the moon, Stitch
 MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
 MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הבא בתור
-MO12 - The voices don't sound real. Can I record them myself? 
+MO12 - The voices don't sound real. Can I record them myself? - native TTS now implemented; real recorded voice still an open option - done
 
 
 === MEDIUM EFFORT (Game Feel) ===
@@ -74,14 +74,12 @@ MN3→ Review quality - Check each game for bugs, missing content, broken flows 
 === WHAT'S LEFT ===
 
 MO9 - Additional characters: Man on the moon, Stitch
-MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה
+MO10 - מציאת כל המילים שבהם יש צליל מסויים באמצע המילה, letter tracing
 MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הנב בתור
-MO12 - The voices don't sound real. Can I record them myself? - native TTS now implemented; real recorded voice still an open option
 ME4→ Answer reveal animation - briefly show correct answer before moving to next question
 BF1→ Sticker collection - earned stars unlock collectible badges, dedicated sticker screen
 BF2→ **validate** Character voice lines - short audio clips of characters saying Hebrew words/letters - covered by native TTS; real character clips still not done
 BF3→ Animated home screen characters - idle wave/bounce animation on home screen
-BF4→ Add more games - Shapes, colors, rhyming, letter tracing
 BF5→ Difficulty progression - Adaptive levels per game
 MN1→ Enhance characters - improve character image quality / recognizability
 

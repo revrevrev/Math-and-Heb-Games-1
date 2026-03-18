@@ -196,7 +196,7 @@ export default function PresentsScreen({ onBack, totalStars }) {
           onPointerUp={onTitlePointerUp}
           onPointerLeave={onTitlePointerUp}
           style={{ userSelect: 'none' }}
-        >🎁 המתנות שלי</h1>
+        >🎁 ההפתעות שלי</h1>
         <div className="presents-header-spacer" />
       </header>
 
@@ -211,7 +211,7 @@ export default function PresentsScreen({ onBack, totalStars }) {
           <div className="presents-progress-bar" style={{ width: `${progressPct}%` }} />
         </div>
         {starsToNext !== STARS_PER_PRESENT && (
-          <p className="presents-progress-hint">{`עוד ${starsToNext} כוכבים למתנה הבאה`}</p>
+          <p className="presents-progress-hint">{`עוד ${starsToNext} כוכבים להפתעה הבאה`}</p>
         )}
       </section>
 
@@ -223,11 +223,11 @@ export default function PresentsScreen({ onBack, totalStars }) {
               className={`presents-gift-btn ${opening ? 'opening' : ''}`}
               onClick={openPresent}
               disabled={opening}
-              aria-label="פתחי מתנה"
+              aria-label="פתחי הפתעה"
             >
               <img
                 src="/images/01-08-00-669_512.webp"
-                alt="מתנה"
+                alt="הפתעה"
                 className="presents-gift-img"
                 draggable={false}
               />
@@ -241,8 +241,8 @@ export default function PresentsScreen({ onBack, totalStars }) {
             </button>
             <p className="presents-available-msg">
               {available === 1
-                ? <>איזה כיף. קיבלת מתנה! 🎉</>
-                : <>וואו, יש לך כבר <strong>{available}</strong> מתנות! 🎉</>}
+                ? <>איזה כיף. קיבלת הפתעה! 🎉</>
+                : <>וואו, יש לך כבר <strong>{available}</strong> הפתעות! 🎉</>}
             </p>
           </>
         ) : (
@@ -250,14 +250,14 @@ export default function PresentsScreen({ onBack, totalStars }) {
             <div className="presents-locked-wrap">
               <img
                 src="/images/01-08-00-669_512.webp"
-                alt="מתנה נעולה"
+                alt="הפתעה נעולה"
                 className="presents-gift-img presents-gift-locked"
                 draggable={false}
               />
               <div className="presents-lock-icon">🔒</div>
             </div>
             <p className="presents-locked-msg">
-              אספי עוד {starsToNext} כוכבים<br />כדי לפתוח מתנה!
+              אספי עוד {starsToNext} כוכבים<br />כדי לפתוח הפתעה!
             </p>
           </>
         )}

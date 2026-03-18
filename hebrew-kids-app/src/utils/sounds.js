@@ -128,14 +128,98 @@ function startBgMusic(game) {
   bgHowl = howl;
 }
 
-// ── Hebrew voice (Web Speech API) ───────────────────────────────────
+// ── Hebrew voice — recorded clips + TTS fallback ────────────
+//
+// Drop your .m4a recordings into  public/sounds/voice/
+// File names must match the paths below exactly.
+// Any missing file automatically falls back to Web Speech / native TTS.
+//
+// Phrases to record (21 clips total):
+//   correct_1  כל הכבוד!          correct_5  איזה חכמה!
+//   correct_2  מצוין!              correct_6  מדהים!
+//   correct_3  יפה מאוד!           correct_7  איך ידעת?
+//   correct_4  נכון!               correct_8  וואו, יפה!
+//   wrong_1    נסי שוב
+//   wrong_2    לא נכון, נסי שוב
+//   wrong_3    כמעט, נסי שוב
+//   win_1      כל הכבוד, סיימת!    win_3  ניצחת! יפה מאוד!
+//   win_2      את מדהימה!          win_4  וואו, מצוין!
+//   streak_1   וואו, רצף מדהים!    streak_3  מדהים, כן כן כן!
+//   streak_2   כל הכבוד, את על הגל!  streak_4  וואו איך עשית את זה?
+//   levelup_1  עלית רמה! כל הכבוד!
+//   levelup_2  מדהים, איזה תותחית. עכשיו רמה חדשה!
+
+// Fallback text (used when the audio file hasn't been recorded yet)
 const VOICE_PHRASES = {
-  correct: ['כל הכבוד!', 'מצוין!', 'יפה מאוד!', 'נכון!', ' איזה חכמה!', 'מדהים!', 'איך ידעת?', 'וואו, יפה!'],
+  correct: ['כל הכבוד!', 'מצוין!', 'יפה מאוד!', 'נכון!', 'איזה חכמה!', 'מדהים!', 'איך ידעת?', 'וואו, יפה!'],
   wrong:   ['נסי שוב', 'לא נכון, נסי שוב', 'כמעט, נסי שוב'],
   win:     ['כל הכבוד, סיימת!', 'את מדהימה!', 'ניצחת! יפה מאוד!', 'וואו, מצוין!'],
-  streak:  ['וואו, רצף מדהים!', 'כל הכבוד, את על הגל!', 'מדהים, כן כן כן!','וואו איך עשית את זה?'],
+  streak:  ['וואו, רצף מדהים!', 'כל הכבוד, את על הגל!', 'מדהים, כן כן כן!', 'וואו איך עשית את זה?'],
   levelUp: ['עלית רמה! כל הכבוד!', 'מדהים, איזה תותחית. עכשיו רמה חדשה!'],
 };
+
+// VoiceFile — preloads one recorded clip; falls back to TTS if missing
+class VoiceFile {
+  constructor(path, fallbackText) {
+    this.fallbackText = fallbackText;
+    this._loaded = false;
+    this._howl = new Howl({
+      src: [path],
+      format: ['m4a'],   // explicit format — Howler doesn't always detect .m4a
+      preload: true,
+      onload: () => { this._loaded = true; },
+      onloaderror: () => { this._loaded = false; },
+    });
+  }
+
+  play(delay = 0) {
+    if (Sounds.muted || !Sounds.voiceEnabled) return;
+    if (this._loaded) {
+      setTimeout(() => {
+        if (Sounds.muted || !Sounds.voiceEnabled) return;
+        this._howl.volume(Sounds.voiceVolume);
+        this._howl.play();
+      }, delay);
+    } else {
+      speakHebrew(this.fallbackText, delay);
+    }
+  }
+}
+
+// NOTE: file names are capitalised to match the recorded files on disk.
+// Keep this pattern when adding new recordings (Wrong_1, Win_1, etc.)
+const V = (n, text) => new VoiceFile(`/sounds/voice/${n}.m4a`, text);
+
+const VOICE_FILES = {
+  correct: [
+    V('Correct_1', 'כל הכבוד!'), V('Correct_2', 'מצוין!'),
+    V('Correct_3', 'יפה מאוד!'), V('Correct_4', 'נכון!'),
+    V('Correct_5', 'איזה חכמה!'), V('Correct_6', 'מדהים!'),
+    V('Correct_7', 'איך ידעת?'), V('Correct_8', 'וואו, יפה!'),
+  ],
+  wrong: [
+    V('Wrong_1', 'נסי שוב'),
+    V('Wrong_2', 'לא נכון, נסי שוב'),
+    V('Wrong_3', 'כמעט, נסי שוב'),
+  ],
+  win: [
+    V('Win_1', 'כל הכבוד, סיימת!'), V('Win_2', 'את מדהימה!'),
+    V('Win_3', 'ניצחת! יפה מאוד!'), V('Win_4', 'וואו, מצוין!'),
+  ],
+  streak: [
+    V('Streak_1', 'וואו, רצף מדהים!'), V('Streak_2', 'כל הכבוד, את על הגל!'),
+    V('Streak_3', 'מדהים, כן כן כן!'), V('Streak_4', 'וואו איך עשית את זה?'),
+  ],
+  levelUp: [
+    V('Levelup_1', 'עלית רמה! כל הכבוד!'),
+    V('Levelup_2', 'מדהים, איזה תותחית. עכשיו רמה חדשה!'),
+  ],
+};
+
+function playVoiceClip(category, delay = 0) {
+  const clips = VOICE_FILES[category];
+  pick(clips).play(delay);
+}
 
 let _hebrewVoice = null;
 
@@ -275,14 +359,14 @@ export const Sounds = {
   },
 
   tap:     () => sfx.tap.play(Sounds.sfxVolume),
-  wrong:   () => { sfx.wrong.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.wrong), 400); },
-  correct: () => { sfx.correct.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.correct), 350); },
-  win:     () => { sfx.win.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.win), 600); },
+  wrong:   () => { sfx.wrong.play(Sounds.sfxVolume); playVoiceClip('wrong', 400); },
+  correct: () => { sfx.correct.play(Sounds.sfxVolume); playVoiceClip('correct', 350); },
+  win:     () => { sfx.win.play(Sounds.sfxVolume); playVoiceClip('win', 600); },
   flip:    () => sfx.flip.play(Sounds.sfxVolume),
-  match:   () => { sfx.match.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.correct), 300); },
+  match:   () => { sfx.match.play(Sounds.sfxVolume); playVoiceClip('correct', 300); },
   star:    () => sfx.star.play(Sounds.sfxVolume),
-  streak:  () => { sfx.streak.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.streak), 400); },
-  levelUp: () => { sfx.levelUp.play(Sounds.sfxVolume); speakHebrew(pick(VOICE_PHRASES.levelUp), 500); },
+  streak:  () => { sfx.streak.play(Sounds.sfxVolume); playVoiceClip('streak', 400); },
+  levelUp: () => { sfx.levelUp.play(Sounds.sfxVolume); playVoiceClip('levelUp', 500); },
 
   // Speak arbitrary Hebrew text (e.g. letter names, numbers)
   speak: (text, delayMs = 0) => speakHebrew(text, delayMs),

@@ -238,7 +238,7 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
               />
             </div>
             <div className="debug-field">
-              <label className="debug-label">🎁 מתנות זמינות</label>
+              <label className="debug-label">🎁 הפתעות זמינות</label>
               <input
                 type="number"
                 className="debug-input"

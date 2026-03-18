@@ -138,7 +138,7 @@ Hidden gestures for testing — invisible to kids, work on both desktop (mouse) 
 | Screen | Gesture | Effect |
 |---|---|---|
 | **Home** | Long-press (700 ms) the gift icon in the bottom nav | Opens Presents screen even with 0 stars |
-| **Presents** | Long-press (700 ms) the "🎁 המתנות שלי" title | Opens a random video without claiming a present |
+| **Presents** | Long-press (700 ms) the "🎁 ההפתעות שלי" title | Opens a random video without claiming a present |
 | **Settings** | Long-press (700 ms) the "⚙️ הגדרות" title | Toggles the debug panel |
 
 ### Settings debug panel
@@ -146,6 +146,6 @@ Hidden gestures for testing — invisible to kids, work on both desktop (mouse) 
 Two independent override fields:
 
 - **⭐ כוכבים** — set the total star count to any value
-- **🎁 מתנות זמינות** — set how many presents should be available right now
+- **🎁 הפתעות זמינות** — set how many presents should be available right now
 
 Leave a field blank to keep its current value. If the star count is too low to cover the requested presents, it is automatically raised to the minimum needed. Press **החל** to apply.
