@@ -47,11 +47,17 @@ function loadYouTubeAPI(callback) {
 function YouTubeShufflePlayer({ playlistId }) {
   const [videoId, setVideoId] = useState(null);
   const [failed,  setFailed]  = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const hiddenRef = useRef(null);
 
   useEffect(() => {
     let player   = null;
     let disposed = false;
+
+    // Watchdog: if nothing resolves within 12 s, show error
+    const watchdog = setTimeout(() => {
+      if (!disposed && !videoId) setFailed(true);
+    }, 12000);
 
     loadYouTubeAPI(() => {
       if (disposed || !hiddenRef.current) return;
@@ -85,15 +91,24 @@ function YouTubeShufflePlayer({ playlistId }) {
 
     return () => {
       disposed = true;
+      clearTimeout(watchdog);
       try { player?.destroy(); } catch (_) { /* ignore */ }
     };
-  }, [playlistId]);
+  }, [playlistId, attempt]); // re-run on retry
+
+  function retry() {
+    setVideoId(null);
+    setFailed(false);
+    setAttempt(a => a + 1);
+  }
+
+  const [playing, setPlaying] = useState(false);
 
   // Hidden bootstrap div — must stay in DOM until IDs are fetched
   return (
     <>
       <div ref={hiddenRef} style={{ position: 'fixed', left: '-9999px', width: 1, height: 1 }} />
-      {videoId ? (
+      {videoId && playing ? (
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&playsinline=1`}
           className="presents-iframe"
@@ -101,8 +116,13 @@ function YouTubeShufflePlayer({ playlistId }) {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />
+      ) : videoId ? (
+        <PlayOverlay thumbnail={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} onPlay={() => setPlaying(true)} />
       ) : failed ? (
-        <div className="presents-loading">⚠️ לא ניתן לטעון</div>
+        <div className="presents-loading">
+          <div>⚠️ לא ניתן לטעון</div>
+          <button className="presents-retry-btn" onClick={retry}>נסי שוב ↺</button>
+        </div>
       ) : (
         <div className="presents-loading">⏳ טוען סרטון...</div>
       )}
@@ -110,9 +130,33 @@ function YouTubeShufflePlayer({ playlistId }) {
   );
 }
 
+// ── Tap-to-play overlay ───────────────────────────────────────
+function PlayOverlay({ thumbnail, onPlay }) {
+  return (
+    <div
+      className="presents-play-overlay"
+      style={thumbnail ? { backgroundImage: `url(${thumbnail})` } : undefined}
+      onClick={onPlay}
+    >
+      <div className="presents-play-circle">▶</div>
+      <div className="presents-play-hint">לחצי להתחלה</div>
+    </div>
+  );
+}
+
 // ── Per-source video player ───────────────────────────────────
 function VideoPlayer({ source }) {
+  const [playing, setPlaying] = useState(false);
+
   if (source.type === 'youtube-video') {
+    if (!playing) {
+      return (
+        <PlayOverlay
+          thumbnail={`https://img.youtube.com/vi/${source.id}/hqdefault.jpg`}
+          onPlay={() => setPlaying(true)}
+        />
+      );
+    }
     return (
       <iframe
         src={`https://www.youtube-nocookie.com/embed/${source.id}?autoplay=1&rel=0&playsinline=1`}
@@ -285,6 +329,10 @@ export default function PresentsScreen({ onBack, totalStars }) {
                 {Array.from({ length: 9 }).map((_, i) => <span key={i} className="presents-tv-dot" />)}
               </div>
               <div className="presents-tv-knob" />
+            </div>
+            {/* Debug label — subtle, for identifying problematic videos */}
+            <div className="presents-debug-label">
+              {currentSource.title} · {currentSource.id}
             </div>
           </div>
         </div>

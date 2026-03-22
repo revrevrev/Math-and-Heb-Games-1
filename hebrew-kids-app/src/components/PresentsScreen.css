@@ -340,11 +340,73 @@
   width: 100%;
   aspect-ratio: 16/9;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
   font-size: 1.1rem;
   color: #c4b5fd;
   background: rgba(0,0,0,0.4);
+}
+
+.presents-retry-btn {
+  margin-top: 0.25rem;
+  padding: 0.45rem 1.2rem;
+  border: none;
+  border-radius: 999px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.presents-retry-btn:active {
+  background: #6d28d9;
+}
+
+.presents-debug-label {
+  text-align: center;
+  font-size: 0.65rem;
+  color: #3b2a5a;
+  padding: 0.2rem 0.5rem 0;
+  letter-spacing: 0.02em;
+  user-select: text;
+}
+
+/* ── Tap-to-play overlay ─────────────────────────────────── */
+.presents-play-overlay {
+  width: 100%;
+  aspect-ratio: 16/9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: #0d0021 center/cover no-repeat;
+  cursor: pointer;
+  position: relative;
+}
+.presents-play-circle {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.4);
+  transition: transform 0.15s;
+}
+.presents-play-overlay:active .presents-play-circle {
+  transform: scale(0.92);
+}
+.presents-play-hint {
+  font-size: 0.9rem;
+  color: #c4b5fd;
+  text-shadow: 0 1px 4px #000;
 }
 
 /* ── Bottom TV controls ──────────────────────────────────── */

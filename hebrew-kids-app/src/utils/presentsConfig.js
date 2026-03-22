@@ -25,10 +25,10 @@ export const STARS_PER_PRESENT = 15;
 
 export const PRESENT_SOURCES = [
   // ── YouTube videos ─────────────────────────────────────────────────
-   { type: 'youtube-video', id: 'WZ72BCp3kOM', title: 'תקרית הפומפונים' },
-   { type: 'youtube-video', id: 'wt_9h_Nx93Y', title: 'איש שלג' },
-   { type: 'youtube-video', id: 'cfqLxopZupc', title: 'להפגש ולשחק עם פו הדב' },
-   { type: 'youtube-video', id: 'cdo0GZpZN-w', title: 'סבא אליעזר והגזר' },
+  // { type: 'youtube-video', id: 'WZ72BCp3kOM', title: 'תקרית הפומפונים' },
+  // { type: 'youtube-video', id: 'wt_9h_Nx93Y', title: 'איש שלג' },
+  // { type: 'youtube-video', id: 'cfqLxopZupc', title: 'להפגש ולשחק עם פו הדב' },
+  // { type: 'youtube-video', id: 'cdo0GZpZN-w', title: 'סבא אליעזר והגזר' },
   // ── YouTube playlists ──────────────────────────────────────────────
    { type: 'youtube-playlist', id: 'PLGni-QAYrlkjg54TKzx54qcPfWGIltwWM', title: 'סרטונים אהובים' }
 
