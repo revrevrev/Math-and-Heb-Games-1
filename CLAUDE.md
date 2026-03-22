@@ -59,6 +59,7 @@ npm run build        # production build → dist/
 npm run android:sync # build + cap sync android
 npm run android:open # open in Android Studio
 npm run lint         # eslint
+.\build-android.bat  # complete flow for building and deploying on android
 ```
 
 ## Adding a New Game
