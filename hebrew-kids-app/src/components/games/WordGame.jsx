@@ -12,6 +12,19 @@ const ROUNDS = 8;
 
 const LEVEL1_WORDS = WORDS.filter(w => w.word.length <= 4);
 
+// Sparse-grid scatter: place tiles in random cells of an oversized grid.
+// Empty cells create visual gaps → looks messy, overlaps are impossible.
+function generateScatter(n) {
+  const COLS = 3;
+  const ROWS = n <= 2 ? 1 : n <= 4 ? 2 : 3;
+  const totalCells = COLS * ROWS;
+  const chosen = shuffle(Array.from({ length: totalCells }, (_, i) => i)).slice(0, n);
+  return chosen.map(cell => ({
+    leftPct: ((cell % COLS + 0.5) / COLS) * 100,
+    topPct:  ((Math.floor(cell / COLS) + 0.5) / ROWS) * 100,
+  }));
+}
+
 function makeRound(usedIndices, level = 1) {
   const wordPool = level === 1 ? LEVEL1_WORDS : WORDS;
   const available = wordPool.filter(w => !usedIndices.has(WORDS.indexOf(w)));
@@ -35,6 +48,7 @@ export default function WordGame({ onBack, onAddStars }) {
   const [remaining, setRemaining] = useState(() =>
     initRound0.letters.map((l, i) => ({ l, i, used: false }))
   );
+  const [scatter, setScatter]     = useState(() => generateScatter(initRound0.letters.length));
   const [correct, setCorrect]     = useState(false);
   const [wrong, setWrong]         = useState(false);
   const [shake, setShake]         = useState(false);
@@ -52,6 +66,7 @@ export default function WordGame({ onBack, onAddStars }) {
 
   function initRound(rd) {
     setRemaining(rd.letters.map((l, i) => ({ l, i, used: false })));
+    setScatter(generateScatter(rd.letters.length));
     setBuilt([]);
     setCorrect(false);
     setWrong(false);
@@ -96,7 +111,6 @@ export default function WordGame({ onBack, onAddStars }) {
         setCorrect(true);
         setScore(s => s + 1);
         onAddStars(1);
-        Sounds.win();
         ge.onCorrect({ display: `${roundData.item.emoji} ${roundData.item.word}` }, round);
         autoAdvRef.current = setTimeout(doAdvance, 2500);
       } else {
@@ -210,16 +224,25 @@ export default function WordGame({ onBack, onAddStars }) {
           <p className="instruction">בני את המילה! לחצי על האותיות 👇</p>
 
           <div className="letter-tiles">
-            {remaining.map((tile, idx) => (
-              <button
-                key={`${tile.l}-${tile.i}`}
-                className={`letter-tile ${tile.used ? 'tile-used' : ''}`}
-                onClick={() => handleLetterTap(idx)}
-                disabled={tile.used}
-              >
-                {tile.l}
-              </button>
-            ))}
+            {remaining.map((tile, idx) => {
+              const pos = scatter[idx] ?? { leftPct: 50, topPct: 50 };
+              return (
+                <button
+                  key={`${tile.l}-${tile.i}`}
+                  className={`letter-tile ${tile.used ? 'tile-used' : ''}`}
+                  onClick={() => handleLetterTap(idx)}
+                  disabled={tile.used}
+                  style={{
+                    position: 'absolute',
+                    left: `${pos.leftPct}%`,
+                    top: `${pos.topPct}%`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
+                  {tile.l}
+                </button>
+              );
+            })}
           </div>
 
           {built.length > 0 && !correct && (

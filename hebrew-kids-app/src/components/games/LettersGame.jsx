@@ -89,7 +89,6 @@ export default function LettersGame({ onBack, onAddStars }) {
       setElsaAnim('celebrate');
       setScore(s => s + 1);
       onAddStars(1);
-      Sounds.correct();
       ge.onCorrect({ display: `${roundData.correct.letter} — ${roundData.correct.name}` }, round);
       autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {

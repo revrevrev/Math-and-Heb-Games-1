@@ -235,3 +235,35 @@
   transition: background var(--t-fast), transform var(--t-fast);
 }
 .debug-apply-btn:active { background: rgba(251,191,36,0.35); transform: scale(0.94); }
+
+.debug-current-state {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.07);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.debug-hint {
+  font-size: 0.78rem;
+  color: rgba(251,191,36,0.6);
+  margin: -4px 0 10px 0;
+  padding-right: 4px;
+}
+.debug-hint-preview {
+  color: rgba(251,191,36,0.4);
+  font-size: 0.72rem;
+}
+
+.debug-applied-summary {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: rgba(100,255,160,0.85);
+  background: rgba(100,255,160,0.08);
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: center;
+  line-height: 1.5;
+}

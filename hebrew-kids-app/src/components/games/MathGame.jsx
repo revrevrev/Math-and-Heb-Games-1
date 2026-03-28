@@ -89,7 +89,6 @@ export default function MathGame({ onBack, onAddStars }) {
       setCorrect(true);
       setScore(s => s + 1);
       onAddStars(1);
-      Sounds.correct();
       ge.onCorrect({ display: `${data.a} + ${data.b} = ${data.answer}` }, round);
 
       // Measure exact pixel distances to center before animating

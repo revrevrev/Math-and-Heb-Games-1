@@ -254,7 +254,7 @@ export default function PresentsScreen({ onBack, totalStars }) {
         <div className="presents-progress-wrap">
           <div className="presents-progress-bar" style={{ width: `${progressPct}%` }} />
         </div>
-        {starsToNext !== STARS_PER_PRESENT && (
+        {available === 0 && starsToNext !== STARS_PER_PRESENT && (
           <p className="presents-progress-hint">{`עוד ${starsToNext} כוכבים להפתעה הבאה`}</p>
         )}
       </section>

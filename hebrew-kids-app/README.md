@@ -70,9 +70,9 @@ In Android Studio:
 
 ### After every code change
 
-```bash
-npm run android:sync   # vite build + cap sync
-```
+cd .\hebrew-kids-app\
+.\build-android.bat  
+
 Then press Run again in Android Studio (no reinstall needed).
 
 ---

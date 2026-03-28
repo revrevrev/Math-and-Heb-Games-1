@@ -75,7 +75,6 @@ export default function CountingGame({ onBack, onAddStars }) {
       setBlueyAnim('celebrate');
       setScore(s => s + 1);
       onAddStars(1);
-      Sounds.correct();
       ge.onCorrect({ display: `${data.n} ${data.item.emoji} ${data.item.name}` }, round);
       autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {

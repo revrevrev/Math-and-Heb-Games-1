@@ -56,6 +56,17 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
   const [debugStars, setDebugStars]       = useState('');
   const [debugPresents, setDebugPresents] = useState('');
   const [debugApplied, setDebugApplied]   = useState(false);
+  const [lastAppliedStars, setLastAppliedStars] = useState(null);
+
+  // Current live state (re-read from localStorage when panel opens)
+  const currentClaimed   = parseInt(localStorage.getItem(CLAIMS_KEY) || '0', 10);
+  const currentEarned    = Math.floor(totalStars / STARS_PER_PRESENT);
+  const currentAvailable = Math.max(0, currentEarned - currentClaimed);
+
+  // Live preview: stars-to-next-present based on whatever is typed (or current)
+  const previewStars     = debugStars !== '' ? Math.max(0, parseInt(debugStars, 10) || 0) : totalStars;
+  const previewMod       = previewStars % STARS_PER_PRESENT;
+  const previewToNext    = previewMod === 0 ? STARS_PER_PRESENT : STARS_PER_PRESENT - previewMod;
 
   const titlePressRef = useRef(null);
   function onTitlePointerDown() {
@@ -72,6 +83,8 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
       ? parsedStars
       : totalStars;
 
+    const newEarned = Math.floor(effectiveStars / STARS_PER_PRESENT);
+
     if (Number.isFinite(parsedPresents) && parsedPresents >= 0) {
       // Ensure stars are high enough to "earn" the requested presents
       const minStars = parsedPresents * STARS_PER_PRESENT;
@@ -79,12 +92,22 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
       const earned  = Math.floor(effectiveStars / STARS_PER_PRESENT);
       const claimed = Math.max(0, earned - parsedPresents);
       localStorage.setItem(CLAIMS_KEY, String(claimed));
+    } else {
+      // Stars-only change: cap claimed to newEarned so stale high-claimed values
+      // from previous debug sessions don't make available appear negative/zero.
+      const prevClaimed = parseInt(localStorage.getItem(CLAIMS_KEY) || '0', 10);
+      if (prevClaimed > newEarned) {
+        localStorage.setItem(CLAIMS_KEY, String(newEarned));
+      }
     }
 
     localStorage.setItem('hebrew-app-stars', String(effectiveStars));
     onDebugSetStars(effectiveStars);
+    setLastAppliedStars(effectiveStars);
+    setDebugStars('');
+    setDebugPresents('');
     setDebugApplied(true);
-    setTimeout(() => setDebugApplied(false), 1800);
+    setTimeout(() => setDebugApplied(false), 3000);
   }
   // ─────────────────────────────────────────────────────────
 
@@ -226,6 +249,12 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
         {debugOpen && (
           <div className="debug-panel">
             <div className="debug-panel-title">🛠 מצב פיתוח</div>
+
+            {/* Current state readout */}
+            <div className="debug-current-state">
+              <span>מצב נוכחי: ⭐ {totalStars} כוכבים &nbsp;|&nbsp; 🎁 {currentAvailable} הפתעות זמינות</span>
+            </div>
+
             <div className="debug-field">
               <label className="debug-label">⭐ כוכבים</label>
               <input
@@ -234,23 +263,47 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
                 min="0"
                 placeholder={String(totalStars)}
                 value={debugStars}
-                onChange={e => setDebugStars(e.target.value)}
+                onChange={e => { setDebugStars(e.target.value); setDebugApplied(false); setLastAppliedStars(null); }}
               />
             </div>
+            {/* Live: stars needed for next present */}
+            <div className="debug-hint">
+              עוד <strong>{previewToNext}</strong> כוכבים להפתעה הבאה
+              {debugStars !== '' && parseInt(debugStars, 10) !== totalStars && (
+                <span className="debug-hint-preview"> (לאחר שינוי)</span>
+              )}
+            </div>
+
             <div className="debug-field">
               <label className="debug-label">🎁 הפתעות זמינות</label>
               <input
                 type="number"
                 className="debug-input"
                 min="0"
-                placeholder="0"
+                placeholder={String(currentAvailable)}
                 value={debugPresents}
-                onChange={e => setDebugPresents(e.target.value)}
+                onChange={e => { setDebugPresents(e.target.value); setDebugApplied(false); setLastAppliedStars(null); }}
               />
             </div>
+
             <button className="debug-apply-btn" onClick={applyDebug}>
               {debugApplied ? '✓ יושם!' : 'החל'}
             </button>
+
+            {/* Post-apply summary */}
+            {debugApplied && lastAppliedStars !== null && (() => {
+              const mod     = lastAppliedStars % STARS_PER_PRESENT;
+              const toNext  = mod === 0 ? STARS_PER_PRESENT : STARS_PER_PRESENT - mod;
+              const newClaimed  = parseInt(localStorage.getItem(CLAIMS_KEY) || '0', 10);
+              const newEarned   = Math.floor(lastAppliedStars / STARS_PER_PRESENT);
+              const newAvail    = Math.max(0, newEarned - newClaimed);
+              return (
+                <div className="debug-applied-summary">
+                  ✓ עודכן: ⭐ {lastAppliedStars} כוכבים, 🎁 {newAvail} זמינות<br />
+                  עוד <strong>{toNext}</strong> כוכבים להפתעה הבאה
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>

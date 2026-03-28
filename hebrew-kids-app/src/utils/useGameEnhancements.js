@@ -27,7 +27,14 @@ export function useGameEnhancements(totalRounds) {
     }
 
     // Streak bonus at 3, 6, 9, …
-    if (s >= 3 && s % 3 === 0) {
+    const isStreak  = s >= 3 && s % 3 === 0;
+    const isLevelUp = roundIndex === Math.floor(totalRounds / 2) - 1;
+
+    if (!isStreak && !isLevelUp) {
+      Sounds.correct();
+    }
+
+    if (isStreak) {
       setStreakCount(s);
       setShowStreak(true);
       Sounds.streak();
@@ -36,8 +43,7 @@ export function useGameEnhancements(totalRounds) {
     // Achievement: 5 in a row
     if (s >= 5) unlockAchievement('streak_5');
 
-    // Level-up at midpoint
-    if (roundIndex === Math.floor(totalRounds / 2) - 1) {
+    if (isLevelUp) {
       setTimeout(() => {
         setShowLevelUp(true);
         Sounds.levelUp();
