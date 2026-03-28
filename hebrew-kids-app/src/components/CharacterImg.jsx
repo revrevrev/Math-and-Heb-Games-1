@@ -75,6 +75,12 @@ const CHARS = {
     pos: 'top center',
     aspect: 0.9,
   },
+  moonman: {
+    src: '/images/האיש על הירח.jpg',
+    alt: 'האיש על הירח',
+    pos: 'top center',
+    aspect: 1.0,
+  },
 };
 
 export default function CharacterImg({ character = 'elsa', size = 90, className = '' }) {

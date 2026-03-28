@@ -1,0 +1,337 @@
+/* ── SoundGame – space/moon night theme ───────────────────────────────────── */
+
+.sg-game {
+  position: relative;
+  width: 100%;
+  min-height: calc(100dvh - 88px); /* below GameShell top bar */
+  background: linear-gradient(180deg, #06081e 0%, #0d1140 45%, #081030 100%);
+  overflow: hidden;
+  direction: rtl;
+  font-family: inherit;
+}
+
+/* ── Background twinkling stars ──────────────────────────────────────────── */
+.sg-bg-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sg-bg-star {
+  position: absolute;
+  color: #c8d8ff;
+  opacity: 0;
+  animation: sg-twinkle linear infinite;
+}
+
+@keyframes sg-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50%       { opacity: 0.9;  transform: scale(1.3); }
+}
+
+/* ── Moon man character ───────────────────────────────────────────────────── */
+.sg-moonman {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 220, 80, 0.55);
+  box-shadow: 0 0 18px rgba(255, 200, 60, 0.35);
+  z-index: 5;
+}
+
+.sg-moonman img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* ── Target sound area ────────────────────────────────────────────────────── */
+.sg-target-area {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 16px 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+.sg-target-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+
+.sg-target-letter {
+  font-size: 68px;
+  line-height: 1;
+  color: #FFD700;
+  font-weight: bold;
+  text-shadow:
+    0 0 16px rgba(255, 215, 0, 0.9),
+    0 0 36px rgba(255, 215, 0, 0.45);
+  animation: sg-letter-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sg-letter-pulse {
+  0%, 100% { transform: scale(1);    filter: brightness(1);   }
+  50%       { transform: scale(1.07); filter: brightness(1.2); }
+}
+
+/* ── Round progress dots ──────────────────────────────────────────────────── */
+.sg-progress {
+  position: absolute;
+  top: 8px;
+  right: 50%;
+  transform: translateX(50%);
+  display: flex;
+  gap: 5px;
+  z-index: 11;
+}
+
+.sg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.sg-dot-active {
+  background: #FFD700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.85);
+}
+
+.sg-dot-done {
+  background: rgba(255, 215, 0, 0.45);
+}
+
+/* ── Flying area ──────────────────────────────────────────────────────────── */
+.sg-flying-area {
+  position: absolute;
+  inset: 130px 0 0 0;
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* ── Flying word track (carries the animation) ────────────────────────────── */
+.sg-word-track {
+  position: absolute;
+  left: 0;
+  /* 'both' fill-mode applies 'from' keyframe during delay (keeps word off-screen) */
+  animation: sg-fly var(--dur) var(--delay) linear both;
+  will-change: transform;
+}
+
+.sg-track-caught {
+  visibility: hidden;
+  animation-play-state: paused;
+}
+
+@keyframes sg-fly {
+  from { transform: translateX(110vw); }
+  to   { transform: translateX(-280px); }
+}
+
+/* ── Word bubble (visual layer, clickable) ────────────────────────────────── */
+.sg-word-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 50px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  border: 3px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.sg-word-bubble:active {
+  transform: scale(0.94);
+}
+
+.sg-word-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.sg-word-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111840;
+  direction: rtl;
+}
+
+/* Wrong tap flash */
+.sg-word-bubble.sg-wrong {
+  animation: sg-wrong-flash 0.55s ease;
+}
+
+@keyframes sg-wrong-flash {
+  0%, 100% { background: rgba(255, 255, 255, 0.96); border-color: transparent; }
+  20%, 60% { background: rgba(255, 80,  80,  0.90); border-color: #ef4444;    }
+}
+
+/* ── Intro overlay ────────────────────────────────────────────────────────── */
+.sg-intro-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(6, 8, 30, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.sg-intro-round {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sg-intro-letter {
+  font-size: 108px;
+  line-height: 1;
+  color: #FFD700;
+  font-weight: bold;
+  text-shadow:
+    0 0 30px rgba(255, 215, 0, 1),
+    0 0 60px rgba(255, 215, 0, 0.5);
+  animation: sg-intro-bounce 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes sg-intro-bounce {
+  from { transform: scale(1);    }
+  to   { transform: scale(1.12); }
+}
+
+.sg-intro-hint {
+  font-size: 20px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ── Between-rounds overlay ───────────────────────────────────────────────── */
+.sg-between-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 8, 30, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.sg-between-text {
+  font-size: 44px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 24px rgba(255, 215, 0, 0.9);
+  animation: sg-between-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes sg-between-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Star burst (correct tap feedback) ───────────────────────────────────── */
+.sg-star-burst {
+  position: fixed;
+  font-size: 42px;
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  animation: sg-star-burst 0.7s ease-out forwards;
+}
+
+@keyframes sg-star-burst {
+  0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  60%  { transform: translate(-50%, -130%) scale(1.6); opacity: 1; }
+  100% { transform: translate(-50%, -200%) scale(1);   opacity: 0; }
+}
+
+/* ── Done screen ──────────────────────────────────────────────────────────── */
+.sg-done {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: rgba(6, 8, 30, 0.88);
+  backdrop-filter: blur(10px);
+  padding: 24px;
+}
+
+.sg-done-moon {
+  font-size: 64px;
+  animation: sg-done-spin 4s linear infinite;
+}
+
+@keyframes sg-done-spin {
+  0%   { transform: rotate(-8deg); }
+  50%  { transform: rotate(8deg);  }
+  100% { transform: rotate(-8deg); }
+}
+
+.sg-done-title {
+  font-size: 42px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.sg-done-stars {
+  font-size: 28px;
+  color: #fff;
+}
+
+.sg-done-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #0d1140;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 44px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(255, 165, 0, 0.55);
+  font-family: inherit;
+}
+
+.sg-done-btn:active { transform: scale(0.96); }
+
+.sg-back-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  padding: 10px 32px;
+  font-size: 18px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sg-back-btn:active { transform: scale(0.96); }

@@ -56,6 +56,16 @@ const GAMES = [
     imgPos: 'top center',
   },
   {
+    id: 'soundgame',
+    title: 'צליל במילה',
+    subtitle: 'תפסי את המילה!',
+    emoji: '🌙',
+    gradient: 'linear-gradient(145deg, #06081e 0%, #1a1a6e 60%, #2d2d9e 100%)',
+    glow: 'rgba(100,100,255,0.65)',
+    imgSrc: '/images/האיש על הירח.jpg',
+    imgPos: 'top center',
+  },
+  {
     id: 'firstletter',
     title: 'מילים ואותיות',
     subtitle: 'משכי את המילה לאות הראשונה שלה!',
