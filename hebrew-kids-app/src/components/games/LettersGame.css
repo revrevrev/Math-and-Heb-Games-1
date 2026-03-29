@@ -28,6 +28,12 @@
   backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(167,139,250,0.3);
   min-width: 110px;
+  cursor: pointer;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.big-letter-card:active {
+  transform: scale(0.93);
+  box-shadow: 0 0 20px rgba(167,139,250,0.5);
 }
 
 .big-letter {

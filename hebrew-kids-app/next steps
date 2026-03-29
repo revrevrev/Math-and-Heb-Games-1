@@ -1,9 +1,11 @@
-MO9 - Additional characters:  Stitch
-MO10 - letter tracing
-MO11 - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הנב בתור
-ME4→ Answer reveal animation - briefly show correct answer before moving to next question
-BF1→ Sticker collection - earned stars unlock collectible badges, dedicated sticker screen
-BF2→ **validate** Character voice lines - short audio clips of characters saying Hebrew words/letters
-BF3→ Animated home screen characters - idle wave/bounce animation on home screen
-BF5→ Difficulty progression - Adaptive levels per game
-MN1→ Enhance characters - improve character image quality / recognizability
+1 - Additional characters:  Stitch
+2 - letter tracing
+3 - Bluey - change the game - מספרים גדולים - איזה יותר גדול - אולי לרדוף אחרי המספר הנב בתור
+4 - Add another type of present - camera - enables to take a photo or selfie with a frame 
+5 - Add an option to take a selfie 
+
+##Low priority##
+L1→ Sticker collection - earned stars unlock collectible badges, dedicated sticker screen
+L2→ Character voice lines - short audio clips of characters saying Hebrew words/letters
+L3→ Animated home screen characters - idle wave/bounce animation on home screen
+L4→ Difficulty progression - Adaptive levels per game

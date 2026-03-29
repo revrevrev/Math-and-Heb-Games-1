@@ -68,6 +68,24 @@
   50%       { transform: scale(1.07); filter: brightness(1.2); }
 }
 
+.sg-target-tappable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sg-target-tappable:active {
+  filter: brightness(1.5);
+  transform: scale(0.94);
+}
+
+.sg-target-tap-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+
 /* ── Catch progress (5 stars needed) ─────────────────────────────────────── */
 .sg-catch-progress {
   display: flex;

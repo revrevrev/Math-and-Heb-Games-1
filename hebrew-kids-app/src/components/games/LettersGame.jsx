@@ -43,7 +43,6 @@ export default function LettersGame({ onBack, onAddStars }) {
   const [showSnow, setShowSnow]     = useState(false);
   const [score, setScore]           = useState(0);
   const [done, setDone]             = useState(false);
-  const [elsaAnim, setElsaAnim]     = useState('');
   const [showReview, setShowReview] = useState(false);
   const ge        = useGameEnhancements(ROUNDS);
   const autoAdvRef = useRef(null);
@@ -75,7 +74,6 @@ export default function LettersGame({ onBack, onAddStars }) {
   function doAdvance() {
     if (autoAdvRef.current) { clearTimeout(autoAdvRef.current); autoAdvRef.current = null; }
     ge.clearWaiting();
-    setElsaAnim('');
     advance();
   }
 
@@ -86,20 +84,17 @@ export default function LettersGame({ onBack, onAddStars }) {
     if (letter === roundData.correct.letter) {
       setCorrect(true);
       setShowSnow(true);
-      setElsaAnim('celebrate');
       setScore(s => s + 1);
       onAddStars(1);
       ge.onCorrect({ display: `${roundData.correct.letter} — ${roundData.correct.name}` }, round);
       autoAdvRef.current = setTimeout(doAdvance, 2500);
     } else {
       setWrong(true);
-      setElsaAnim('wiggle');
       Sounds.wrong();
       ge.onWrong();
       setTimeout(() => {
         setWrong(false);
         setChosen(null);
-        setElsaAnim('');
       }, 900);
     }
   }
@@ -116,6 +111,15 @@ export default function LettersGame({ onBack, onAddStars }) {
   useEffect(() => {
     if (done && score === ROUNDS) unlockAchievement('perfect_game');
   }, [done, score]);
+
+  // Announce the letter when each round appears
+  useEffect(() => {
+    if (done) return;
+    const timer = setTimeout(() => {
+      Sounds.speak(`מִיצִי אֶת הָאוֹת ${roundData.correct.pronounce}`);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [roundData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { correct: correctItem, choices } = roundData;
 
@@ -159,7 +163,7 @@ export default function LettersGame({ onBack, onAddStars }) {
                 onClick={() => setShowReview(r => !r)}>
                 {showReview ? '▲ הסתרי' : '📋 סקירה'}
               </button>
-              <button className="done-btn primary" onClick={restart}>שחק שוב 🔄</button>
+              <button className="done-btn primary" onClick={restart}>שחקי שוב 🔄</button>
               <button className="done-btn secondary" onClick={onBack}>🏠 בית</button>
             </div>
           </div>
@@ -184,12 +188,12 @@ export default function LettersGame({ onBack, onAddStars }) {
 
           {/* Character + letter display */}
           <div className={`letter-stage ${correct ? 'correct-stage' : ''} ${wrong ? 'wrong-stage' : ''}`}>
-            <div className={`elsa-wrap ${elsaAnim}`}>
-              <CharacterImg character="elsa" size={100} />
-            </div>
-            <div className="big-letter-card">
+            <div className="big-letter-card"
+              role="button"
+              tabIndex={0}
+              onClick={() => Sounds.speak(correctItem.pronounce)}
+            >
               <span className="big-letter">{correctItem.letter}</span>
-              <span className="letter-name">{correctItem.name}</span>
             </div>
           </div>
 

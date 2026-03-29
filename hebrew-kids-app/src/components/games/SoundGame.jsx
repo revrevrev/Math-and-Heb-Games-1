@@ -134,8 +134,9 @@ const ROUNDS = [
   },
 ];
 
-const CATCHES_NEEDED = 4;  // how many correct taps needed to finish a round
-const MAX_ACTIVE = 4;  // max words flying at once
+const CATCHES_NEEDED = 4;
+const MAX_ACTIVE     = 3;   // max words flying at once
+const SPAWN_INTERVAL = 1600; // ms between spawn attempts
 
 function shuffle(arr) {
   const a = [...arr];
@@ -144,29 +145,6 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-// Spread Y positions so words don't stack
-function spreadY(count) {
-  const positions = [];
-  const step = 60 / count;
-  for (let i = 0; i < count; i++) {
-    positions.push(12 + i * step + Math.random() * (step * 0.6));
-  }
-  return shuffle(positions);
-}
-
-function makeBatch(words, batchIndex) {
-  const shuffled = shuffle([...words]);
-  const ys = spreadY(shuffled.length);
-  return shuffled.map((w, i) => ({
-    ...w,
-    id: `b${batchIndex}-${i}-${Date.now()}`,
-    yPercent: ys[i],
-    duration: 7 + Math.random() * 4,
-    delay: i * 1.1,
-    status: 'flying',
-  }));
 }
 
 // ── Star burst ───────────────────────────────────────────────────────────────
@@ -182,7 +160,7 @@ function FlyingWord({ word, onTap, onGone }) {
   return (
     <div
       className={`sg-word-track ${word.status === 'caught' ? 'sg-track-caught' : ''}`}
-      style={{ top: `${word.yPercent}%`, '--dur': `${word.duration}s`, '--delay': `${word.delay}s` }}
+      style={{ top: `${word.yPercent}%`, '--dur': `${word.duration}s`, '--delay': '0s' }}
       onAnimationEnd={handleAnimEnd}
     >
       <div className="sg-word-bubble" onClick={(e) => onTap(word.id, e)}>
@@ -193,7 +171,7 @@ function FlyingWord({ word, onTap, onGone }) {
   );
 }
 
-// ── Progress bar — shows how many of 5 caught ───────────────────────────────
+// ── Progress bar — shows how many of CATCHES_NEEDED caught ──────────────────
 function CatchProgress({ caught }) {
   return (
     <div className="sg-catch-progress">
@@ -207,19 +185,18 @@ function CatchProgress({ caught }) {
 // ── Main component ───────────────────────────────────────────────────────────
 export default function SoundGame({ onBack, onAddStars }) {
   const [shuffledRounds, setShuffledRounds] = useState(() => [ROUNDS[Math.floor(Math.random() * ROUNDS.length)]]);
-  const [roundIdx, setRoundIdx]       = useState(0);
   const [phase, setPhase]             = useState('intro');
   const [wordItems, setWordItems]     = useState([]);
   const [caughtCount, setCaughtCount] = useState(0);
   const [totalStars, setTotalStars]   = useState(0);
   const [starBurst, setStarBurst]     = useState(null);
 
-  const wordItemsRef  = useRef([]);
-  const caughtRef     = useRef(0);
-  const batchRef      = useRef(0);
+  const wordItemsRef = useRef([]);
+  const caughtRef    = useRef(0);
+  const wordPoolRef  = useRef([]);
+  const nextIdRef    = useRef(0);
 
   useEffect(() => { wordItemsRef.current = wordItems; }, [wordItems]);
-  useEffect(() => { caughtRef.current = caughtCount; }, [caughtCount]);
 
   // ── Music ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -227,54 +204,55 @@ export default function SoundGame({ onBack, onAddStars }) {
     return () => Sounds.stopMusic();
   }, []);
 
-  // ── Intro phase: speak the sound, then launch first batch ─────────────────
+  // ── Intro: speak instruction, then start playing ───────────────────────────
   useEffect(() => {
     if (phase !== 'intro') return;
-    batchRef.current = 0;
+    caughtRef.current = 0;
     setCaughtCount(0);
     setWordItems([]);
 
-    // Speak the instruction after 400 ms
-    const round = shuffledRounds[roundIdx];
-    // Niqqud in the instruction helps Hebrew TTS pronounce every word correctly
-    const speech = `מִצְאִי מִילִים עִם הַצְּלִיל ${round.target}`;
-    Sounds.speak(speech, 400);
+    const round = shuffledRounds[0];
+    Sounds.speak(`מִצְאִי מִילִים עִם הַצְּלִיל ${round.target}`, 400);
 
-    // Start playing after 2.5 s
-    const t = setTimeout(() => {
-      setWordItems(makeBatch(round.words, batchRef.current));
-      setPhase('playing');
-    }, 2500);
+    const t = setTimeout(() => setPhase('playing'), 2500);
     return () => clearTimeout(t);
-  }, [phase, roundIdx, shuffledRounds]);
+  }, [phase, shuffledRounds]);
 
-  // ── Check if batch is exhausted ────────────────────────────────────────────
+  // ── Continuous word spawner ────────────────────────────────────────────────
   useEffect(() => {
-    if (phase !== 'playing' || wordItems.length === 0) return;
-    const allDone = wordItems.every(w => w.status === 'caught' || w.status === 'gone');
-    if (!allDone) return;
+    if (phase !== 'playing') return;
 
-    if (caughtRef.current >= CATCHES_NEEDED) {
-      // Round complete
-      Sounds.win();
-      setPhase('between');
-      setTimeout(() => {
-        if (roundIdx + 1 >= shuffledRounds.length) {
-          const stats = recordGamePlayed('soundgame');
-          if (stats.count >= 10) unlockAchievement('games_10');
-          if (stats.uniqueGames?.length >= 5) unlockAchievement('all_games');
-          setPhase('done');
-        } else {
-          setRoundIdx(r => r + 1);
-          setPhase('intro');
-        }
-      }, 1800);
-    } else {
-      // Need more catches — recycle the word list
-      batchRef.current += 1;
-      setWordItems(makeBatch(shuffledRounds[roundIdx].words, batchRef.current));
+    const round = shuffledRounds[0];
+    wordPoolRef.current = shuffle([...round.words]);
+    nextIdRef.current = 0;
+
+    function spawnWord() {
+      if (caughtRef.current >= CATCHES_NEEDED) return;
+
+      if (wordPoolRef.current.length === 0) {
+        wordPoolRef.current = shuffle([...round.words]);
+      }
+      const w = wordPoolRef.current.pop();
+      const newWord = {
+        ...w,
+        id: `w${nextIdRef.current++}-${Date.now()}`,
+        yPercent: 10 + Math.random() * 62,
+        duration: 7 + Math.random() * 4,
+        delay: 0,
+        status: 'flying',
+      };
+
+      setWordItems(prev => {
+        const active = prev.filter(x => x.status === 'flying').length;
+        if (active >= MAX_ACTIVE) return prev;
+        return [...prev, newWord];
+      });
     }
-  }, [wordItems, phase, roundIdx]);
+
+    spawnWord(); // spawn immediately on phase start
+    const timer = setInterval(spawnWord, SPAWN_INTERVAL);
+    return () => clearInterval(timer);
+  }, [phase, shuffledRounds]);
 
   // ── Tap handler ───────────────────────────────────────────────────────────
   const handleTap = useCallback((wordId, evt) => {
@@ -287,30 +265,47 @@ export default function SoundGame({ onBack, onAddStars }) {
       Sounds.correct();
       onAddStars(1);
       setTotalStars(s => s + 1);
-      setCaughtCount(c => c + 1);
-      // Star burst at tap position
+      const newCaught = caughtRef.current + 1;
+      caughtRef.current = newCaught;
+      setCaughtCount(newCaught);
+
       const rect = evt.currentTarget.getBoundingClientRect();
       setStarBurst({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
       setTimeout(() => setStarBurst(null), 700);
       setWordItems(prev => prev.map(x => x.id === wordId ? { ...x, status: 'caught' } : x));
+
+      if (newCaught >= CATCHES_NEEDED) {
+        Sounds.win();
+        setPhase('between');
+        setTimeout(() => {
+          const stats = recordGamePlayed('soundgame');
+          if (stats.count >= 10) unlockAchievement('games_10');
+          if (stats.uniqueGames?.length >= 5) unlockAchievement('all_games');
+          setPhase('done');
+        }, 1800);
+      }
     }
     // Wrong tap: no feedback (gentle game)
   }, [phase, onAddStars]);
 
+  // ── Word flew off screen ───────────────────────────────────────────────────
   const handleWordGone = useCallback((wordId) => {
-    setWordItems(prev =>
-      prev.map(w => w.id === wordId && w.status === 'flying' ? { ...w, status: 'gone' } : w)
-    );
+    setWordItems(prev => prev.filter(w => w.id !== wordId));
   }, []);
+
+  // ── Replay instruction when tapping the target letter ─────────────────────
+  const speakInstruction = useCallback(() => {
+    const round = shuffledRounds[0];
+    Sounds.speak(`מִצְאִי מִילִים עִם הַצְּלִיל ${round.target}`, 0);
+  }, [shuffledRounds]);
 
   const restart = useCallback(() => {
     setShuffledRounds([ROUNDS[Math.floor(Math.random() * ROUNDS.length)]]);
-    setRoundIdx(0);
     setTotalStars(0);
     setPhase('intro');
   }, []);
 
-  const round = shuffledRounds[roundIdx];
+  const round = shuffledRounds[0];
 
   return (
     <GameShell onBack={onBack} title="צליל במילה" emoji="🌙" score={totalStars}>
@@ -318,41 +313,34 @@ export default function SoundGame({ onBack, onAddStars }) {
 
         <BgStars />
 
-        {/* Target sound */}
+        {/* Target sound — tap to replay instruction */}
         <div className="sg-target-area">
           <div className="sg-target-label">מִצְאִי מִילִים עִם הַצְּלִיל</div>
-          <div className="sg-target-letter">{round.target}</div>
+          <div className="sg-target-letter sg-target-tappable" onClick={speakInstruction}>
+            {round.target}
+          </div>
+          <div className="sg-target-tap-hint">👆 לחצי לשמוע שוב</div>
           <CatchProgress caught={Math.min(caughtCount, CATCHES_NEEDED)} />
-        </div>
-
-        {/* Round progress dots */}
-        <div className="sg-progress">
-          {shuffledRounds.map((_, i) => (
-            <span key={i} className={`sg-dot ${i < roundIdx ? 'sg-dot-done' : i === roundIdx ? 'sg-dot-active' : ''}`} />
-          ))}
         </div>
 
         {/* Flying words */}
         {phase === 'playing' && (
           <div className="sg-flying-area">
-            {wordItems.map(word =>
-              word.status !== 'gone' && (
-                <FlyingWord key={word.id} word={word} onTap={handleTap} onGone={handleWordGone} />
-              )
-            )}
+            {wordItems.map(word => (
+              <FlyingWord key={word.id} word={word} onTap={handleTap} onGone={handleWordGone} />
+            ))}
           </div>
         )}
 
         {/* Intro overlay */}
         {phase === 'intro' && (
           <div className="sg-intro-overlay">
-            <div className="sg-intro-round">סבב {roundIdx + 1} מתוך {shuffledRounds.length}</div>
             <div className="sg-intro-letter">{round.target}</div>
             <div className="sg-intro-hint">מִצְאִי מִילִים עִם הַצְּלִיל!</div>
           </div>
         )}
 
-        {/* Between-rounds celebration */}
+        {/* Between celebration */}
         {phase === 'between' && (
           <div className="sg-between-overlay">
             <div className="sg-between-text">כל הכבוד! ⭐</div>

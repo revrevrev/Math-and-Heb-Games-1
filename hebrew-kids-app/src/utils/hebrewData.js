@@ -1,27 +1,31 @@
 // ── Hebrew alphabet data ──────────────────────────────
+// `name`      — display text (no nikud, clean)
+// `pronounce` — nikud-marked version fed to TTS for correct pronunciation
+//               Edit `pronounce` to fix any mispronunciations.
+//               The expected sound is noted in the comment after each line.
 export const ALEF_BET = [
-  { letter: 'א', name: 'אלף',  emoji: '🦁', word: 'אריה'  },
-  { letter: 'ב', name: 'בית',  emoji: '🦋', word: 'פרפר'  },
-  { letter: 'ג', name: 'גימל', emoji: '🐪', word: 'גמל'   },
-  { letter: 'ד', name: 'דלת',  emoji: '🐟', word: 'דג'    },
-  { letter: 'ה', name: 'הא',   emoji: '🦔', word: 'קיפוד' },
-  { letter: 'ו', name: 'וו',   emoji: '🌹', word: 'ורד'   },
-  { letter: 'ז', name: 'זין',  emoji: '🪰', word: 'זבוב'  },
-  { letter: 'ח', name: 'חית',  emoji: '🐱', word: 'חתול'  },
-  { letter: 'ט', name: 'טית',  emoji: '🦚', word: 'טווס'  },
-  { letter: 'י', name: 'יוד',  emoji: '🌊', word: 'ים'    },
-  { letter: 'כ', name: 'כף',   emoji: '⭐', word: 'כוכב'  },
-  { letter: 'ל', name: 'למד',  emoji: '🌙', word: 'לילה'  },
-  { letter: 'מ', name: 'מם',   emoji: '💦', word: 'מים'   },
-  { letter: 'נ', name: 'נון',  emoji: '🕯️', word: 'נר'    },
-  { letter: 'ס', name: 'סמך',  emoji: '🍂', word: 'סתיו'  },
-  { letter: 'ע', name: 'עין',  emoji: '🌳', word: 'עץ'    },
-  { letter: 'פ', name: 'פא',   emoji: '🌸', word: 'פרח'   },
-  { letter: 'צ', name: 'צדי',  emoji: '🐢', word: 'צב'    },
-  { letter: 'ק', name: 'קוף',  emoji: '🐒', word: 'קוף'   },
-  { letter: 'ר', name: 'ריש',  emoji: '🏃', word: 'ריצה'  },
-  { letter: 'ש', name: 'שין',  emoji: '☀️', word: 'שמש'   },
-  { letter: 'ת', name: 'תו',   emoji: '🍓', word: 'תות'   },
+  { letter: 'א', name: 'אלף',   pronounce: 'אָלֶף',   emoji: '🦁', word: 'אריה'  }, // AH-lef
+  { letter: 'ב', name: 'בּית',  pronounce: 'בֵּת',   emoji: '🏠', word: 'בית'  }, // BEIT
+  { letter: 'ג', name: 'גימל',  pronounce: 'גִימֶל',  emoji: '🐪', word: 'גמל'   }, // GEE-mel
+  { letter: 'ד', name: 'דלת',   pronounce: 'דָּלֶת',  emoji: '🐟', word: 'דג'    }, // DAH-let
+  { letter: 'ה', name: 'הֵא',   pronounce: 'הֵי',     emoji: '🍔', word: 'המבורגר' }, // HEI
+  { letter: 'ו', name: 'וָו',   pronounce: 'וָו',     emoji: '🌹', word: 'ורד'   }, // VAV
+  { letter: 'ז', name: 'זַיִן', pronounce: 'זַיִן',   emoji: '🪰', word: 'זבוב'  }, // ZAH-yin
+  { letter: 'ח', name: 'חֵית',  pronounce: 'חֵת',    emoji: '🐱', word: 'חתול'  }, // CHEIT
+  { letter: 'ט', name: 'טֵית',  pronounce: 'טֵת',    emoji: '🦚', word: 'טווס'  }, // TEIT
+  { letter: 'י', name: 'יוֹד',  pronounce: 'יוּד',    emoji: '🌊', word: 'ים'    }, // YOD
+  { letter: 'כ', name: 'כַּף',  pronounce: 'כַּף',    emoji: '⭐', word: 'כוכב'  }, // KAF
+  { letter: 'ל', name: 'למד',   pronounce: 'לָ מֶד',   emoji: '🌙', word: 'לילה'  }, // LAH-med
+  { letter: 'מ', name: 'מֵם',   pronounce: 'מֵם',     emoji: '💦', word: 'מים'   }, // MEM
+  { letter: 'נ', name: 'נוּן',  pronounce: 'נוּן',    emoji: '🕯️', word: 'נר'    }, // NUN
+  { letter: 'ס', name: 'סמך',   pronounce: 'סָמֶךְ',  emoji: '🍂', word: 'סתיו'  }, // SAH-mech
+  { letter: 'ע', name: 'עַיִן', pronounce: 'עַיִן',   emoji: '🌳', word: 'עץ'    }, // AH-yin
+  { letter: 'פ', name: 'פֵּא',  pronounce: 'פֵּי',    emoji: '🌸', word: 'פרח'   }, // PEI
+  { letter: 'צ', name: 'צָדִי', pronounce: 'צָדִי',   emoji: '🐢', word: 'צב'    }, // TSAH-di
+  { letter: 'ק', name: 'קוֹף',  pronounce: 'קוּף',    emoji: '🐒', word: 'קוף'   }, // KOF
+  { letter: 'ר', name: 'רֵישׁ', pronounce: 'רֵישׁ',   emoji: '🏃', word: 'ריצה'  }, // REISH
+  { letter: 'ש', name: 'שִׁין', pronounce: 'שִׁין',   emoji: '☀️', word: 'שמש'   }, // SHIN
+  { letter: 'ת', name: 'תָּו',  pronounce: 'תָּף',    emoji: '🍓', word: 'תות'   }, // TAV
 ];
 
 // ── Words for word-building game ──────────────────────
