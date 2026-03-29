@@ -4,7 +4,9 @@
   position: relative;
   width: 100%;
   min-height: calc(100dvh - 88px); /* below GameShell top bar */
-  background: linear-gradient(180deg, #06081e 0%, #0d1140 45%, #081030 100%);
+  background:
+    linear-gradient(180deg, rgba(6,8,30,0.55) 0%, rgba(13,17,64,0.45) 50%, rgba(6,8,30,0.6) 100%),
+    url('/images/האיש על הירח עם הפיה.jpg') center/cover no-repeat;
   overflow: hidden;
   direction: rtl;
   font-family: inherit;
@@ -28,27 +30,6 @@
 @keyframes sg-twinkle {
   0%, 100% { opacity: 0.15; transform: scale(0.7); }
   50%       { opacity: 0.9;  transform: scale(1.3); }
-}
-
-/* ── Moon man character ───────────────────────────────────────────────────── */
-.sg-moonman {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(255, 220, 80, 0.55);
-  box-shadow: 0 0 18px rgba(255, 200, 60, 0.35);
-  z-index: 5;
-}
-
-.sg-moonman img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
 }
 
 /* ── Target sound area ────────────────────────────────────────────────────── */
@@ -85,6 +66,29 @@
 @keyframes sg-letter-pulse {
   0%, 100% { transform: scale(1);    filter: brightness(1);   }
   50%       { transform: scale(1.07); filter: brightness(1.2); }
+}
+
+/* ── Catch progress (5 stars needed) ─────────────────────────────────────── */
+.sg-catch-progress {
+  display: flex;
+  gap: 7px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.sg-catch-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  transition: background 0.25s, box-shadow 0.25s;
+}
+
+.sg-catch-dot-full {
+  background: #FFD700;
+  border-color: #FFD700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.9);
 }
 
 /* ── Round progress dots ──────────────────────────────────────────────────── */
@@ -175,15 +179,7 @@
   direction: rtl;
 }
 
-/* Wrong tap flash */
-.sg-word-bubble.sg-wrong {
-  animation: sg-wrong-flash 0.55s ease;
-}
-
-@keyframes sg-wrong-flash {
-  0%, 100% { background: rgba(255, 255, 255, 0.96); border-color: transparent; }
-  20%, 60% { background: rgba(255, 80,  80,  0.90); border-color: #ef4444;    }
-}
+/* No negative feedback for wrong taps — intentionally omitted */
 
 /* ── Intro overlay ────────────────────────────────────────────────────────── */
 .sg-intro-overlay {

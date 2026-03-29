@@ -147,7 +147,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  padding: var(--sp-2) var(--sp-4) var(--sp-1);
   direction: rtl;
   gap: var(--sp-3);
 }
@@ -180,14 +180,15 @@
   max-width: var(--max-w);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  padding: var(--sp-2) var(--sp-4) var(--sp-3);
+  gap: 10px;
+  padding: var(--sp-1) var(--sp-4) var(--sp-2);
 }
 
 /* ── Game card — square tile ───────────────────────────── */
 .game-card {
   position: relative;
-  height: 172px;
+  /* Dynamic height: all 4 rows (8 tiles) fit with slight breathing room below */
+  height: clamp(100px, calc((100dvh - 245px) / 4.2), 150px);
   border-radius: 22px;
   border: 2px solid rgba(255,255,255,0.22);
   overflow: hidden;
@@ -219,14 +220,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 12px;
+  padding-top: 4px;
+  overflow: hidden;
 }
 
 /* ── Card label strip (bottom) ─────────────────────────── */
 .card-label {
   background: rgba(0,0,0,0.30);
   backdrop-filter: blur(6px);
-  padding: 8px 12px;
+  padding: 5px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,6 +245,12 @@
   color: white;
   text-shadow: 0 1px 6px rgba(0,0,0,0.5);
   line-height: 1.2;
+}
+
+/* ── Sticker size inside game cards — constrained to tile ─── */
+.game-card .char-sticker {
+  width:  clamp(68px, 19vw, 108px) !important;
+  height: clamp(68px, 19vw, 108px) !important;
 }
 
 /* ── Character sticker ─────────────────────────────────── */

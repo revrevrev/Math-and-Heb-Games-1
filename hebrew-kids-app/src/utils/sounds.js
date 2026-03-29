@@ -90,6 +90,7 @@ const GAME_MUSIC = {
   math:        'Mickey.mp3',
   words:       'Gabby.mp3',
   firstletter: 'זהר לא הספקתי.mp3',
+  soundgame:   'האיש על הירח.mp3',
 };
 
 function stopMusicLoop() {

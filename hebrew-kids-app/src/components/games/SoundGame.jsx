@@ -4,116 +4,138 @@ import { Sounds } from '../../utils/sounds';
 import { recordGamePlayed, unlockAchievement } from '../../utils/achievements';
 import './SoundGame.css';
 
-// ── Game rounds: each has a target sound and 8 flying words ─────────────────
+// ── Game data: 8 rounds, each with a target sound and ~10 flying words ──────
+// Each word may contain the target sound at the start OR in the middle.
 const ROUNDS = [
   {
-    target: 'בַּ',
+    target: 'בַּ',  // B + A (bet-dagesh + patach/kamatz)
     words: [
-      { text: 'בַּיִת', emoji: '🏠', matches: true },
-      { text: 'בַּת', emoji: '👧', matches: true },
-      { text: 'בַּלּוֹן', emoji: '🎈', matches: true },
-      { text: 'בָּנָנָה', emoji: '🍌', matches: true },
-      { text: 'כֶּלֶב', emoji: '🐶', matches: false },
-      { text: 'תַּפּוּחַ', emoji: '🍎', matches: false },
-      { text: 'שִׁיר', emoji: '🎵', matches: false },
-      { text: 'פִּיל', emoji: '🐘', matches: false },
+      { text: 'בַּיִת',   emoji: '🏠', matches: true  }, // starts with BA
+      { text: 'בַּת',     emoji: '👧', matches: true  },
+      { text: 'בַּלּוֹן', emoji: '🎈', matches: true  },
+      { text: 'בָּנָנָה', emoji: '🍌', matches: true  },
+      { text: 'אַבָּא',   emoji: '👨', matches: true  }, // BA in middle
+      { text: 'סַבָּא',   emoji: '👴', matches: true  }, // BA in middle
+      { text: 'שַׁבָּת',  emoji: '🕯️', matches: true  }, // BA in middle
+      { text: 'כֶּלֶב',   emoji: '🐶', matches: false },
+      { text: 'שִׁיר',    emoji: '🎵', matches: false },
+      { text: 'פִּיל',    emoji: '🐘', matches: false },
+      { text: 'גֶּשֶׁם',  emoji: '🌧️', matches: false },
     ],
   },
   {
-    target: 'מָ',
+    target: 'מָ',  // M + A (mem + kamatz/patach)
     words: [
-      { text: 'מָיִם', emoji: '💧', matches: true },
-      { text: 'מָקוֹם', emoji: '📍', matches: true },
-      { text: 'מָתוֹק', emoji: '🍬', matches: true },
-      { text: 'שֶׁמֶשׁ', emoji: '☀️', matches: false },
-      { text: 'סֵפֶר', emoji: '📚', matches: false },
-      { text: 'כֶּלֶב', emoji: '🐶', matches: false },
-      { text: 'פֶּרַח', emoji: '🌸', matches: false },
-      { text: 'יֶלֶד', emoji: '👦', matches: false },
+      { text: 'מָיִם',    emoji: '💧', matches: true  },
+      { text: 'מָתוֹק',   emoji: '🍬', matches: true  },
+      { text: 'מָקוֹם',   emoji: '📍', matches: true  },
+      { text: 'אִמָּא',   emoji: '👩', matches: true  }, // MA in middle
+      { text: 'גָּמָל',   emoji: '🐪', matches: true  }, // MA in middle
+      { text: 'שָׁמַיִם', emoji: '☁️', matches: true  }, // MA in middle
+      { text: 'שֶׁמֶשׁ',  emoji: '☀️', matches: false }, // ME not MA
+      { text: 'סֵפֶר',    emoji: '📚', matches: false },
+      { text: 'כֶּלֶב',   emoji: '🐶', matches: false },
+      { text: 'לֵב',      emoji: '❤️', matches: false },
     ],
   },
   {
-    target: 'שִׁ',
+    target: 'שִׁ',  // SH + I (shin + hirik)
     words: [
-      { text: 'שִׁיר', emoji: '🎵', matches: true },
-      { text: 'שִׁינַיִם', emoji: '🦷', matches: true },
-      { text: 'שִׁמְחָה', emoji: '😊', matches: true },
-      { text: 'שֶׁמֶשׁ', emoji: '☀️', matches: false },
-      { text: 'שָׁלוֹם', emoji: '🕊️', matches: false },
-      { text: 'בַּיִת', emoji: '🏠', matches: false },
-      { text: 'כֶּלֶב', emoji: '🐶', matches: false },
-      { text: 'מָיִם', emoji: '💧', matches: false },
+      { text: 'שִׁיר',     emoji: '🎵', matches: true  },
+      { text: 'שִׁינַיִם', emoji: '🦷', matches: true  },
+      { text: 'שִׁירָה',   emoji: '🎶', matches: true  },
+      { text: 'שִׁיעוּר',  emoji: '📝', matches: true  },
+      { text: 'שִׁישִׁי',  emoji: '📅', matches: true  }, // SHI (Friday/sixth)
+      { text: 'שֶׁמֶשׁ',   emoji: '☀️', matches: false }, // SHE not SHI
+      { text: 'שָׁלוֹם',   emoji: '🕊️', matches: false }, // SHA not SHI
+      { text: 'בַּיִת',    emoji: '🏠', matches: false },
+      { text: 'מָיִם',     emoji: '💧', matches: false },
+      { text: 'כֶּלֶב',    emoji: '🐶', matches: false },
     ],
   },
   {
-    target: 'לֵ',
+    target: 'לֵ',  // L + E (lamed + tsere/segol)
     words: [
-      { text: 'לֵב', emoji: '❤️', matches: true },
-      { text: 'לֶחֶם', emoji: '🍞', matches: true },
-      { text: 'לֵילָה', emoji: '🌙', matches: true },
-      { text: 'לָבָן', emoji: '⬜', matches: false },
-      { text: 'כַּלְבָּה', emoji: '🐶', matches: false },
-      { text: 'מָיִם', emoji: '💧', matches: false },
-      { text: 'בַּיִת', emoji: '🏠', matches: false },
-      { text: 'שִׁיר', emoji: '🎵', matches: false },
+      { text: 'לֵב',     emoji: '❤️', matches: true  },
+      { text: 'לֶחֶם',   emoji: '🍞', matches: true  },
+      { text: 'לֵיצָן',  emoji: '🤡', matches: true  }, // LE (clown)
+      { text: 'לַיְלָה',  emoji: '🌙', matches: false }, // LA not LE
+      { text: 'שָׁלֶג',  emoji: '❄️', matches: true  }, // LE in middle
+      { text: 'כֶּלֶב',  emoji: '🐶', matches: true  }, // LE in middle (ke-LEV)
+      { text: 'יֶלֶד',   emoji: '👦', matches: true  }, // LE in middle (ye-LED)
+      { text: 'לָבָן',   emoji: '⬜', matches: false }, // LA not LE
+      { text: 'מָיִם',   emoji: '💧', matches: false },
+      { text: 'בַּיִת',  emoji: '🏠', matches: false },
+      { text: 'שִׁיר',   emoji: '🎵', matches: false },
     ],
   },
   {
-    target: 'כּוֹ',
+    target: 'כּוֹ',  // K + O (kaf-dagesh + holam)
     words: [
-      { text: 'כּוֹכָב', emoji: '⭐', matches: true },
-      { text: 'כּוֹס', emoji: '🥤', matches: true },
-      { text: 'כּוֹבַע', emoji: '🎩', matches: true },
-      { text: 'כֶּלֶב', emoji: '🐶', matches: false },
-      { text: 'כִּתָּה', emoji: '🏫', matches: false },
-      { text: 'מָיִם', emoji: '💧', matches: false },
-      { text: 'שִׁיר', emoji: '🎵', matches: false },
-      { text: 'בַּיִת', emoji: '🏠', matches: false },
+      { text: 'כּוֹכָב',   emoji: '⭐', matches: true  },
+      { text: 'כּוֹס',     emoji: '🥤', matches: true  },
+      { text: 'כּוֹבַע',   emoji: '🎩', matches: true  },
+      { text: 'כּוֹחַ',    emoji: '💪', matches: true  },
+      { text: 'סֻכּוֹת',   emoji: '🌿', matches: true  }, // KO in middle (Sukkot)
+      { text: 'כֶּלֶב',   emoji: '🐶', matches: false }, // KE not KO
+      { text: 'כִּתָּה', emoji: '🏫', matches: false }, // KI not KO
+      { text: 'מָיִם',   emoji: '💧', matches: false },
+      { text: 'שִׁיר',   emoji: '🎵', matches: false },
+      { text: 'לֵב',     emoji: '❤️', matches: false },
+      { text: 'גָּן',    emoji: '🌳', matches: false },
     ],
   },
   {
-    target: 'פַּ',
+    target: 'פַּ',  // P + A (pey-dagesh + patach/kamatz)
     words: [
-      { text: 'פַּרְפַּר', emoji: '🦋', matches: true },
-      { text: 'פָּרָה', emoji: '🐄', matches: true },
-      { text: 'פַּעַם', emoji: '🔔', matches: true },
-      { text: 'פֶּרַח', emoji: '🌸', matches: false },
-      { text: 'פִּיל', emoji: '🐘', matches: false },
-      { text: 'כּוֹכָב', emoji: '⭐', matches: false },
-      { text: 'שִׁיר', emoji: '🎵', matches: false },
-      { text: 'לֵב', emoji: '❤️', matches: false },
+      { text: 'פַּרְפַּר', emoji: '🦋', matches: true  }, // PA at start AND middle
+      { text: 'פָּרָה',    emoji: '🐄', matches: true  },
+      { text: 'פַּעַם',    emoji: '🔔', matches: true  },
+      { text: 'פָּנִים',   emoji: '😊', matches: true  },
+      { text: 'מַפָּה',    emoji: '🗺️', matches: true  }, // PA in middle
+      { text: 'פֶּרַח',    emoji: '🌸', matches: false }, // PE not PA
+      { text: 'פִּיל',     emoji: '🐘', matches: false }, // PI not PA
+      { text: 'כֶּלֶב',    emoji: '🐶', matches: false },
+      { text: 'שִׁיר',     emoji: '🎵', matches: false },
+      { text: 'לֵב',       emoji: '❤️', matches: false },
     ],
   },
   {
-    target: 'גָּ',
+    target: 'גָּ',  // G + A (gimel + kamatz/patach)
     words: [
-      { text: 'גָּדוֹל', emoji: '🐘', matches: true },
-      { text: 'גָּמָל', emoji: '🐪', matches: true },
-      { text: 'גָּן', emoji: '🌳', matches: true },
-      { text: 'גֶּשֶׁם', emoji: '🌧️', matches: false },
-      { text: 'גִּלָּה', emoji: '🎀', matches: false },
-      { text: 'כֶּלֶב', emoji: '🐶', matches: false },
-      { text: 'מָיִם', emoji: '💧', matches: false },
-      { text: 'לֵב', emoji: '❤️', matches: false },
+      { text: 'גָּדוֹל', emoji: '🐘', matches: true  },
+      { text: 'גָּמָל',  emoji: '🐪', matches: true  },
+      { text: 'גָּן',    emoji: '🌳', matches: true  },
+      { text: 'נָגַן',   emoji: '🎸', matches: true  }, // GA in middle (na-GAN)
+      { text: 'גָּג',    emoji: '🏠', matches: true  }, // GA (roof)
+      { text: 'גֶּשֶׁם', emoji: '🌧️', matches: false }, // GE not GA
+      { text: 'גִּלָּה', emoji: '🎀', matches: false }, // GI not GA
+      { text: 'כֶּלֶב',  emoji: '🐶', matches: false },
+      { text: 'מָיִם',   emoji: '💧', matches: false },
+      { text: 'לֵב',     emoji: '❤️', matches: false },
     ],
   },
   {
-    target: 'תּוּ',
+    target: 'תּוּ',  // T + U (tav + shuruk/kubutz)
     words: [
-      { text: 'תּוּת', emoji: '🍓', matches: true },
-      { text: 'תּוּכִּי', emoji: '🦜', matches: true },
-      { text: 'תּוּף', emoji: '🥁', matches: true },
-      { text: 'תַּפּוּחַ', emoji: '🍎', matches: false },
-      { text: 'תֵּה', emoji: '🍵', matches: false },
-      { text: 'כֶּלֶב', emoji: '🐶', matches: false },
-      { text: 'שִׁיר', emoji: '🎵', matches: false },
-      { text: 'גָּן', emoji: '🌳', matches: false },
+      { text: 'תּוּת',     emoji: '🍓', matches: true  },
+      { text: 'תּוּכִּי',  emoji: '🦜', matches: true  },
+      { text: 'תּוּלַעַת', emoji: '🪱', matches: true  },
+      { text: 'מְתוּקָה',  emoji: '🍬', matches: true  }, // TU in middle (sweet)
+      { text: 'חָתוּל',    emoji: '🐱', matches: true  }, // TU in middle (cat)
+      { text: 'תּוֹף',     emoji: '🥁', matches: false }, // TO not TU
+      { text: 'תַּפּוּחַ', emoji: '🍎', matches: false }, // TA not TU
+      { text: 'תֵּה',      emoji: '🍵', matches: false }, // TE not TU
+      { text: 'כֶּלֶב',    emoji: '🐶', matches: false },
+      { text: 'שִׁיר',     emoji: '🎵', matches: false },
+      { text: 'גָּן',      emoji: '🌳', matches: false },
+      { text: 'מָיִם',     emoji: '💧', matches: false },
     ],
   },
 ];
 
-// Y positions spread so words don't overlap too much
-const Y_SLOTS = [14, 26, 38, 52, 64, 20, 44, 58];
+const CATCHES_NEEDED = 4;  // how many correct taps needed to finish a round
+const MAX_ACTIVE = 4;  // max words flying at once
 
 function shuffle(arr) {
   const a = [...arr];
@@ -124,22 +146,32 @@ function shuffle(arr) {
   return a;
 }
 
-function makeWordItems(words) {
-  return shuffle(words).map((w, i) => ({
+// Spread Y positions so words don't stack
+function spreadY(count) {
+  const positions = [];
+  const step = 60 / count;
+  for (let i = 0; i < count; i++) {
+    positions.push(12 + i * step + Math.random() * (step * 0.6));
+  }
+  return shuffle(positions);
+}
+
+function makeBatch(words, batchIndex) {
+  const shuffled = shuffle([...words]);
+  const ys = spreadY(shuffled.length);
+  return shuffled.map((w, i) => ({
     ...w,
-    id: `w${Date.now()}-${i}`,
-    yPercent: Y_SLOTS[i % Y_SLOTS.length],
-    duration: 7 + Math.random() * 4,  // 7–11 s
-    delay: i * 1.1,                    // stagger by 1.1 s
-    status: 'flying',                  // 'flying' | 'caught' | 'wrong' | 'gone'
+    id: `b${batchIndex}-${i}-${Date.now()}`,
+    yPercent: ys[i],
+    duration: 7 + Math.random() * 4,
+    delay: i * 1.1,
+    status: 'flying',
   }));
 }
 
-// ── Star burst component ─────────────────────────────────────────────────────
+// ── Star burst ───────────────────────────────────────────────────────────────
 function StarBurst({ x, y }) {
-  return (
-    <div className="sg-star-burst" style={{ left: x, top: y }}>⭐</div>
-  );
+  return <div className="sg-star-burst" style={{ left: x, top: y }}>⭐</div>;
 }
 
 // ── Flying word ──────────────────────────────────────────────────────────────
@@ -147,21 +179,13 @@ function FlyingWord({ word, onTap, onGone }) {
   const handleAnimEnd = (e) => {
     if (e.animationName === 'sg-fly') onGone(word.id);
   };
-
   return (
     <div
       className={`sg-word-track ${word.status === 'caught' ? 'sg-track-caught' : ''}`}
-      style={{
-        top: `${word.yPercent}%`,
-        '--dur': `${word.duration}s`,
-        '--delay': `${word.delay}s`,
-      }}
+      style={{ top: `${word.yPercent}%`, '--dur': `${word.duration}s`, '--delay': `${word.delay}s` }}
       onAnimationEnd={handleAnimEnd}
     >
-      <div
-        className={`sg-word-bubble ${word.status === 'wrong' ? 'sg-wrong' : ''}`}
-        onClick={(e) => onTap(word.id, e)}
-      >
+      <div className="sg-word-bubble" onClick={(e) => onTap(word.id, e)}>
         <span className="sg-word-emoji">{word.emoji}</span>
         <span className="sg-word-text">{word.text}</span>
       </div>
@@ -169,50 +193,90 @@ function FlyingWord({ word, onTap, onGone }) {
   );
 }
 
-// ── Main game ────────────────────────────────────────────────────────────────
+// ── Progress bar — shows how many of 5 caught ───────────────────────────────
+function CatchProgress({ caught }) {
+  return (
+    <div className="sg-catch-progress">
+      {Array.from({ length: CATCHES_NEEDED }).map((_, i) => (
+        <span key={i} className={`sg-catch-dot ${i < caught ? 'sg-catch-dot-full' : ''}`} />
+      ))}
+    </div>
+  );
+}
+
+// ── Main component ───────────────────────────────────────────────────────────
 export default function SoundGame({ onBack, onAddStars }) {
-  const [roundIdx, setRoundIdx]     = useState(0);
-  const [phase, setPhase]           = useState('intro'); // 'intro' | 'playing' | 'between' | 'done'
-  const [wordItems, setWordItems]   = useState([]);
-  const [totalStars, setTotalStars] = useState(0);
-  const [starBurst, setStarBurst]   = useState(null); // { x, y }
+  const [shuffledRounds, setShuffledRounds] = useState(() => [ROUNDS[Math.floor(Math.random() * ROUNDS.length)]]);
+  const [roundIdx, setRoundIdx]       = useState(0);
+  const [phase, setPhase]             = useState('intro');
+  const [wordItems, setWordItems]     = useState([]);
+  const [caughtCount, setCaughtCount] = useState(0);
+  const [totalStars, setTotalStars]   = useState(0);
+  const [starBurst, setStarBurst]     = useState(null);
 
-  const wordItemsRef = useRef([]);
+  const wordItemsRef  = useRef([]);
+  const caughtRef     = useRef(0);
+  const batchRef      = useRef(0);
+
   useEffect(() => { wordItemsRef.current = wordItems; }, [wordItems]);
+  useEffect(() => { caughtRef.current = caughtCount; }, [caughtCount]);
 
-  // ── Phase: intro → playing after 2.5 s ──────────────────────────────────
+  // ── Music ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    Sounds.startMusic('soundgame');
+    return () => Sounds.stopMusic();
+  }, []);
+
+  // ── Intro phase: speak the sound, then launch first batch ─────────────────
   useEffect(() => {
     if (phase !== 'intro') return;
+    batchRef.current = 0;
+    setCaughtCount(0);
     setWordItems([]);
+
+    // Speak the instruction after 400 ms
+    const round = shuffledRounds[roundIdx];
+    // Niqqud in the instruction helps Hebrew TTS pronounce every word correctly
+    const speech = `מִצְאִי מִילִים עִם הַצְּלִיל ${round.target}`;
+    Sounds.speak(speech, 400);
+
+    // Start playing after 2.5 s
     const t = setTimeout(() => {
-      setWordItems(makeWordItems(ROUNDS[roundIdx].words));
+      setWordItems(makeBatch(round.words, batchRef.current));
       setPhase('playing');
     }, 2500);
     return () => clearTimeout(t);
-  }, [phase, roundIdx]);
+  }, [phase, roundIdx, shuffledRounds]);
 
-  // ── Round complete check ─────────────────────────────────────────────────
+  // ── Check if batch is exhausted ────────────────────────────────────────────
   useEffect(() => {
     if (phase !== 'playing' || wordItems.length === 0) return;
     const allDone = wordItems.every(w => w.status === 'caught' || w.status === 'gone');
     if (!allDone) return;
 
-    Sounds.win();
-    setPhase('between');
-    setTimeout(() => {
-      if (roundIdx + 1 >= ROUNDS.length) {
-        const stats = recordGamePlayed('soundgame');
-        if (stats.count >= 10) unlockAchievement('games_10');
-        if (stats.uniqueGames?.length >= 5) unlockAchievement('all_games');
-        setPhase('done');
-      } else {
-        setRoundIdx(r => r + 1);
-        setPhase('intro');
-      }
-    }, 1800);
+    if (caughtRef.current >= CATCHES_NEEDED) {
+      // Round complete
+      Sounds.win();
+      setPhase('between');
+      setTimeout(() => {
+        if (roundIdx + 1 >= shuffledRounds.length) {
+          const stats = recordGamePlayed('soundgame');
+          if (stats.count >= 10) unlockAchievement('games_10');
+          if (stats.uniqueGames?.length >= 5) unlockAchievement('all_games');
+          setPhase('done');
+        } else {
+          setRoundIdx(r => r + 1);
+          setPhase('intro');
+        }
+      }, 1800);
+    } else {
+      // Need more catches — recycle the word list
+      batchRef.current += 1;
+      setWordItems(makeBatch(shuffledRounds[roundIdx].words, batchRef.current));
+    }
   }, [wordItems, phase, roundIdx]);
 
-  // ── Tap handler ──────────────────────────────────────────────────────────
+  // ── Tap handler ───────────────────────────────────────────────────────────
   const handleTap = useCallback((wordId, evt) => {
     if (phase !== 'playing') return;
     const w = wordItemsRef.current.find(x => x.id === wordId);
@@ -223,20 +287,14 @@ export default function SoundGame({ onBack, onAddStars }) {
       Sounds.correct();
       onAddStars(1);
       setTotalStars(s => s + 1);
+      setCaughtCount(c => c + 1);
       // Star burst at tap position
       const rect = evt.currentTarget.getBoundingClientRect();
       setStarBurst({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
       setTimeout(() => setStarBurst(null), 700);
       setWordItems(prev => prev.map(x => x.id === wordId ? { ...x, status: 'caught' } : x));
-    } else {
-      Sounds.wrong();
-      setWordItems(prev => prev.map(x => x.id === wordId ? { ...x, status: 'wrong' } : x));
-      setTimeout(() => {
-        setWordItems(prev =>
-          prev.map(x => x.id === wordId && x.status === 'wrong' ? { ...x, status: 'flying' } : x)
-        );
-      }, 600);
     }
+    // Wrong tap: no feedback (gentle game)
   }, [phase, onAddStars]);
 
   const handleWordGone = useCallback((wordId) => {
@@ -246,34 +304,30 @@ export default function SoundGame({ onBack, onAddStars }) {
   }, []);
 
   const restart = useCallback(() => {
+    setShuffledRounds([ROUNDS[Math.floor(Math.random() * ROUNDS.length)]]);
     setRoundIdx(0);
     setTotalStars(0);
     setPhase('intro');
   }, []);
 
-  const round = ROUNDS[roundIdx];
+  const round = shuffledRounds[roundIdx];
 
   return (
     <GameShell onBack={onBack} title="צליל במילה" emoji="🌙" score={totalStars}>
       <div className="sg-game">
 
-        {/* Twinkling background stars */}
         <BgStars />
 
-        {/* Moon man character (bottom-left) */}
-        <div className="sg-moonman">
-          <img src="/images/האיש על הירח.jpg" alt="האיש על הירח" />
-        </div>
-
-        {/* Target sound display */}
+        {/* Target sound */}
         <div className="sg-target-area">
-          <div className="sg-target-label">מצאי מילה עם הצליל</div>
+          <div className="sg-target-label">מִצְאִי מִילִים עִם הַצְּלִיל</div>
           <div className="sg-target-letter">{round.target}</div>
+          <CatchProgress caught={Math.min(caughtCount, CATCHES_NEEDED)} />
         </div>
 
         {/* Round progress dots */}
         <div className="sg-progress">
-          {ROUNDS.map((_, i) => (
+          {shuffledRounds.map((_, i) => (
             <span key={i} className={`sg-dot ${i < roundIdx ? 'sg-dot-done' : i === roundIdx ? 'sg-dot-active' : ''}`} />
           ))}
         </div>
@@ -289,12 +343,12 @@ export default function SoundGame({ onBack, onAddStars }) {
           </div>
         )}
 
-        {/* Round intro overlay */}
+        {/* Intro overlay */}
         {phase === 'intro' && (
           <div className="sg-intro-overlay">
-            <div className="sg-intro-round">סבב {roundIdx + 1} מתוך {ROUNDS.length}</div>
+            <div className="sg-intro-round">סבב {roundIdx + 1} מתוך {shuffledRounds.length}</div>
             <div className="sg-intro-letter">{round.target}</div>
-            <div className="sg-intro-hint">תפסי מילות עם הצליל!</div>
+            <div className="sg-intro-hint">מִצְאִי מִילִים עִם הַצְּלִיל!</div>
           </div>
         )}
 
@@ -305,7 +359,7 @@ export default function SoundGame({ onBack, onAddStars }) {
           </div>
         )}
 
-        {/* Star burst effect */}
+        {/* Star burst */}
         {starBurst && <StarBurst x={starBurst.x} y={starBurst.y} />}
 
         {/* Done screen */}
@@ -323,13 +377,13 @@ export default function SoundGame({ onBack, onAddStars }) {
   );
 }
 
-// ── Background stars (memoised so they don't re-render) ─────────────────────
+// ── Static background stars ──────────────────────────────────────────────────
 const BG_STARS = Array.from({ length: 28 }, (_, i) => ({
-  left: `${(i * 37 + 5) % 100}%`,
-  top: `${(i * 53 + 8) % 100}%`,
-  dur: `${2.2 + (i % 5) * 0.7}s`,
-  delay: `${(i % 7) * 0.4}s`,
-  size: `${5 + (i % 4) * 3}px`,
+  left:  `${(i * 37 + 5)  % 100}%`,
+  top:   `${(i * 53 + 8)  % 100}%`,
+  dur:   `${2.2 + (i % 5) * 0.7}s`,
+  delay: `${(i % 7)       * 0.4}s`,
+  size:  `${5 + (i % 4)   * 3}px`,
 }));
 
 function BgStars() {
