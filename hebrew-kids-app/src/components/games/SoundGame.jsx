@@ -39,7 +39,7 @@ const ROUNDS = [
     ],
   },
   {
-    target: 'שִׁ',  // SH + I (shin + hirik)
+    target: 'שִׁ',  targetSpeak: 'שִׁי',  // SH + I (shin + hirik)
     words: [
       { text: 'שִׁיר',     emoji: '🎵', matches: true  },
       { text: 'שִׁינַיִם', emoji: '🦷', matches: true  },
@@ -212,7 +212,7 @@ export default function SoundGame({ onBack, onAddStars }) {
     setWordItems([]);
 
     const round = shuffledRounds[0];
-    Sounds.speak(`מִצְאִי מִילִים עִם הַצְּלִיל ${round.target}`, 400);
+    Sounds.speak(`מִצְאִי מִילִים עִם הַצְּלִיל ${round.targetSpeak ?? round.target}`, 400);
 
     const t = setTimeout(() => setPhase('playing'), 2500);
     return () => clearTimeout(t);
@@ -296,7 +296,7 @@ export default function SoundGame({ onBack, onAddStars }) {
   // ── Replay instruction when tapping the target letter ─────────────────────
   const speakInstruction = useCallback(() => {
     const round = shuffledRounds[0];
-    Sounds.speak(`מִצְאִי מִילִים עִם הַצְּלִיל ${round.target}`, 0);
+    Sounds.speak(`מִצְאִי מִילִים עִם הַצְּלִיל ${round.targetSpeak ?? round.target}`, 0);
   }, [shuffledRounds]);
 
   const restart = useCallback(() => {

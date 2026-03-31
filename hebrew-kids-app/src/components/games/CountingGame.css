@@ -1,70 +1,266 @@
 @import './shared.css';
 
-.count-stage {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+/* ── Background photo + tint ────────────────────────────── */
+.counting-bg-photo,
+.counting-bg-tint {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 4px 0;
+  height: 100%;
+  pointer-events: none;
 }
 
-.bluey-wrap {
-  flex-shrink: 0;
-  position: relative;
+.counting-bg-photo {
+  object-fit: cover;
+  object-position: center top;
+  z-index: 0;
 }
 
-/* Glassy object display */
-.count-objects {
-  flex: 1;
+.counting-bg-tint {
+  background: linear-gradient(160deg, rgba(10,26,94,0.18) 0%, rgba(29,78,216,0.14) 45%, rgba(56,189,248,0.10) 100%);
+  z-index: 1;
+}
+
+/* all game content above the background layers */
+.counting-bg .game-top-bar { position: relative; z-index: 2; }
+.balloon-game-wrap          { position: relative; z-index: 2; }
+.counting-bg .done-screen   { position: relative; z-index: 2; }
+.counting-bg .streak-banner,
+.counting-bg .level-up-banner { z-index: 3; }
+
+/* ── Game wrapper ───────────────────────────────────────── */
+.balloon-game-wrap {
   display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: var(--sp-2);
-  padding: var(--sp-3);
-  background: rgba(255,255,255,0.14);
-  border-radius: var(--r-lg);
-  border: 2px solid rgba(255,255,255,0.28);
-  min-height: 120px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+  gap: 6px;
+  padding: 6px 8px 0;
+}
+
+/* ── Number prompt row ──────────────────────────────────── */
+.num-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.13);
+  border-radius: 18px;
+  border: 2px solid rgba(255,255,255,0.25);
+  padding: 8px 16px;
+  width: 100%;
+  max-width: 380px;
+  backdrop-filter: blur(8px);
+}
+
+.num-prompt-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 4px;
+}
+
+.num-prompt-label {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.9rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.num-prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.num-display-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.20);
+  border: 2.5px solid rgba(255,255,255,0.40);
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
-.count-obj {
-  font-size: clamp(1.8rem, 7vw, 2.6rem);
-  animation: pop 0.35s ease both;
-  line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+.target-box {
+  background: rgba(251,191,36,0.28);
+  border-color: #fbbf24;
+  color: #fde68a;
+  animation: target-pulse 1.2s ease-in-out infinite;
 }
 
-/* Number buttons — big colorful circles */
-.number-choices {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
+@keyframes target-pulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 4px 24px rgba(251,191,36,0.7), 0 0 20px rgba(251,191,36,0.4); }
+}
+
+.num-arrow {
+  color: rgba(255,255,255,0.7);
+  font-size: 1.4rem;
+}
+
+/* Bluey character in prompt */
+.bluey-small {
+  flex-shrink: 0;
+}
+.bluey-small.celebrate { animation: char-celebrate 0.5s ease; }
+.bluey-small.wiggle    { animation: char-wiggle    0.5s ease; }
+
+@keyframes char-celebrate {
+  0%   { transform: scale(1) rotate(0deg); }
+  30%  { transform: scale(1.25) rotate(-8deg); }
+  60%  { transform: scale(1.2) rotate(8deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes char-wiggle {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-6px) rotate(-5deg); }
+  60%     { transform: translateX(6px) rotate(5deg); }
+}
+
+/* ── Balloon field ──────────────────────────────────────── */
+.balloon-field {
+  position: relative;
   width: 100%;
+  max-width: 420px;
+  flex: 1;
+  min-height: 320px;
+  height: calc(100svh - 220px);
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.15);
 }
 
-.num-btn {
-  width: clamp(56px, 15vw, 72px);
-  height: clamp(56px, 15vw, 72px);
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.30);
+/* ── Balloon ────────────────────────────────────────────── */
+.balloon {
+  position: absolute;
+  bottom: -15%;
+  width: 72px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: center bottom;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.balloon-float {
+  animation: balloon-rise var(--dur, 7s) linear var(--del, 0s) infinite;
+}
+
+@keyframes balloon-rise {
+  0%   { bottom: -15%; }
+  100% { bottom: 110%; }
+}
+
+.balloon-body {
+  width: 64px;
+  height: 76px;
+  border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+  background: radial-gradient(
+    ellipse at 35% 35%,
+    rgba(255,255,255,0.55) 0%,
+    var(--balloon-color, #ff6b6b) 45%,
+    color-mix(in srgb, var(--balloon-color, #ff6b6b) 70%, black) 100%
+  );
+  box-shadow:
+    inset -6px -8px 14px rgba(0,0,0,0.20),
+    inset 4px 4px 10px rgba(255,255,255,0.45),
+    0 6px 20px rgba(0,0,0,0.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.balloon:active .balloon-body {
+  transform: scale(0.92);
+}
+
+.balloon-num {
+  font-size: 1.6rem;
+  font-weight: 900;
   color: white;
-  font-size: clamp(1.5rem, 5.5vw, 2.2rem);
-  font-family: inherit;
-  font-weight: bold;
-  transition: transform var(--t-fast), filter var(--t-fast);
-  box-shadow: 0 5px 18px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5), 0 0 12px rgba(0,0,0,0.3);
+  line-height: 1;
 }
 
-/* Cycle 4 Kahoot colors */
-.num-btn:nth-child(4n+1) { background: #e21b3c; }
-.num-btn:nth-child(4n+2) { background: #1368ce; }
-.num-btn:nth-child(4n+3) { background: #d89e00; }
-.num-btn:nth-child(4n+4) { background: #26890c; }
+.balloon-knot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50% 50% 40% 40%;
+  background: color-mix(in srgb, var(--balloon-color, #ff6b6b) 80%, black);
+  margin-top: -2px;
+}
 
-.num-btn:hover  { filter: brightness(1.15); transform: translateY(-3px) scale(1.06); }
-.num-btn:active { transform: scale(0.88); }
+.balloon-string {
+  width: 1.5px;
+  height: 28px;
+  background: rgba(255,255,255,0.55);
+  border-radius: 1px;
+}
+
+/* ── Balloon pop (correct) ──────────────────────────────── */
+.balloon-pop {
+  animation: balloon-burst 0.55s ease forwards !important;
+  pointer-events: none;
+}
+
+@keyframes balloon-burst {
+  0%   { transform: scale(1);   opacity: 1; }
+  25%  { transform: scale(1.5); opacity: 1; }
+  60%  { transform: scale(0.3); opacity: 0.6; }
+  100% { transform: scale(0);   opacity: 0; }
+}
+
+/* ── Balloon wobble (wrong) ─────────────────────────────── */
+.balloon-wobble .balloon-body {
+  animation: balloon-shake 0.55s ease;
+}
+
+@keyframes balloon-shake {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  15%     { transform: translateX(-8px) rotate(-8deg); }
+  35%     { transform: translateX(8px) rotate(8deg); }
+  55%     { transform: translateX(-5px) rotate(-5deg); }
+  75%     { transform: translateX(5px) rotate(4deg); }
+}
+
+/* ── Glitter burst particles ────────────────────────────── */
+.burst-particle {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--pcolor, #ffd93d);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: particle-fly 3.5s cubic-bezier(0.05, 0.7, 0.2, 1) forwards;
+  box-shadow: 0 0 8px var(--pcolor, #ffd93d);
+}
+
+@keyframes particle-fly {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angle, 0deg)) translateX(0) scale(1.4);
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angle, 0deg)) translateX(var(--dist, 60px)) scale(0.15);
+    opacity: 0;
+  }
+}

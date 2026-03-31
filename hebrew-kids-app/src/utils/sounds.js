@@ -361,6 +361,7 @@ export const Sounds = {
 
   tap:     () => sfx.tap.play(Sounds.sfxVolume),
   wrong:   () => { sfx.wrong.play(Sounds.sfxVolume); playVoiceClip('wrong', 400); },
+  wrongSfx:() => sfx.wrong.play(Sounds.sfxVolume),
   correct: () => { sfx.correct.play(Sounds.sfxVolume); playVoiceClip('correct', 350); },
   win:     () => { sfx.win.play(Sounds.sfxVolume); playVoiceClip('win', 600); },
   flip:    () => sfx.flip.play(Sounds.sfxVolume),
