@@ -91,6 +91,7 @@ const GAME_MUSIC = {
   words:       'Gabby.mp3',
   firstletter: 'זהר לא הספקתי.mp3',
   soundgame:   'האיש על הירח.mp3',
+  readgame:    'Stitch.mp3',
 };
 
 function stopMusicLoop() {
@@ -173,16 +174,17 @@ class VoiceFile {
     });
   }
 
-  play(delay = 0) {
-    if (Sounds.muted || !Sounds.voiceEnabled) return;
+  play(delay = 0, onEnd = null) {
+    if (Sounds.muted || !Sounds.voiceEnabled) { if (delay === 0) onEnd?.(); else setTimeout(() => onEnd?.(), delay); return; }
     if (this._loaded) {
       setTimeout(() => {
-        if (Sounds.muted || !Sounds.voiceEnabled) return;
+        if (Sounds.muted || !Sounds.voiceEnabled) { onEnd?.(); return; }
         this._howl.volume(Sounds.voiceVolume);
+        if (onEnd) this._howl.once('end', onEnd);
         this._howl.play();
       }, delay);
     } else {
-      speakHebrew(this.fallbackText, delay);
+      speakHebrew(this.fallbackText, delay, onEnd);
     }
   }
 }
@@ -217,9 +219,9 @@ const VOICE_FILES = {
   ],
 };
 
-function playVoiceClip(category, delay = 0) {
+function playVoiceClip(category, delay = 0, onEnd = null) {
   const clips = VOICE_FILES[category];
-  pick(clips).play(delay);
+  pick(clips).play(delay, onEnd);
 }
 
 let _hebrewVoice = null;
@@ -248,20 +250,27 @@ if (typeof speechSynthesis !== 'undefined') {
 
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function speakHebrew(text, delayMs = 300) {
-  if (Sounds.muted || !Sounds.voiceEnabled) return;
+// Incremented by stopSpeech() to cancel any pending delayed speak calls
+let _speakToken = 0;
+
+function speakHebrew(text, delayMs = 300, onEnd = null) {
+  if (Sounds.muted || !Sounds.voiceEnabled) { onEnd?.(); return; }
+  const token = ++_speakToken;
   setTimeout(async () => {
-    if (Sounds.muted || !Sounds.voiceEnabled) return;
+    if (token !== _speakToken) { onEnd?.(); return; }   // cancelled
+    if (Sounds.muted || !Sounds.voiceEnabled) { onEnd?.(); return; }
     if (IS_NATIVE) {
       // Use native Android TTS — reliable, no voice pack needed
       try {
         await TextToSpeech.stop();
+        if (token !== _speakToken) { onEnd?.(); return; } // cancelled while awaiting
         await TextToSpeech.speak({ text, lang: 'he-IL', rate: 0.9, pitch: 1.3, volume: Sounds.voiceVolume, category: 'ambient' });
       } catch (e) { console.warn('Native TTS error:', e); }
+      onEnd?.();
       return;
     }
     // Web browser fallback (Web Speech API)
-    if (typeof speechSynthesis === 'undefined') return;
+    if (typeof speechSynthesis === 'undefined') { onEnd?.(); return; }
     loadHebrewVoice();
     const utt = new SpeechSynthesisUtterance(text);
     if (_hebrewVoice) utt.voice = _hebrewVoice;
@@ -269,6 +278,7 @@ function speakHebrew(text, delayMs = 300) {
     utt.rate   = 0.9;
     utt.pitch  = 1.3;
     utt.volume = Sounds.voiceVolume;
+    utt.onend  = () => onEnd?.();
     try { speechSynthesis.resume(); } catch (_) { /* ignore */ }
     if (speechSynthesis.speaking) speechSynthesis.cancel();
     speechSynthesis.speak(utt);
@@ -362,7 +372,9 @@ export const Sounds = {
   tap:     () => sfx.tap.play(Sounds.sfxVolume),
   wrong:   () => { sfx.wrong.play(Sounds.sfxVolume); playVoiceClip('wrong', 400); },
   wrongSfx:() => sfx.wrong.play(Sounds.sfxVolume),
-  correct: () => { sfx.correct.play(Sounds.sfxVolume); playVoiceClip('correct', 350); },
+  correct:        () => { sfx.correct.play(Sounds.sfxVolume); playVoiceClip('correct', 350); },
+  correctSfxOnly: () => sfx.correct.play(Sounds.sfxVolume),
+  praiseVoice:    (delay = 0, onEnd = null) => playVoiceClip('correct', delay, onEnd),
   win:     () => { sfx.win.play(Sounds.sfxVolume); playVoiceClip('win', 600); },
   flip:    () => sfx.flip.play(Sounds.sfxVolume),
   match:   () => { sfx.match.play(Sounds.sfxVolume); playVoiceClip('correct', 300); },
@@ -371,7 +383,17 @@ export const Sounds = {
   levelUp: () => { sfx.levelUp.play(Sounds.sfxVolume); playVoiceClip('levelUp', 500); },
 
   // Speak arbitrary Hebrew text (e.g. letter names, numbers)
-  speak: (text, delayMs = 0) => speakHebrew(text, delayMs),
+  speak: (text, delayMs = 0, onEnd = null) => speakHebrew(text, delayMs, onEnd),
+
+  // Stop any ongoing or pending speech immediately
+  stopSpeech() {
+    _speakToken++;   // cancel pending delayed calls
+    if (IS_NATIVE) {
+      try { TextToSpeech.stop(); } catch (_) {}
+    } else if (typeof speechSynthesis !== 'undefined') {
+      try { speechSynthesis.cancel(); } catch (_) {}
+    }
+  },
 };
 
 // Apply persisted mute state to Howler immediately

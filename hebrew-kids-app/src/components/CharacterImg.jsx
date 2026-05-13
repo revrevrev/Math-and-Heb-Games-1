@@ -69,6 +69,12 @@ const CHARS = {
     pos: 'center 8%',
     aspect: 1.9,
   },
+  stitch: {
+    src: '/images/stitch.avif',
+    alt: 'סטיץ׳',
+    pos: 'top center',
+    aspect: 0.9,
+  },
   zohar: {
     src: '/images/זהר לא הספקתי.jpg',
     alt: 'זוהר',

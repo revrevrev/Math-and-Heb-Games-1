@@ -7,6 +7,7 @@ import MathGame from './components/games/MathGame';
 import WordGame from './components/games/WordGame';
 import FirstLetterGame from './components/games/FirstLetterGame';
 import SoundGame from './components/games/SoundGame';
+import ReadingGame from './components/games/ReadingGame';
 import SettingsScreen from './components/SettingsScreen';
 import AchievementsScreen from './components/AchievementsScreen';
 import ProfileScreen from './components/ProfileScreen';
@@ -106,6 +107,7 @@ export default function App() {
       {screen === 'profile'      && <ProfileScreen      onBack={goHome} />}
       {screen === 'firstletter'  && <FirstLetterGame    onBack={goHome} onAddStars={addStars} />}
       {screen === 'soundgame'    && <SoundGame          onBack={goHome} onAddStars={addStars} />}
+      {screen === 'readgame'     && <ReadingGame        onBack={goHome} onAddStars={addStars} />}
       {screen === 'presents'     && <PresentsScreen     onBack={goHome} totalStars={totalStars} />}
     </>
   );

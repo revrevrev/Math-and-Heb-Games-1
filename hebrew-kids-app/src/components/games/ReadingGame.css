@@ -1,0 +1,305 @@
+@import './shared.css';
+
+/* ── Game background — Stitch & Angel photo ──────────────── */
+.reading-bg {
+  background:
+    linear-gradient(160deg, rgba(5,15,50,0.55) 0%, rgba(10,40,100,0.40) 50%, rgba(5,25,70,0.50) 100%),
+    url('/images/stitch and angel.avif') center / cover no-repeat;
+}
+
+/* ── Main layout ─────────────────────────────────────────── */
+.reading-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px 16px;
+  width: 100%;
+}
+
+/* ── Progress bar ────────────────────────────────────────── */
+.reading-progress {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.reading-progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.20);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.reading-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, #fb923c);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(251,191,36,0.55);
+}
+
+.reading-progress-label {
+  color: rgba(255,255,255,0.70);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* ── Word card ───────────────────────────────────────────── */
+.reading-word-card {
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 24px;
+  padding: 24px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  min-width: 220px;
+}
+
+.reading-emoji {
+  font-size: 3.8rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+}
+
+.reading-word {
+  font-size: clamp(3rem, 12vw, 5rem);
+  font-weight: bold;
+  color: white;
+  letter-spacing: 0.08em;
+  text-shadow: 0 4px 18px rgba(0,0,0,0.45);
+  direction: rtl;
+  line-height: 1.1;
+}
+
+.reading-word.word-blink {
+  animation: wordBlink 0.5s ease-in-out 2;
+}
+
+@keyframes wordBlink {
+  0%, 100% { color: white;   text-shadow: 0 4px 18px rgba(0,0,0,0.45); }
+  50%       { color: #86efac; text-shadow: 0 0 40px rgba(34,197,94,0.9), 0 4px 18px rgba(0,0,0,0.3); }
+}
+
+.reading-instruction {
+  color: rgba(255,255,255,0.80);
+  font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+  text-align: center;
+  margin: 0;
+}
+
+/* ── Speech recognition controls ────────────────────────── */
+.reading-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.reading-status-label {
+  color: rgba(255,255,255,0.92);
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+  text-align: center;
+  min-height: 1.5em;
+  direction: rtl;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+
+.reading-heard-text {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.88rem;
+  direction: rtl;
+  background: rgba(0,0,0,0.22);
+  border-radius: 10px;
+  padding: 4px 14px;
+}
+
+.reading-live-text {
+  color: #fde68a;
+  font-size: 1.15rem;
+  font-weight: 600;
+  direction: rtl;
+  background: rgba(0,0,0,0.30);
+  border: 1px solid rgba(253,230,138,0.35);
+  border-radius: 10px;
+  padding: 6px 18px;
+  min-width: 120px;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.reading-live-placeholder {
+  color: rgba(253,230,138,0.45);
+  animation: liveTextPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes liveTextPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* Mic button */
+.reading-mic-btn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.55);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px rgba(59,130,246,0.55);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1;
+}
+
+.reading-mic-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.reading-mic-btn.listening {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 8px 28px rgba(239,68,68,0.65);
+  animation: micPulse 1s ease-in-out infinite;
+  cursor: not-allowed;
+}
+
+.reading-mic-btn.correct {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 8px 28px rgba(34,197,94,0.7);
+  border-color: #86efac;
+}
+
+.reading-mic-btn.wrong {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 8px 28px rgba(249,115,22,0.6);
+  animation: micShake 0.45s ease;
+}
+
+.reading-mic-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* Skip button */
+.reading-skip-btn {
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.60);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 14px;
+  padding: 10px 28px;
+  font-size: clamp(1rem, 3.5vw, 1.1rem);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  direction: rtl;
+}
+
+.reading-skip-btn.prominent {
+  background: rgba(249,115,22,0.22);
+  color: #fdba74;
+  border-color: rgba(249,115,22,0.50);
+  box-shadow: 0 4px 16px rgba(249,115,22,0.30);
+}
+
+.reading-skip-btn:active:not(:disabled) {
+  transform: scale(0.93);
+}
+
+.reading-skip-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@keyframes micPulse {
+  0%, 100% { box-shadow: 0 8px 28px rgba(239,68,68,0.65), 0 0 0 0   rgba(239,68,68,0.35); }
+  50%       { box-shadow: 0 8px 28px rgba(239,68,68,0.65), 0 0 0 20px rgba(239,68,68,0); }
+}
+
+@keyframes micShake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-8px); }
+  40%  { transform: translateX(8px); }
+  60%  { transform: translateX(-5px); }
+  80%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+/* ── Manual fallback button ──────────────────────────────── */
+.reading-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 18px 56px;
+  font-size: clamp(1.3rem, 5vw, 1.6rem);
+  font-family: inherit;
+  font-weight: bold;
+  box-shadow: 0 8px 28px rgba(34,197,94,0.55);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reading-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 4px 14px rgba(34,197,94,0.4);
+}
+
+/* ── Stars progress row ──────────────────────────────────── */
+.reading-stars-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  max-width: 300px;
+}
+
+.reading-star {
+  font-size: 1.25rem;
+  opacity: 0.25;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.reading-star.earned {
+  opacity: 1;
+  animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ── Word animation ──────────────────────────────────────── */
+.pop-in {
+  animation: popIn 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pop-out {
+  animation: popOut 0.25s ease-in forwards;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.7) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+@keyframes popOut {
+  from { opacity: 1; transform: scale(1)   translateY(0); }
+  to   { opacity: 0; transform: scale(0.8) translateY(-10px); }
+}
+
+@keyframes starPop {
+  0%   { transform: scale(0.5); }
+  60%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}

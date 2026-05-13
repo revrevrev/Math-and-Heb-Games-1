@@ -75,6 +75,16 @@ const GAMES = [
     imgSrc: '/images/זהר לא הספקתי.jpg',
     imgPos: 'top center',
   },
+  {
+    id: 'readgame',
+    title: 'קריאה',
+    subtitle: 'קראי מילים בעברית!',
+    emoji: '📖',
+    gradient: 'linear-gradient(145deg, #0c3461 0%, #0ea5e9 60%, #38bdf8 100%)',
+    glow: 'rgba(14,165,233,0.65)',
+    imgSrc: '/images/stitch.avif',
+    imgPos: 'top center',
+  },
 ];
 
 const PARTICLE_POOL = ['⭐','❄️','🐾','💜','🌸','✨','🎵','🌟','💛','🎈','🦋','💎'];
