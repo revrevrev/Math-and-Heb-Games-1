@@ -124,12 +124,13 @@ export default function ReadingGame({ onBack, onAddStars }) {
 
   function handleWrong(transcript) {
     SpeechRecognitionUtil.stopListening();
+    // Keep liveTranscript so the user can see what STT returned vs the target word
     setLastTranscript(transcript || '');
     Sounds.wrong();
     setListenState('wrong');
 
     setRetries(r => {
-      setTimeout(() => setListenState('idle'), 1800);
+      setTimeout(() => { setListenState('idle'); setLiveTranscript(''); }, 2500);
       return r + 1;
     });
   }
@@ -141,21 +142,31 @@ export default function ReadingGame({ onBack, onAddStars }) {
     setListenState('listening');
     Sounds.tap();
 
-    SpeechRecognitionUtil.startListening({
-      targetWord:  current.word,
-      timeoutMs:   7000,
-      onListening: () => {},
-      onPartial:   (text) => setLiveTranscript(text),
-      onResult: ({ matched, transcript }) => {
-        if (matched) handleCorrect();
-        else         handleWrong(transcript);
-      },
-      onError: ({ code }) => {
-        if (code === 'NOT_ALLOWED') { setSpeechAvail('none'); return; }
-        if (code === 'TIMEOUT' || code === 'ENDED_EARLY') handleWrong('');
-        else setListenState('idle');
-      },
-    });
+    // Brief delay so Android audio system releases TTS focus before mic opens.
+    // Without this, the first recognition after TTS playback often returns empty.
+    setTimeout(() => {
+      SpeechRecognitionUtil.startListening({
+        targetWord:  current.word,
+        timeoutMs:   7000,
+        onListening: () => {},
+        onPartial:   (text) => setLiveTranscript(text),
+        onResult: ({ matched, transcript }) => {
+          setLiveTranscript(transcript); // show the final result, not just the interim
+          if (matched) handleCorrect();
+          else         handleWrong(transcript);
+        },
+        onError: ({ code }) => {
+          if (code === 'NOT_ALLOWED') { setSpeechAvail('none'); return; }
+          if (code === 'TIMEOUT' || code === 'ENDED_EARLY') {
+            handleWrong('');
+          } else {
+            // Show the error code in the live box for troubleshooting
+            setLiveTranscript(`⚠️ ${code}`);
+            setTimeout(() => { setListenState('idle'); setLiveTranscript(''); }, 2500);
+          }
+        },
+      });
+    }, 300);
   }
 
   function handleSkip() {
@@ -200,7 +211,10 @@ export default function ReadingGame({ onBack, onAddStars }) {
   function statusLabel() {
     if (listenState === 'listening') return '...מקשיבה';
     if (listenState === 'correct')   return '🎉 כל הכבוד!';
-    if (listenState === 'wrong')     return 'נסי שוב! 💪';
+    if (listenState === 'wrong') {
+      // Distinguish "heard but wrong word" from "didn't hear anything"
+      return (liveTranscript || lastTranscript) ? 'נסי שוב! 💪' : 'לא שמעתי 🎤 — דברי חזק יותר!';
+    }
     if (listenState === 'skipped')   return 'דלגנו — בהצלחה במילה הבאה!';
     if (retries === 0)               return 'לחצי על המיקרופון ואמרי את המילה';
     return `ניסיון ${retries + 1} — לחצי ונסי שוב!`;
@@ -263,6 +277,10 @@ export default function ReadingGame({ onBack, onAddStars }) {
               {listenState === 'listening' ? (
                 <div className={`reading-live-text${liveTranscript ? '' : ' reading-live-placeholder'}`}>
                   {liveTranscript || '· · ·'}
+                </div>
+              ) : listenState === 'wrong' && liveTranscript ? (
+                <div className="reading-live-text" style={{opacity:0.75}}>
+                  {liveTranscript}
                 </div>
               ) : listenState === 'wrong' && lastTranscript ? (
                 <div className="reading-heard-text">שמעתי: &quot;{lastTranscript}&quot;</div>

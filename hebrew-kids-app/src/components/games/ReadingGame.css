@@ -4,7 +4,7 @@
 .reading-bg {
   background:
     linear-gradient(160deg, rgba(5,15,50,0.55) 0%, rgba(10,40,100,0.40) 50%, rgba(5,25,70,0.50) 100%),
-    url('/images/stitch and angel.avif') center / cover no-repeat;
+    url('/images/stitch and angel.avif') bottom / 100% auto no-repeat;
 }
 
 /* ── Main layout ─────────────────────────────────────────── */

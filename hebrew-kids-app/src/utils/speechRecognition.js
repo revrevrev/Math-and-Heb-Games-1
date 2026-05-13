@@ -18,9 +18,12 @@ let _webRecognizer      = null;   // Web Speech API instance
 // ── Capability detection ──────────────────────────────────────────────────────
 
 function _detectCapability() {
-  if (IS_NATIVE) return 'native';
+  // Prefer the Web Speech API even on native Android — it runs in the
+  // Chrome-based WebView without any popup dialog, unlike the Capacitor
+  // native plugin which requires popup:true on many devices.
   if (typeof window !== 'undefined' &&
       (window.SpeechRecognition || window.webkitSpeechRecognition)) return 'web';
+  if (IS_NATIVE) return 'native';
   return 'none';
 }
 
@@ -78,20 +81,20 @@ async function _startNative(config) {
       return;
     }
 
-    // Listen for partial results — fires multiple times as the user speaks.
-    // Strategy:
-    //   • Fast path: if a partial already matches, accept immediately.
-    //   • Otherwise: accumulate and wait 600 ms of silence for the final
-    //     (most complete) result before judging.
+    // Results event — fires with partial and/or final results.
+    // With popup:true the system dialog handles UI; we just receive final matches.
     _nativeHandle = await CapSpeech.addListener('partialResults', (data) => {
       if (!_active) return;
+      console.log('[STT] partialResults event:', JSON.stringify(data));
+
       const alternatives = data.matches ?? [];
       if (alternatives.length === 0) return;
 
       _lastNativeMatches = alternatives;
-      config.onPartial?.(alternatives[0]);
+      // Show all alternatives separated by " / " so we can see what STT heard
+      config.onPartial?.(alternatives.join(' / '));
 
-      // Fast path — already a match, no need to wait for more partials
+      // Fast path — already a match, no need to wait for more
       if (matchHebrewWord(config.targetWord, alternatives)) {
         clearTimeout(_silenceTimer);
         _silenceTimer = null;
@@ -100,25 +103,27 @@ async function _startNative(config) {
         return;
       }
 
-      // Not a match yet — debounce: wait for 600 ms of silence, then finalize
+      // Debounce: wait 300 ms of silence, then finalize with best result so far
       clearTimeout(_silenceTimer);
-      _silenceTimer = setTimeout(_finalize, 600);
+      _silenceTimer = setTimeout(_finalize, 300);
     });
 
     // Hard timeout — finalize with whatever we have so far
     _timeoutId = setTimeout(_finalize, timeoutMs);
 
+    console.log('[STT-native] started, target:', JSON.stringify(config.targetWord));
     config.onListening?.();
 
     await CapSpeech.start({
       language:       'he-IL',
-      maxResults:     5,
+      maxResults:     10,
       partialResults: true,
       popup:          false,
     });
   } catch (e) {
+    console.error('[STT] start error:', e);
     _cleanupNative();
-    config.onError?.({ code: 'START_FAILED' });
+    config.onError?.({ code: 'START_FAILED', detail: String(e) });
   }
 }
 
@@ -126,6 +131,7 @@ async function _startNative(config) {
 
 function _startWeb(config) {
   const timeoutMs = config.timeoutMs ?? 7000;
+  let _lastInterim = '';   // best interim result seen so far
 
   const SR  = window.SpeechRecognition || window.webkitSpeechRecognition;
   const rec = new SR();
@@ -136,8 +142,12 @@ function _startWeb(config) {
   rec.interimResults  = true;
   rec.maxAlternatives = 5;
 
+  console.log('[STT-web] starting, target:', JSON.stringify(config.targetWord));
+
   rec.onstart = () => {
+    console.log('[STT-web] onstart — mic active');
     _timeoutId = setTimeout(() => {
+      console.log('[STT-web] hard timeout fired');
       _cleanupWeb();
       config.onError?.({ code: 'TIMEOUT' });
     }, timeoutMs);
@@ -147,17 +157,21 @@ function _startWeb(config) {
   rec.onresult = (event) => {
     const result = event.results[event.results.length - 1];
     if (!result.isFinal) {
-      // Interim result — show live transcript only
-      config.onPartial?.(result[0].transcript.trim());
+      _lastInterim = result[0].transcript.trim();
+      console.log('[STT-web] interim:', JSON.stringify(_lastInterim));
+      config.onPartial?.(_lastInterim);
       return;
     }
     _cleanupWeb();
     const alternatives = Array.from(result).map(r => r.transcript.trim());
-    const matched      = matchHebrewWord(config.targetWord, alternatives);
+    console.log('[STT-web] final alternatives:', alternatives);
+    config.onPartial?.(alternatives.join(' / '));
+    const matched = matchHebrewWord(config.targetWord, alternatives);
     config.onResult?.({ matched, transcript: alternatives[0] });
   };
 
   rec.onerror = (event) => {
+    console.log('[STT-web] onerror:', event.error, '— active:', _active);
     _cleanupWeb();
     const raw  = event.error ?? '';
     const code = raw === 'no-speech'   ? 'TIMEOUT'
@@ -168,7 +182,15 @@ function _startWeb(config) {
   };
 
   rec.onend = () => {
-    if (_active) {
+    console.log('[STT-web] onend — active:', _active, 'lastInterim:', JSON.stringify(_lastInterim));
+    if (!_active) return;
+    // Session ended before a final result arrived.
+    // If we received an interim result, use it rather than discarding it.
+    if (_lastInterim) {
+      _cleanupWeb();
+      const matched = matchHebrewWord(config.targetWord, [_lastInterim]);
+      config.onResult?.({ matched, transcript: _lastInterim });
+    } else {
       _cleanupWeb();
       config.onError?.({ code: 'ENDED_EARLY' });
     }
@@ -177,6 +199,7 @@ function _startWeb(config) {
   try {
     rec.start();
   } catch (e) {
+    console.log('[STT-web] start threw:', e);
     _cleanupWeb();
     config.onError?.({ code: 'START_FAILED' });
   }
@@ -215,18 +238,34 @@ export const SpeechRecognitionUtil = {
   },
 
   stopListening() {
-    if (IS_NATIVE) _cleanupNative();
-    else           _cleanupWeb();
+    _cleanupWeb();                   // always stop web recognizer (used even on Android)
+    if (IS_NATIVE) _cleanupNative(); // also stop native plugin if on Android
   },
 };
 
 // ── Hebrew word matching ──────────────────────────────────────────────────────
 
-/** Strip nikud (U+05B0–U+05C7) and punctuation, trim whitespace. */
+/**
+ * Normalize a Hebrew string for comparison:
+ *   1. NFKD decomposition — splits precomposed chars + converts compat forms (U+FB1D–U+FB4E → base + mark)
+ *   2. Strip ALL Unicode combining/modifier marks via \p{M} (nikud, dagesh, cantillation, etc.)
+ *   3. Remove Hebrew punctuation and common ASCII punctuation
+ *   4. Remove invisible Unicode direction/zero-width marks that Android STT injects
+ *   5. Normalize final letter forms → non-final, so ם≡מ ן≡נ ף≡פ ך≡כ ץ≡צ
+ *   6. Collapse whitespace and trim
+ */
 export function stripNikud(text) {
   return text
-    .replace(/[\u05B0-\u05C7]/g, '')
-    .replace(/[\u05F3\u05F4״׳,.\-!?]/g, '')
+    .normalize('NFKD')                                          // decompose everything (separates dagesh, nikud, etc.)
+    .replace(/\p{M}/gu, '')                                     // strip ALL Unicode combining marks (nikud, dagesh, cantillation…)
+    .replace(/[\u05BE\u05F3\u05F4]/g, '')                       // Hebrew punctuation: maqaf, geresh, gershayim
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '') // invisible RTL/LTR/BOM/formatting marks
+    .replace(/[,.\-!?'"״׳]/g, '')                               // common ASCII + Hebrew punctuation chars
+    .replace(/\u05DD/g, '\u05DE')  // ם → מ
+    .replace(/\u05DF/g, '\u05E0')  // ן → נ
+    .replace(/\u05E3/g, '\u05E4')  // ף → פ
+    .replace(/\u05DA/g, '\u05DB')  // ך → כ
+    .replace(/\u05E5/g, '\u05E6')  // ץ → צ
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -245,9 +284,13 @@ export function stripNikud(text) {
  */
 export function matchHebrewWord(targetWord, alternatives) {
   const target = stripNikud(targetWord);
+  console.log('[Match] target:', JSON.stringify(target),
+              'codePoints:', [...target].map(c => c.codePointAt(0).toString(16)));
 
   for (const alt of alternatives) {
     const recognized = stripNikud(alt);
+    console.log('[Match] vs:', JSON.stringify(recognized),
+                'codePoints:', [...recognized].map(c => c.codePointAt(0).toString(16)));
 
     if (recognized === target) return true;
     if (recognized.includes(target)) return true;
@@ -257,12 +300,22 @@ export function matchHebrewWord(targetWord, alternatives) {
       if (recognized === prefix + target) return true;
     }
 
-    if (_levenshtein(recognized, target) <= 1) return true;
+    const maxDist = target.length >= 4 ? 2 : 1;
+    if (_levenshtein(recognized, target) <= maxDist) return true;
 
     // Check each individual word in the transcript
     for (const w of recognized.split(/\s+/)) {
-      if (w.length >= 2 && _levenshtein(w, target) <= 1) return true;
+      if (w.length >= 2 && _levenshtein(w, target) <= maxDist) return true;
     }
+
+    // Ultimate fallback: compare only the Hebrew base consonants (U+05D0–U+05EA).
+    // Catches any residual invisible chars or unexpected non-Hebrew tokens.
+    const hebrewOnly = s => s.replace(/[^\u05D0-\u05EA]/g, '');
+    const recHz = hebrewOnly(recognized);
+    const tgtHz = hebrewOnly(target);
+    if (recHz.length >= 1 && recHz === tgtHz) return true;
+    if (recHz.length >= 2 && tgtHz.includes(recHz)) return true;
+    if (tgtHz.length >= 2 && recHz.includes(tgtHz)) return true;
   }
   return false;
 }
