@@ -252,10 +252,10 @@ export default function ReadingGame({ onBack, onAddStars }) {
             <div className="reading-progress-bar">
               <div
                 className="reading-progress-fill"
-                style={{ width: `${(round / ROUNDS) * 100}%` }}
+                style={{ width: `${((round + 1) / ROUNDS) * 100}%` }}
               />
             </div>
-            <span className="reading-progress-label">{round + 1} / {ROUNDS}</span>
+            <span className="reading-progress-label" dir="ltr">{round + 1} / {ROUNDS}</span>
           </div>
 
           {/* Word card */}
@@ -272,36 +272,40 @@ export default function ReadingGame({ onBack, onAddStars }) {
             </button>
           ) : (
             <div className="reading-controls">
-              <div className="reading-status-label">{statusLabel()}</div>
+              {/* Unified feedback panel */}
+              <div className="reading-feedback-panel">
+                <div className="reading-status-label">{statusLabel()}</div>
 
-              {listenState === 'listening' ? (
-                <div className={`reading-live-text${liveTranscript ? '' : ' reading-live-placeholder'}`}>
-                  {liveTranscript || '· · ·'}
-                </div>
-              ) : listenState === 'wrong' && liveTranscript ? (
-                <div className="reading-live-text" style={{opacity:0.75}}>
-                  {liveTranscript}
-                </div>
-              ) : listenState === 'wrong' && lastTranscript ? (
-                <div className="reading-heard-text">שמעתי: &quot;{lastTranscript}&quot;</div>
-              ) : null}
+                {listenState === 'listening' ? (
+                  <div className={`reading-live-text${liveTranscript ? '' : ' reading-live-placeholder'}`}>
+                    {liveTranscript || '· · ·'}
+                  </div>
+                ) : listenState === 'wrong' && (liveTranscript || lastTranscript) ? (
+                  <div className="reading-heard-text">
+                    שמעתי: &ldquo;{liveTranscript || lastTranscript}&rdquo;
+                  </div>
+                ) : null}
+              </div>
 
-              <button
-                className={`reading-mic-btn ${listenState}`}
-                onClick={handleMicTap}
-                disabled={listenState !== 'idle'}
-                aria-label="לחצי לדבר"
-              >
-                {listenState === 'listening' ? '👂' : '🎤'}
-              </button>
+              {/* Mic + Skip side by side */}
+              <div className="reading-action-row">
+                <button
+                  className={`reading-skip-btn ${retries >= MAX_RETRIES ? 'prominent' : ''}`}
+                  onClick={handleSkip}
+                  disabled={listenState === 'correct'}
+                >
+                  ← דלגי
+                </button>
 
-              <button
-                className={`reading-skip-btn ${retries >= MAX_RETRIES ? 'prominent' : ''}`}
-                onClick={handleSkip}
-                disabled={listenState === 'correct'}
-              >
-                דלגי
-              </button>
+                <button
+                  className={`reading-mic-btn ${listenState}`}
+                  onClick={handleMicTap}
+                  disabled={listenState !== 'idle'}
+                  aria-label="לחצי לדבר"
+                >
+                  {listenState === 'listening' ? '👂' : '🎤'}
+                </button>
+              </div>
             </div>
           )}
 

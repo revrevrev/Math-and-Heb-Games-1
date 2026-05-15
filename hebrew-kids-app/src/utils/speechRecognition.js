@@ -243,6 +243,48 @@ export const SpeechRecognitionUtil = {
   },
 };
 
+// ── Match-failure incident log ────────────────────────────────────────────────
+// Saves the raw + normalized forms (with code-points) of every failed match to
+// localStorage so they can be inspected offline via Settings → debug panel.
+
+const INCIDENT_KEY  = 'hebrew-app-stt-incidents';
+const MAX_INCIDENTS = 100;
+
+function _cps(s) {
+  return [...s].map(c => c.codePointAt(0).toString(16));
+}
+
+export function saveMatchIncident(targetWord, alternatives) {
+  const norm = t => stripNikud(t);
+  const entry = {
+    t:    new Date().toISOString(),
+    tRaw: targetWord,
+    tCPs: _cps(targetWord),
+    tNrm: norm(targetWord),
+    tNCPs: _cps(norm(targetWord)),
+    alts: alternatives.map(a => ({
+      raw:  a,
+      cps:  _cps(a),
+      nrm:  norm(a),
+      ncps: _cps(norm(a)),
+    })),
+  };
+  try {
+    const list = JSON.parse(localStorage.getItem(INCIDENT_KEY) || '[]');
+    list.push(entry);
+    if (list.length > MAX_INCIDENTS) list.splice(0, list.length - MAX_INCIDENTS);
+    localStorage.setItem(INCIDENT_KEY, JSON.stringify(list));
+  } catch (_) {}
+}
+
+export function getMatchIncidents() {
+  try { return JSON.parse(localStorage.getItem(INCIDENT_KEY) || '[]'); } catch (_) { return []; }
+}
+
+export function clearMatchIncidents() {
+  localStorage.removeItem(INCIDENT_KEY);
+}
+
 // ── Hebrew word matching ──────────────────────────────────────────────────────
 
 /**
@@ -317,6 +359,9 @@ export function matchHebrewWord(targetWord, alternatives) {
     if (recHz.length >= 2 && tgtHz.includes(recHz)) return true;
     if (tgtHz.length >= 2 && recHz.includes(tgtHz)) return true;
   }
+
+  // No match — persist a full diagnostic record for offline investigation.
+  saveMatchIncident(targetWord, alternatives);
   return false;
 }
 

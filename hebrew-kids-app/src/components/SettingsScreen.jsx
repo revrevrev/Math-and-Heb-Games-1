@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Sounds } from '../utils/sounds';
 import { resetAllProgress } from '../utils/achievements';
 import { STARS_PER_PRESENT } from '../utils/presentsConfig';
+import { getMatchIncidents, clearMatchIncidents } from '../utils/speechRecognition';
 import './SettingsScreen.css';
 
 const CLAIMS_KEY  = 'hebrew-app-presents-claimed';
@@ -49,6 +50,32 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
     const val = parseFloat(e.target.value);
     Sounds.setSfxVolume(val);
     setSfxVolumeState(val);
+  }
+
+  // ── STT incident log viewer ───────────────────────────────
+  const [incidents, setIncidents] = useState(null); // null = not loaded yet
+  const [copied, setCopied] = useState(false);
+
+  function loadIncidents() {
+    setIncidents(getMatchIncidents());
+  }
+
+  function handleClearIncidents() {
+    clearMatchIncidents();
+    setIncidents([]);
+  }
+
+  function handleCopyIncidents() {
+    const data = getMatchIncidents();
+    const text = JSON.stringify(data, null, 2);
+    navigator.clipboard?.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }).catch(() => {
+      // Fallback: open in new window
+      const w = window.open('', '_blank');
+      if (w) { w.document.write('<pre>' + text + '</pre>'); }
+    });
   }
 
   // ── Hidden debug panel ────────────────────────────────────
@@ -304,6 +331,50 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
                 </div>
               );
             })()}
+
+            {/* STT match-failure incident log */}
+            <div className="debug-incidents-section">
+              <div className="debug-incidents-header">
+                <span className="debug-incidents-title">🎤 תקלות זיהוי דיבור</span>
+                <div className="debug-incidents-btns">
+                  <button className="debug-incidents-btn" onClick={loadIncidents}>טען</button>
+                  <button className="debug-incidents-btn" onClick={handleCopyIncidents}>
+                    {copied ? '✓ הועתק' : 'העתק'}
+                  </button>
+                  <button className="debug-incidents-btn debug-incidents-btn-danger" onClick={handleClearIncidents}>נקה</button>
+                </div>
+              </div>
+
+              {incidents !== null && (
+                incidents.length === 0
+                  ? <div className="debug-incidents-empty">אין תקלות שמורות</div>
+                  : <div className="debug-incidents-list">
+                      {[...incidents].reverse().map((inc, i) => (
+                        <div key={i} className="debug-incident">
+                          <div className="debug-incident-time">{new Date(inc.t).toLocaleString('he-IL')}</div>
+                          <div className="debug-incident-row">
+                            <span className="debug-incident-label">מטרה:</span>
+                            <span className="debug-incident-word">{inc.tRaw}</span>
+                            <span className="debug-incident-cps">[{inc.tCPs.join(' ')}]</span>
+                            {inc.tNrm !== inc.tRaw && (
+                              <span className="debug-incident-norm">→ {inc.tNrm} [{inc.tNCPs.join(' ')}]</span>
+                            )}
+                          </div>
+                          {inc.alts.map((a, j) => (
+                            <div key={j} className="debug-incident-row">
+                              <span className="debug-incident-label">שמעתי:</span>
+                              <span className="debug-incident-word">{a.raw}</span>
+                              <span className="debug-incident-cps">[{a.cps.join(' ')}]</span>
+                              {a.nrm !== a.raw && (
+                                <span className="debug-incident-norm">→ {a.nrm} [{a.ncps.join(' ')}]</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+              )}
+            </div>
           </div>
         )}
       </div>
