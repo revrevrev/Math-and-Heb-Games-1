@@ -338,8 +338,11 @@ export function stripNikud(text) {
  *   2. Recognized text contains the target ("זה יד" → matches "יד")
  *   3. Target contains recognized text (STT too terse, length ≥ 2)
  *   4. Common prefix variants: ה/ו/ל/ב/כ/מ/ש prepended to target
- *   5. Whole-transcript Levenshtein ≤ 1  (only for target length ≥ 4)
- *   6. Any individual word in the transcript Levenshtein ≤ 1  (only for target length ≥ 4)
+ *   5. Consonant-skeleton match: strip all vowel letters (א ה ו י) from both
+ *      sides and compare — handles a child who adds vowel sounds anywhere
+ *      (leading, trailing, or internal): "באת"→"בת", "אים"→"ים", "צבה"→"צב"
+ *   6. Whole-transcript Levenshtein ≤ 1  (only for target length ≥ 4)
+ *   7. Any individual word in the transcript Levenshtein ≤ 1  (only for target length ≥ 4)
  *      Skipped for words ≤ 3 letters — too few characters for 1 edit to be meaningful.
  */
 export function matchHebrewWord(targetWord, alternatives) {
@@ -354,11 +357,23 @@ export function matchHebrewWord(targetWord, alternatives) {
 
     if (recognized === target) return true;
     if (recognized.includes(target)) return true;
-    if (recognized.length >= 2 && target.includes(recognized)) return true;
+    // Only allow "target contains recognized" for longer words — for short words
+    // (≤ 3 letters) this is too loose: "שמ" matches inside "שמש" even though
+    // the child said a completely different word.
+    if (target.length >= 4 && recognized.length >= 2 && target.includes(recognized)) return true;
 
     for (const prefix of ['ה', 'ו', 'ל', 'ב', 'כ', 'מ', 'ש']) {
       if (recognized === prefix + target) return true;
     }
+
+    // Consonant-skeleton match: strip all Hebrew vowel letters (א ה ו י) from
+    // both the recognized text and the target, then compare the remaining
+    // consonant skeletons.  A child reading letter-by-letter inserts these
+    // vowel sounds freely — position doesn't matter.
+    const stripVowels = s => s.replace(/[אהוי]/g, '');
+    const recSkel = stripVowels(recognized);
+    const tgtSkel = stripVowels(target);
+    if (recSkel.length >= 1 && tgtSkel.length >= 1 && recSkel === tgtSkel) return true;
 
     // Levenshtein only for words ≥ 4 letters — shorter words have too few
     // characters for 1 edit to be meaningful (e.g. "שם" matching "ים",
@@ -378,8 +393,8 @@ export function matchHebrewWord(targetWord, alternatives) {
     const recHz = hebrewOnly(recognized);
     const tgtHz = hebrewOnly(target);
     if (recHz.length >= 1 && recHz === tgtHz) return true;
-    if (recHz.length >= 2 && tgtHz.includes(recHz)) return true;
-    if (tgtHz.length >= 2 && recHz.includes(tgtHz)) return true;
+    if (tgtHz.length >= 4 && recHz.length >= 2 && tgtHz.includes(recHz)) return true;
+    if (recHz.length >= 2 && tgtHz.length >= 2 && recHz.includes(tgtHz)) return true;
   }
 
   // No match — persist a full diagnostic record for offline investigation.
