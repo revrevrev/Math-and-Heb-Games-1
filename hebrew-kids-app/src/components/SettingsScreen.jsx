@@ -272,6 +272,11 @@ export default function SettingsScreen({ onBack, totalStars, onDebugSetStars }) 
           </button>
         </div>
 
+        {/* Build timestamp */}
+        <div className="settings-build-stamp">
+          גרסה: {new Date(__BUILD_TIME__).toLocaleString('he-IL')}
+        </div>
+
         {/* Hidden debug panel */}
         {debugOpen && (
           <div className="debug-panel">

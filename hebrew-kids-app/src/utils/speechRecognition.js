@@ -147,9 +147,16 @@ function _startWeb(config) {
   rec.onstart = () => {
     console.log('[STT-web] onstart — mic active');
     _timeoutId = setTimeout(() => {
-      console.log('[STT-web] hard timeout fired');
+      console.log('[STT-web] hard timeout fired, lastInterim:', JSON.stringify(_lastInterim));
+      // Salvage any interim result rather than discarding it on timeout.
+      const interimAtTimeout = _lastInterim;
       _cleanupWeb();
-      config.onError?.({ code: 'TIMEOUT' });
+      if (interimAtTimeout) {
+        const matched = matchHebrewWord(config.targetWord, [interimAtTimeout]);
+        config.onResult?.({ matched, transcript: interimAtTimeout });
+      } else {
+        config.onError?.({ code: 'TIMEOUT' });
+      }
     }, timeoutMs);
     config.onListening?.();
   };
@@ -171,14 +178,25 @@ function _startWeb(config) {
   };
 
   rec.onerror = (event) => {
-    console.log('[STT-web] onerror:', event.error, '— active:', _active);
+    console.log('[STT-web] onerror:', event.error, '— active:', _active,
+                'lastInterim:', JSON.stringify(_lastInterim));
+    const interimBeforeCleanup = _lastInterim;
     _cleanupWeb();
     const raw  = event.error ?? '';
     const code = raw === 'no-speech'   ? 'TIMEOUT'
                : raw === 'not-allowed' ? 'NOT_ALLOWED'
                : raw === 'network'     ? 'NETWORK'
                : raw.toUpperCase().replace(/-/g, '_');
-    config.onError?.({ code });
+    // If we already received an interim transcript, use it as the result
+    // rather than discarding it. Android Chrome often fires no-speech after
+    // delivering interim results but before delivering a final result.
+    if (interimBeforeCleanup && code === 'TIMEOUT') {
+      console.log('[STT-web] onerror: salvaging interim as result:', JSON.stringify(interimBeforeCleanup));
+      const matched = matchHebrewWord(config.targetWord, [interimBeforeCleanup]);
+      config.onResult?.({ matched, transcript: interimBeforeCleanup });
+    } else {
+      config.onError?.({ code });
+    }
   };
 
   rec.onend = () => {
@@ -320,9 +338,9 @@ export function stripNikud(text) {
  *   2. Recognized text contains the target ("זה יד" → matches "יד")
  *   3. Target contains recognized text (STT too terse, length ≥ 2)
  *   4. Common prefix variants: ה/ו/ל/ב/כ/מ/ש prepended to target
- *   5. Whole-transcript Levenshtein ≤ 1
- *   6. Any individual word in the transcript Levenshtein ≤ 1
- *      (catches "שמח גדולה" when target is "שמש")
+ *   5. Whole-transcript Levenshtein ≤ 1  (only for target length ≥ 4)
+ *   6. Any individual word in the transcript Levenshtein ≤ 1  (only for target length ≥ 4)
+ *      Skipped for words ≤ 3 letters — too few characters for 1 edit to be meaningful.
  */
 export function matchHebrewWord(targetWord, alternatives) {
   const target = stripNikud(targetWord);
@@ -342,12 +360,16 @@ export function matchHebrewWord(targetWord, alternatives) {
       if (recognized === prefix + target) return true;
     }
 
-    const maxDist = target.length >= 4 ? 2 : 1;
-    if (_levenshtein(recognized, target) <= maxDist) return true;
+    // Levenshtein only for words ≥ 4 letters — shorter words have too few
+    // characters for 1 edit to be meaningful (e.g. "שם" matching "ים",
+    // or "פרח" matching "ברח").
+    if (target.length >= 4) {
+      if (_levenshtein(recognized, target) <= 1) return true;
 
-    // Check each individual word in the transcript
-    for (const w of recognized.split(/\s+/)) {
-      if (w.length >= 2 && _levenshtein(w, target) <= maxDist) return true;
+      // Check each individual word in the transcript
+      for (const w of recognized.split(/\s+/)) {
+        if (w.length >= 2 && _levenshtein(w, target) <= 1) return true;
+      }
     }
 
     // Ultimate fallback: compare only the Hebrew base consonants (U+05D0–U+05EA).

@@ -3,7 +3,7 @@ import GameShell from '../GameShell';
 import CharacterImg from '../CharacterImg';
 import GameEffects from '../GameEffects';
 import { Sounds } from '../../utils/sounds';
-import { SpeechRecognitionUtil } from '../../utils/speechRecognition';
+import { SpeechRecognitionUtil, saveMatchIncident } from '../../utils/speechRecognition';
 import { unlockAchievement, recordGamePlayed } from '../../utils/achievements';
 import './ReadingGame.css';
 
@@ -158,6 +158,8 @@ export default function ReadingGame({ onBack, onAddStars }) {
         onError: ({ code }) => {
           if (code === 'NOT_ALLOWED') { setSpeechAvail('none'); return; }
           if (code === 'TIMEOUT' || code === 'ENDED_EARLY') {
+            // Log as incident so we can see STT returned nothing for this word
+            saveMatchIncident(current.word, [`[STT returned empty — code: ${code}]`]);
             handleWrong('');
           } else {
             // Show the error code in the live box for troubleshooting
