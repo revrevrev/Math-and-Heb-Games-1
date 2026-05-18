@@ -26,9 +26,10 @@ const WORD_POOL = [
   { word: 'גזר' },
   { word: 'לחם' },
   { word: 'קטן' },
-  { word: 'גדול' },
-  { word: 'פרפר' },
-  { word: 'בלון' },
+// 4-letter words - future expansion
+//  { word: 'גדול' },
+//  { word: 'פרפר' },
+//  { word: 'בלון' },
 ];
 
 const ROUNDS      = 10;
@@ -126,7 +127,8 @@ export default function ReadingGame({ onBack, onAddStars }) {
     SpeechRecognitionUtil.stopListening();
     // Keep liveTranscript so the user can see what STT returned vs the target word
     setLastTranscript(transcript || '');
-    Sounds.wrong();
+    if (transcript) Sounds.wrong();
+    else            Sounds.couldntHear();
     setListenState('wrong');
 
     setRetries(r => {

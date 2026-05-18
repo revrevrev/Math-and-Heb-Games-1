@@ -193,6 +193,8 @@ class VoiceFile {
 // Keep this pattern when adding new recordings (Wrong_1, Win_1, etc.)
 const V = (n, text) => new VoiceFile(`/sounds/voice/${n}.m4a`, text);
 
+const couldntHear = new VoiceFile('/sounds/voice/Couldnt hear.m4a', 'לא שמעתי');
+
 const VOICE_FILES = {
   correct: [
     V('Correct_1', 'כל הכבוד!'), V('Correct_2', 'מצוין!'),
@@ -370,7 +372,8 @@ export const Sounds = {
   },
 
   tap:     () => sfx.tap.play(Sounds.sfxVolume),
-  wrong:   () => { sfx.wrong.play(Sounds.sfxVolume); playVoiceClip('wrong', 400); },
+  wrong:       () => { sfx.wrong.play(Sounds.sfxVolume); playVoiceClip('wrong', 400); },
+  couldntHear: () => { sfx.wrong.play(Sounds.sfxVolume); couldntHear.play(400); },
   wrongSfx:() => sfx.wrong.play(Sounds.sfxVolume),
   correct:        () => { sfx.correct.play(Sounds.sfxVolume); playVoiceClip('correct', 350); },
   correctSfxOnly: () => sfx.correct.play(Sounds.sfxVolume),

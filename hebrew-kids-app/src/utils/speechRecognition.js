@@ -58,22 +58,74 @@ function _cleanupWeb() {
 async function _startNative(config) {
   const timeoutMs = config.timeoutMs ?? 7000;
   _lastNativeMatches = [];
+  let _accumulated = '';   // all committed utterances joined across pauses
 
-  // Called when we're ready to commit to the accumulated results.
-  function _finalize() {
+  // Commit current utterance to _accumulated, try to match, then either
+  // succeed, restart for the next utterance, or (if isFinal) wrap up.
+  async function _commitUtterance(isFinal) {
     if (!_active) return;
-    const matches = _lastNativeMatches;
-    _cleanupNative();
-    if (matches.length > 0) {
-      const matched = matchHebrewWord(config.targetWord, matches);
-      config.onResult?.({ matched, transcript: matches[0] });
-    } else {
-      config.onError?.({ code: 'TIMEOUT' });
+    const utterance = _lastNativeMatches[0] ?? '';
+    if (utterance) _accumulated = (_accumulated + ' ' + utterance).trim();
+    _lastNativeMatches = [];
+
+    const toCheck = [_accumulated, utterance].filter(Boolean);
+    if (toCheck.length && matchHebrewWord(config.targetWord, toCheck)) {
+      _cleanupNative();
+      config.onResult?.({ matched: true, transcript: _accumulated });
+      return;
+    }
+
+    if (isFinal) {
+      _cleanupNative();
+      if (_accumulated) {
+        config.onResult?.({ matched: false, transcript: _accumulated });
+      } else {
+        config.onError?.({ code: 'TIMEOUT' });
+      }
+      return;
+    }
+
+    // Pause detected but hard timeout not yet reached — restart recognition
+    // so we keep listening through the gap.
+    if (_nativeHandle) { _nativeHandle.remove(); _nativeHandle = null; }
+    try { CapSpeech.stop(); } catch (_) {}
+    config.onPartial?.(_accumulated);
+
+    _nativeHandle = await CapSpeech.addListener('partialResults', _onPartial);
+    try {
+      await CapSpeech.start({ language: 'he-IL', maxResults: 10, partialResults: true, popup: false });
+    } catch (e) {
+      _cleanupNative();
+      config.onError?.({ code: 'START_FAILED', detail: String(e) });
     }
   }
 
+  function _onPartial(data) {
+    if (!_active) return;
+    console.log('[STT-native] partialResults:', JSON.stringify(data));
+    const alternatives = data.matches ?? [];
+    if (alternatives.length === 0) return;
+
+    _lastNativeMatches = alternatives;
+    const preview = (_accumulated + ' ' + alternatives[0]).trim();
+    config.onPartial?.(preview);
+
+    // Fast path: check current alternatives and full accumulated+current text
+    const toCheck = [...alternatives, preview].filter(Boolean);
+    if (matchHebrewWord(config.targetWord, toCheck)) {
+      clearTimeout(_silenceTimer);
+      _silenceTimer = null;
+      _cleanupNative();
+      config.onResult?.({ matched: true, transcript: preview });
+      return;
+    }
+
+    // Debounce: 300 ms of silence → commit this utterance and restart
+    clearTimeout(_silenceTimer);
+    _silenceTimer = setTimeout(() => _commitUtterance(false), 300);
+  }
+
   try {
-    // Request permissions (no-op if already granted)
     const perms = await CapSpeech.requestPermissions();
     if (perms.speechRecognition !== 'granted') {
       _active = false;
@@ -81,35 +133,10 @@ async function _startNative(config) {
       return;
     }
 
-    // Results event — fires with partial and/or final results.
-    // With popup:true the system dialog handles UI; we just receive final matches.
-    _nativeHandle = await CapSpeech.addListener('partialResults', (data) => {
-      if (!_active) return;
-      console.log('[STT] partialResults event:', JSON.stringify(data));
+    _nativeHandle = await CapSpeech.addListener('partialResults', _onPartial);
 
-      const alternatives = data.matches ?? [];
-      if (alternatives.length === 0) return;
-
-      _lastNativeMatches = alternatives;
-      // Show all alternatives separated by " / " so we can see what STT heard
-      config.onPartial?.(alternatives.join(' / '));
-
-      // Fast path — already a match, no need to wait for more
-      if (matchHebrewWord(config.targetWord, alternatives)) {
-        clearTimeout(_silenceTimer);
-        _silenceTimer = null;
-        _cleanupNative();
-        config.onResult?.({ matched: true, transcript: alternatives[0] });
-        return;
-      }
-
-      // Debounce: wait 300 ms of silence, then finalize with best result so far
-      clearTimeout(_silenceTimer);
-      _silenceTimer = setTimeout(_finalize, 300);
-    });
-
-    // Hard timeout — finalize with whatever we have so far
-    _timeoutId = setTimeout(_finalize, timeoutMs);
+    // Hard timeout — commit final utterance and wrap up regardless
+    _timeoutId = setTimeout(() => _commitUtterance(true), timeoutMs);
 
     console.log('[STT-native] started, target:', JSON.stringify(config.targetWord));
     config.onListening?.();
@@ -131,14 +158,18 @@ async function _startNative(config) {
 
 function _startWeb(config) {
   const timeoutMs = config.timeoutMs ?? 7000;
-  let _lastInterim = '';   // best interim result seen so far
+  let _lastInterim = '';   // best interim result for the current utterance
+  let _accumulated = '';   // all committed final results joined across pauses
+
+  // Combine everything heard so far into one string for matching.
+  const _fullTranscript = () => (_accumulated + ' ' + _lastInterim).trim();
 
   const SR  = window.SpeechRecognition || window.webkitSpeechRecognition;
   const rec = new SR();
   _webRecognizer = rec;
 
   rec.lang            = 'he-IL';
-  rec.continuous      = false;
+  rec.continuous      = true;   // keep listening through pauses and other speakers
   rec.interimResults  = true;
   rec.maxAlternatives = 5;
 
@@ -147,13 +178,12 @@ function _startWeb(config) {
   rec.onstart = () => {
     console.log('[STT-web] onstart — mic active');
     _timeoutId = setTimeout(() => {
-      console.log('[STT-web] hard timeout fired, lastInterim:', JSON.stringify(_lastInterim));
-      // Salvage any interim result rather than discarding it on timeout.
-      const interimAtTimeout = _lastInterim;
+      const transcript = _fullTranscript();
+      console.log('[STT-web] hard timeout fired, transcript:', JSON.stringify(transcript));
       _cleanupWeb();
-      if (interimAtTimeout) {
-        const matched = matchHebrewWord(config.targetWord, [interimAtTimeout]);
-        config.onResult?.({ matched, transcript: interimAtTimeout });
+      if (transcript) {
+        const matched = matchHebrewWord(config.targetWord, [transcript]);
+        config.onResult?.({ matched, transcript });
       } else {
         config.onError?.({ code: 'TIMEOUT' });
       }
@@ -162,52 +192,60 @@ function _startWeb(config) {
   };
 
   rec.onresult = (event) => {
-    const result = event.results[event.results.length - 1];
-    if (!result.isFinal) {
-      _lastInterim = result[0].transcript.trim();
-      console.log('[STT-web] interim:', JSON.stringify(_lastInterim));
-      config.onPartial?.(_lastInterim);
-      return;
+    // Iterate only new results since last event (handles continuous mode correctly)
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const result = event.results[i];
+      if (!result.isFinal) {
+        _lastInterim = result[0].transcript.trim();
+        console.log('[STT-web] interim:', JSON.stringify(_fullTranscript()));
+        config.onPartial?.(_fullTranscript());
+      } else {
+        // Commit this utterance to the running transcript
+        const finals = Array.from(result).map(r => r.transcript.trim());
+        _accumulated = (_accumulated + ' ' + finals[0]).trim();
+        _lastInterim = '';
+        console.log('[STT-web] final, accumulated:', JSON.stringify(_accumulated));
+        config.onPartial?.(_accumulated);
+
+        // Check accumulated text + individual alternatives from this utterance
+        const toCheck = [_accumulated, ...finals].filter(Boolean);
+        if (matchHebrewWord(config.targetWord, toCheck)) {
+          _cleanupWeb();
+          config.onResult?.({ matched: true, transcript: _accumulated });
+          return;
+        }
+      }
     }
-    _cleanupWeb();
-    const alternatives = Array.from(result).map(r => r.transcript.trim());
-    console.log('[STT-web] final alternatives:', alternatives);
-    config.onPartial?.(alternatives.join(' / '));
-    const matched = matchHebrewWord(config.targetWord, alternatives);
-    config.onResult?.({ matched, transcript: alternatives[0] });
   };
 
   rec.onerror = (event) => {
-    console.log('[STT-web] onerror:', event.error, '— active:', _active,
-                'lastInterim:', JSON.stringify(_lastInterim));
-    const interimBeforeCleanup = _lastInterim;
+    const transcript = _fullTranscript();
+    console.log('[STT-web] onerror:', event.error, '— transcript:', JSON.stringify(transcript));
     _cleanupWeb();
     const raw  = event.error ?? '';
     const code = raw === 'no-speech'   ? 'TIMEOUT'
                : raw === 'not-allowed' ? 'NOT_ALLOWED'
                : raw === 'network'     ? 'NETWORK'
                : raw.toUpperCase().replace(/-/g, '_');
-    // If we already received an interim transcript, use it as the result
-    // rather than discarding it. Android Chrome often fires no-speech after
-    // delivering interim results but before delivering a final result.
-    if (interimBeforeCleanup && code === 'TIMEOUT') {
-      console.log('[STT-web] onerror: salvaging interim as result:', JSON.stringify(interimBeforeCleanup));
-      const matched = matchHebrewWord(config.targetWord, [interimBeforeCleanup]);
-      config.onResult?.({ matched, transcript: interimBeforeCleanup });
+    // Salvage accumulated + interim text rather than discarding it
+    if (transcript && code === 'TIMEOUT') {
+      console.log('[STT-web] onerror: salvaging transcript:', JSON.stringify(transcript));
+      const matched = matchHebrewWord(config.targetWord, [transcript]);
+      config.onResult?.({ matched, transcript });
     } else {
       config.onError?.({ code });
     }
   };
 
   rec.onend = () => {
-    console.log('[STT-web] onend — active:', _active, 'lastInterim:', JSON.stringify(_lastInterim));
+    const transcript = _fullTranscript();
+    console.log('[STT-web] onend — active:', _active, 'transcript:', JSON.stringify(transcript));
     if (!_active) return;
-    // Session ended before a final result arrived.
-    // If we received an interim result, use it rather than discarding it.
-    if (_lastInterim) {
+    // Session ended unexpectedly (network drop, etc.) — use whatever we have
+    if (transcript) {
       _cleanupWeb();
-      const matched = matchHebrewWord(config.targetWord, [_lastInterim]);
-      config.onResult?.({ matched, transcript: _lastInterim });
+      const matched = matchHebrewWord(config.targetWord, [transcript]);
+      config.onResult?.({ matched, transcript });
     } else {
       _cleanupWeb();
       config.onError?.({ code: 'ENDED_EARLY' });
@@ -306,6 +344,21 @@ export function clearMatchIncidents() {
 // ── Hebrew word matching ──────────────────────────────────────────────────────
 
 /**
+ * Collapse phonetically equivalent Hebrew letters to a canonical form so that
+ * a child's mispronunciation or STT confusion still counts as a match.
+ *   א = ע = ה  (all guttural / effectively silent for young readers)
+ *   ו = ב      (both /v/ when ב has no dagesh)
+ *   ק = כ = ח  (velar stops and fricatives sound alike to children)
+ */
+function phoneticNormalize(s) {
+  return s
+    .replace(/[עה]/g, 'א')
+    .replace(/ב/g, 'ו')
+    .replace(/[קח]/g, 'כ')
+    .replace(/ט/g, 'ת');   // ת=ט — both /t/
+}
+
+/**
  * Normalize a Hebrew string for comparison:
  *   1. NFKD decomposition — splits precomposed chars + converts compat forms (U+FB1D–U+FB4E → base + mark)
  *   2. Strip ALL Unicode combining/modifier marks via \p{M} (nikud, dagesh, cantillation, etc.)
@@ -374,6 +427,24 @@ export function matchHebrewWord(targetWord, alternatives) {
     const recSkel = stripVowels(recognized);
     const tgtSkel = stripVowels(target);
     if (recSkel.length >= 1 && tgtSkel.length >= 1 && recSkel === tgtSkel) return true;
+
+    // Phonetic equivalence match: collapse letters that sound alike for young
+    // readers, then compare.
+    //   א=ע=ה — all guttural/silent
+    //   ו=ב   — both /v/ when ב has no dagesh
+    //   ק=כ=ח — all velar/uvular stops or fricatives
+    const recPhon = phoneticNormalize(recognized);
+    const tgtPhon = phoneticNormalize(target);
+    if (recPhon === tgtPhon) return true;
+    if (recPhon.includes(tgtPhon)) return true;
+    if (tgtPhon.length >= 4 && recPhon.length >= 2 && tgtPhon.includes(recPhon)) return true;
+
+    // Phonetic-skeleton match: apply phonetic normalization first so that ב→ו
+    // (then stripped as a vowel letter) and ע→א (then stripped) are treated
+    // identically to their sound-alike pairs.
+    const recPhonSkel = stripVowels(phoneticNormalize(recognized));
+    const tgtPhonSkel = stripVowels(phoneticNormalize(target));
+    if (recPhonSkel.length >= 1 && tgtPhonSkel.length >= 1 && recPhonSkel === tgtPhonSkel) return true;
 
     // Levenshtein only for words ≥ 4 letters — shorter words have too few
     // characters for 1 edit to be meaningful (e.g. "שם" matching "ים",

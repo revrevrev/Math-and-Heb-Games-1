@@ -100,9 +100,8 @@ if errorlevel 1 (
 
 echo.
 echo ============================================
-echo   Done! App installed on !DEVICE!
-echo   Open it manually on the phone if it
-echo   does not launch automatically.
+echo   Done. App installed on DEVICE !DEVICE!
+echo   Open it manually on the phone to start.
 echo ============================================
 echo.
 endlocal
