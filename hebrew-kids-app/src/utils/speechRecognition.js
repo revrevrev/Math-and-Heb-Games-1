@@ -347,15 +347,16 @@ export function clearMatchIncidents() {
  * Collapse phonetically equivalent Hebrew letters to a canonical form so that
  * a child's mispronunciation or STT confusion still counts as a match.
  *   א = ע = ה  (all guttural / effectively silent for young readers)
- *   ו = ב      (both /v/ when ב has no dagesh)
+ *   ו = ב = מ  (ב is /v/ like ו, and /m/ like מ — no dagesh distinction for kids)
  *   ק = כ = ח  (velar stops and fricatives sound alike to children)
+ *   ת = ט      (both /t/)
  */
 function phoneticNormalize(s) {
   return s
     .replace(/[עה]/g, 'א')
-    .replace(/ב/g, 'ו')
+    .replace(/[במ]/g, 'ו')  // ו=ב=מ — ב is /v/ like ו, and /m/ like מ (no dagesh distinction)
     .replace(/[קח]/g, 'כ')
-    .replace(/ט/g, 'ת');   // ת=ט — both /t/
+    .replace(/ט/g, 'ת');    // ת=ט — both /t/
 }
 
 /**
