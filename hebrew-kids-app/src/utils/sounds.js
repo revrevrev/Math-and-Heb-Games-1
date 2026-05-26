@@ -287,6 +287,36 @@ function speakHebrew(text, delayMs = 300, onEnd = null) {
   }, delayMs);
 }
 
+// Speak using English TTS — for producing bare consonant sounds (e.g. "sh", "m")
+// that Hebrew TTS can't produce without inventing a vowel.
+function speakEnglish(text, delayMs = 0, onEnd = null) {
+  if (Sounds.muted || !Sounds.voiceEnabled) { onEnd?.(); return; }
+  const token = ++_speakToken;
+  setTimeout(async () => {
+    if (token !== _speakToken) { onEnd?.(); return; }
+    if (Sounds.muted || !Sounds.voiceEnabled) { onEnd?.(); return; }
+    if (IS_NATIVE) {
+      try {
+        await TextToSpeech.stop();
+        if (token !== _speakToken) { onEnd?.(); return; }
+        await TextToSpeech.speak({ text, lang: 'en-US', rate: 0.8, pitch: 1.3, volume: Sounds.voiceVolume, category: 'ambient' });
+      } catch (e) { console.warn('Native TTS error:', e); }
+      onEnd?.();
+      return;
+    }
+    if (typeof speechSynthesis === 'undefined') { onEnd?.(); return; }
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang   = 'en-US';
+    utt.rate   = 0.8;
+    utt.pitch  = 1.3;
+    utt.volume = Sounds.voiceVolume;
+    utt.onend  = () => onEnd?.();
+    try { speechSynthesis.resume(); } catch (_) {}
+    if (speechSynthesis.speaking) speechSynthesis.cancel();
+    speechSynthesis.speak(utt);
+  }, delayMs);
+}
+
 // ── Sound effects (declared after Sounds so synthFn closures work) ──
 
 // Synthesis fallbacks for each sound
@@ -387,6 +417,8 @@ export const Sounds = {
 
   // Speak arbitrary Hebrew text (e.g. letter names, numbers)
   speak: (text, delayMs = 0, onEnd = null) => speakHebrew(text, delayMs, onEnd),
+  // Speak using English TTS — for bare consonant sounds that Hebrew TTS can't produce
+  speakEn: (text, delayMs = 0, onEnd = null) => speakEnglish(text, delayMs, onEnd),
 
   // Stop any ongoing or pending speech immediately
   stopSpeech() {

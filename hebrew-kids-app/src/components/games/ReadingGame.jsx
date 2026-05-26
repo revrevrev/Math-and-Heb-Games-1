@@ -7,29 +7,31 @@ import { SpeechRecognitionUtil, saveMatchIncident } from '../../utils/speechReco
 import { unlockAchievement, recordGamePlayed } from '../../utils/achievements';
 import './ReadingGame.css';
 
-// ── Word pool: simple Hebrew words (no nikud) ─────────────────────────────────
+// ── Word pool ────────────────────────────────────────────────────────────────
+// `sounds` = per-letter nikud syllables so TTS reads the phonetic sound,
+//            not the letter name (e.g. "שֶׁ" instead of "שין").
 const WORD_POOL = [
   // 2-letter words
-  { word: 'ים'  },
-  { word: 'דג'  },
-  { word: 'אש'  },
-  { word: 'גן'  },
-  { word: 'בת'  },
-  { word: 'בן'  },
-  { word: 'צב'  },
-  { word: 'אח'  },
+  { word: 'ים',  sounds: ['יָ',  'מְה'] },
+  { word: 'דג',  sounds: ['דָּ', 'גְה'] },
+  { word: 'אש',  sounds: ['אֵ',  'שְׁה'] },
+  { word: 'גן',  sounds: ['גַּ', 'נְה'] },
+  { word: 'בת',  sounds: ['בַּ', 'תְה'] },
+  { word: 'בן',  sounds: ['בֵּ', 'נְה'] },
+  { word: 'צב',  sounds: ['צָ',  'בְה'] },
+  { word: 'אח',  sounds: ['אָ',  'חְה'] },
   // 3-letter words
-  { word: 'שמש' },
-  { word: 'פרח' },
-  { word: 'אבא' },
-  { word: 'אמא' },
-  { word: 'גזר' },
-  { word: 'לחם' },
-  { word: 'קטן' },
+  { word: 'שמש', sounds: ['שֶׁ', 'מֶ', 'שְׁה'] },
+  { word: 'פרח', sounds: ['פֶּ', 'רַ', 'חְה'] },
+  { word: 'אבא', sounds: ['אַ',  'בָּ', 'אְה'] },
+  { word: 'אמא', sounds: ['אִ',  'מָּ', 'אְה'] },
+  { word: 'גזר', sounds: ['גֶּ', 'זֶ', 'רְה'] },
+  { word: 'לחם', sounds: ['לֶ',  'חֶ', 'מְה'] },
+  { word: 'קטן', sounds: ['קָ',  'טָ', 'נְה'] },
 // 4-letter words - future expansion
-//  { word: 'גדול' },
-//  { word: 'פרפר' },
-//  { word: 'בלון' },
+//  { word: 'גדול', sounds: ['גָּ', 'דוֹ', 'ל'] },
+//  { word: 'פרפר', sounds: ['פַּ', 'רְ', 'פַּ', 'ר'] },
+//  { word: 'בלון', sounds: ['בָּ', 'לוֹ', 'ן'] },
 ];
 
 const ROUNDS      = 10;
@@ -46,7 +48,9 @@ export default function ReadingGame({ onBack, onAddStars }) {
   const [score,    setScore]    = useState(0);
   const [flash,    setFlash]    = useState(false);
   const [wordAnim, setWordAnim] = useState('pop-in');
-  const [wordBlink, setWordBlink] = useState(false);
+  // Letter-by-letter spell-out state
+  // null = inactive, { letterIndex: number, showWhole: boolean }
+  const [spellOut, setSpellOut] = useState(null);
 
   // Speech recognition state
   const [speechAvail,    setSpeechAvail]    = useState(() => SpeechRecognitionUtil.isAvailable());
@@ -78,7 +82,7 @@ export default function ReadingGame({ onBack, onAddStars }) {
   }, [done, score]);
 
   // ── Advance to next word ──────────────────────────────────────────────────
-  function advanceWord(currentRound, currentScore) {
+  function advanceWord(currentRound) {
     const next = currentRound + 1;
     if (next >= ROUNDS) {
       setTimeout(() => {
@@ -93,34 +97,65 @@ export default function ReadingGame({ onBack, onAddStars }) {
         setLastTranscript('');
         setLiveTranscript('');
         setListenState('idle');
-        setWordBlink(false);
+        setSpellOut(null);
         setWordAnim('pop-in');
       }, 300);
     }
   }
 
+  // ── Letter-by-letter spell-out ─────────────────────────────────────────
+  function runSpellOut(wordEntry, onDone) {
+    const { word, sounds } = wordEntry;
+    const letters = [...word];
+    let i = 0;
+
+    function nextLetter() {
+      if (i < letters.length) {
+        setSpellOut({ letterIndex: i, showWhole: false });
+        const entry = sounds?.[i] ?? letters[i];
+        const speakFn = (entry?.en != null)
+          ? (cb) => Sounds.speakEn(entry.en, 100, cb)
+          : (cb) => Sounds.speak(entry,      100, cb);
+        speakFn(() => {
+          i++;
+          // brief pause between letters
+          setTimeout(nextLetter, 250);
+        });
+      } else {
+        // all letters done — show whole word
+        setSpellOut({ letterIndex: -1, showWhole: true });
+        Sounds.speak(word, 200, () => {
+          setSpellOut(null);
+          onDone();
+        });
+      }
+    }
+
+    nextLetter();
+  }
+
   // ── Handlers ──────────────────────────────────────────────────────────────
   function handleCorrect() {
     SpeechRecognitionUtil.stopListening();
-    const word = wordsRef.current[roundRef.current].word;
+    const entry = wordsRef.current[roundRef.current];
 
     setListenState('correct');
     setFlash(true);
-    setWordBlink(true);
 
     const newScore = scoreRef.current + 1;
     setScore(newScore);
     onAddStars(1);
 
-    // Sequence: ding SFX → speak word → praise voice → advance
     Sounds.correctSfxOnly();
-    Sounds.speak(word, 300, () => {
-      Sounds.praiseVoice(150, () => {
-        setFlash(false);
-        setWordBlink(false);
-        advanceWord(roundRef.current, newScore);
+    // Spell out letter-by-letter, then praise, then advance
+    setTimeout(() => {
+      runSpellOut(entry, () => {
+        Sounds.praiseVoice(150, () => {
+          setFlash(false);
+          advanceWord(roundRef.current, newScore);
+        });
       });
-    });
+    }, 400);
   }
 
   function handleWrong(transcript) {
@@ -177,26 +212,32 @@ export default function ReadingGame({ onBack, onAddStars }) {
     SpeechRecognitionUtil.stopListening();
     setListenState('skipped');
     Sounds.tap();
-    setTimeout(() => advanceWord(roundRef.current, scoreRef.current), 600);
+    const entry = wordsRef.current[roundRef.current];
+    // Spell out the word so the child learns it, then advance
+    setTimeout(() => {
+      runSpellOut(entry, () => {
+        advanceWord(roundRef.current, scoreRef.current);
+      });
+    }, 400);
   }
 
   // Manual fallback (no speech API)
   function handleRead() {
     if (done) return;
-    const word = words[round].word;
+    const entry = words[round];
     setFlash(true);
-    setWordBlink(true);
     const newScore = score + 1;
     setScore(newScore);
     onAddStars(1);
     Sounds.correctSfxOnly();
-    Sounds.speak(word, 300, () => {
-      Sounds.praiseVoice(150, () => {
-        setFlash(false);
-        setWordBlink(false);
-        advanceWord(round, newScore);
+    setTimeout(() => {
+      runSpellOut(entry, () => {
+        Sounds.praiseVoice(150, () => {
+          setFlash(false);
+          advanceWord(round, newScore);
+        });
       });
-    });
+    }, 400);
   }
 
   function restart() {
@@ -204,7 +245,7 @@ export default function ReadingGame({ onBack, onAddStars }) {
     setScore(0);
     setDone(false);
     setFlash(false);
-    setWordBlink(false);
+    setSpellOut(null);
     setListenState('idle');
     setRetries(0);
     setLastTranscript('');
@@ -264,8 +305,19 @@ export default function ReadingGame({ onBack, onAddStars }) {
 
           {/* Word card */}
           <div className={`reading-word-card ${wordAnim}`}>
-            <div className={`reading-word ${wordBlink ? 'word-blink' : ''}`}>
-              {current.word}
+            <div className={`reading-word ${spellOut?.showWhole ? 'spell-whole' : ''}`}>
+              {[...current.word].map((letter, i) => (
+                <span
+                  key={i}
+                  className={
+                    spellOut && !spellOut.showWhole && spellOut.letterIndex === i
+                      ? 'spell-letter-active'
+                      : ''
+                  }
+                >
+                  {letter}
+                </span>
+              ))}
             </div>
           </div>
 

@@ -84,13 +84,73 @@
   line-height: 1.1;
 }
 
-.reading-word.word-blink {
-  animation: wordBlink 0.5s ease-in-out 2;
+/* ── Spell-out: active letter enlarges with sparkles ────── */
+.reading-word span {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              color 0.2s ease,
+              text-shadow 0.2s ease;
+  position: relative;
 }
 
-@keyframes wordBlink {
-  0%, 100% { color: white;   text-shadow: 0 4px 18px rgba(0,0,0,0.45); }
-  50%       { color: #86efac; text-shadow: 0 0 40px rgba(34,197,94,0.9), 0 4px 18px rgba(0,0,0,0.3); }
+.spell-letter-active {
+  transform: scale(1.55);
+  color: #fde68a !important;
+  text-shadow:
+    0 0 20px rgba(251,191,36,0.9),
+    0 0 50px rgba(251,191,36,0.5),
+    0 4px 18px rgba(0,0,0,0.3) !important;
+  animation: letterSparkle 0.6s ease-in-out;
+  z-index: 1;
+}
+
+/* Sparkle particles via pseudo-elements */
+.spell-letter-active::before,
+.spell-letter-active::after {
+  content: '✨';
+  position: absolute;
+  font-size: 0.4em;
+  animation: sparkleFloat 0.7s ease-out forwards;
+  pointer-events: none;
+}
+
+.spell-letter-active::before {
+  top: -0.3em;
+  right: -0.2em;
+  animation-delay: 0s;
+}
+
+.spell-letter-active::after {
+  bottom: -0.1em;
+  left: -0.2em;
+  animation-delay: 0.15s;
+}
+
+@keyframes letterSparkle {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.65); }
+  100% { transform: scale(1.55); }
+}
+
+@keyframes sparkleFloat {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-18px) scale(0.3); }
+}
+
+/* Whole word highlight after all letters spelled */
+.reading-word.spell-whole {
+  animation: wholeWordPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: #86efac;
+  text-shadow:
+    0 0 30px rgba(34,197,94,0.8),
+    0 0 60px rgba(34,197,94,0.4),
+    0 4px 18px rgba(0,0,0,0.3);
+}
+
+@keyframes wholeWordPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  100% { transform: scale(1.15); }
 }
 
 .reading-instruction {
