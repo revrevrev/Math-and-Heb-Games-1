@@ -350,13 +350,17 @@ export function clearMatchIncidents() {
  *   ו = ב = מ  (ב is /v/ like ו, and /m/ like מ — no dagesh distinction for kids)
  *   ק = כ = ח  (velar stops and fricatives sound alike to children)
  *   ת = ט      (both /t/)
+ *   ס = ש      (both /s/ — STT often confuses samech and shin)
+ *   ד = נ      (STT confusion between dalet and nun)
  */
 function phoneticNormalize(s) {
   return s
     .replace(/[עה]/g, 'א')
-    .replace(/[במ]/g, 'ו')  // ו=ב=מ — ב is /v/ like ו, and /m/ like מ (no dagesh distinction)
+    .replace(/[ומ]/g, 'ב')  // ו=ב=מ — ב is /v/ like ו, and /m/ like מ (no dagesh distinction)
     .replace(/[קח]/g, 'כ')
-    .replace(/ט/g, 'ת');    // ת=ט — both /t/
+    .replace(/ט/g, 'ת')     // ת=ט — both /t/
+    .replace(/ס/g, 'ש')     // ש=ס — both /s/
+    .replace(/נ/g, 'ד');    // ד=נ — STT confusion
 }
 
 /**
@@ -434,6 +438,8 @@ export function matchHebrewWord(targetWord, alternatives) {
     //   א=ע=ה — all guttural/silent
     //   ו=ב   — both /v/ when ב has no dagesh
     //   ק=כ=ח — all velar/uvular stops or fricatives
+    //   ש=ס   — both /s/
+    //   ד=נ   — STT confusion
     const recPhon = phoneticNormalize(recognized);
     const tgtPhon = phoneticNormalize(target);
     if (recPhon === tgtPhon) return true;
